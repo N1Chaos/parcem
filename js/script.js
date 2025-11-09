@@ -1,22 +1,3 @@
-// === SÉCURITÉ : BLOQUER LE PANNEAU DE DÉFINITION SUR index.html ===
-const isMainPage = window.location.pathname === '/' || window.location.pathname.includes('index.html');
-
-if (isMainPage) {
-  // Désactiver le panneau de définition
-  const definitionContainer = document.getElementById('definition-container');
-  if (definitionContainer) {
-    definitionContainer.style.display = 'none';
-    definitionContainer.remove(); // Supprime du DOM
-  }
-
-  // Empêcher toute ouverture future
-  window.addEventListener('click', (e) => {
-    if (e.target.closest('.selectable')) {
-      const panel = document.getElementById('definition-container');
-      if (panel) panel.style.display = 'none';
-    }
-  });
-}
 
 // Définir les définitions des mots
 const wordDefinitions = 
@@ -1878,6 +1859,8 @@ const definitionVideoSource = document.getElementById('definition-video-source')
 const definitionImageContainer = document.getElementById('definition-image-container');
 const definitionAudioContainer = document.getElementById('definition-audio-container');
 const definitionVideoContainer = document.getElementById('definition-video-container');
+
+
 
 // Redimensionnement
 let isResizing = false;

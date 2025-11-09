@@ -1901,29 +1901,37 @@ function restoreSelectedWords() {
     console.log(`Mots restaurés pour ${pageName}:`, savedWords);
 }
 
-// Mettre à jour localStorage avec les mots sélectionnés
 function updateSelectedWords() {
-    const pageName = window.location.pathname.split('/').pop().replace('.html', '');
-    const selectedWordsOnPage = Array.from(document.querySelectorAll('.selected')).map(el => el.textContent);
-    let selectedWords = JSON.parse(localStorage.getItem('selectedWords')) || [];
-    
-    // Supprimer les mots de cette page qui ne sont plus sélectionnés
-    const pageWords = Array.from(words).map(el => el.textContent);
-    selectedWords = selectedWords.filter(word => !pageWords.includes(word) || selectedWordsOnPage.includes(word));
-    
-    // Ajouter les nouveaux mots sélectionnés
-    selectedWordsOnPage.forEach(word => {
-        if (!selectedWords.includes(word)) {
-            selectedWords.push(word);
-        }
-    });
-    
-    localStorage.setItem('selectedWords', JSON.stringify(selectedWords));
-    localStorage.setItem(`selectedWords_${pageName}`, JSON.stringify(selectedWordsOnPage));
-    console.log(`Mots mis à jour pour ${pageName}:`, selectedWordsOnPage);
-localStorage.setItem('forceGlobalUpdate', Date.now().toString());
+  const pageName = window.location.pathname.split('/').pop().replace('.html', '');
+  const selectedWordsOnPage = Array.from(document.querySelectorAll('.selected')).map(el => el.textContent.trim());
+  
+  // Récupérer les mots globaux
+  let globalSelectedWords = JSON.parse(localStorage.getItem('selectedWords')) || [];
+  
+  // Récupérer TOUS les mots de cette page (même non sélectionnés)
+  const allPageWords = Array.from(words).map(el => el.textContent.trim());
 
-  }
+  // 1. Supprimer de globalSelectedWords tous les mots de cette page qui ne sont PLUS sélectionnés
+  globalSelectedWords = globalSelectedWords.filter(word => 
+    !allPageWords.includes(word) || selectedWordsOnPage.includes(word)
+  );
+
+  // 2. Ajouter les nouveaux mots sélectionnés
+  selectedWordsOnPage.forEach(word => {
+    if (!globalSelectedWords.includes(word)) {
+      globalSelectedWords.push(word);
+    }
+  });
+
+  // Sauvegarde
+  localStorage.setItem('selectedWords', JSON.stringify(globalSelectedWords));
+  localStorage.setItem(`selectedWords_${pageName}`, JSON.stringify(selectedWordsOnPage));
+
+  console.log(`Mots mis à jour [${pageNama}]:`, selectedWordsOnPage);
+
+  // Notifier index.html
+  localStorage.setItem('forceGlobalUpdate', Date.now().toString());
+}
 
 // Gestion des mots
 words.forEach(word => {

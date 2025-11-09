@@ -1,9 +1,4 @@
-// === SÉCURITÉ : NE CHARGER QUE SI LE PANNEAU EXISTE ===
-if (!document.getElementById('definition-container')) {
-  console.log('Panneau absent → script ignoré (index.html)');
-  // Arrête tout
-  return;
-}
+
 // Définir les définitions des mots
 const wordDefinitions = 
         {

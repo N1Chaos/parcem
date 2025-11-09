@@ -1884,16 +1884,16 @@ function displayWordsForPage(page) {
   if (!container) return;
 
   const words = loadFromLocalStorage(`selectedWords_${page}`) || [];
-  
+
   if (words.length === 0) {
     container.innerHTML = "<span class='empty'>Aucun mot sélectionné</span>";
   } else {
     container.innerHTML = words.map(word => {
-      const escapedWord = word.replace(/'/g, "\\'"); // Échappe les apostrophes
+      const escaped = word.replace(/'/g, "\\'").replace(/"/g, "\\\"");
       return `
         <span class="tag" data-bs-toggle="tooltip" title="${wordDefinitions[word]?.definition || 'Pas de définition'}">
           ${word}
-          <span class="delete-word" onclick="deleteWordFromMainPage('${page}', '${escapedWord}')">×</span>
+          <span class="delete-word" onclick="deleteWordFromMainPage('${page}', '${escaped}')">×</span>
         </span>
       `;
     }).join(' ');
@@ -1901,37 +1901,14 @@ function displayWordsForPage(page) {
 
   // Réactiver les tooltips
   container.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
-    const existing = bootstrap.Tooltip.getInstance(el);
-    if (existing) existing.dispose();
+    const t = bootstrap.Tooltip.getInstance(el);
+    if (t) t.dispose();
     new bootstrap.Tooltip(el, { trigger: 'hover' });
   });
 
   console.log(`Mots affichés pour ${page}:`, words);
 }
 
-function deleteWordFromPage(page, word) {
-  if (confirm(`Supprimer "${word}" ?`)) {
-    // Fermer tous les tooltips avant la suppression
-    const tooltipInstances = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    tooltipInstances.forEach(el => {
-      const tooltip = bootstrap.Tooltip.getInstance(el);
-      if (tooltip) {
-        tooltip.hide(); // Force la fermeture du tooltip
-      }
-    });
-
-    // Mettre à jour la liste des mots pour la page
-    const pageWords = loadFromLocalStorage(`selectedWords_${page}`);
-    saveToLocalStorage(`selectedWords_${page}`, pageWords.filter(w => w !== word));
-
-    // Mettre à jour la liste globale des mots sélectionnés
-    const selectedWords = loadFromLocalStorage('selectedWords');
-    saveToLocalStorage('selectedWords', selectedWords.filter(w => w !== word));
-
-    displayWordsForPage(page);
-    console.log(`Mot "${word}" supprimé pour ${page}`);
-  }
-}
 
 // Mettre à jour les mots affichés lorsqu’un changement est détecté dans localStorage
 function updateWordsOnStorageChange() {
@@ -3513,3 +3490,27 @@ window.addEventListener('storage', (e) => {
     }
   }
 });
+
+// === SUPPRESSION D'UN MOT DEPUIS index.html (croix) ===
+function deleteWordFromMainPage(page, word) {
+  if (!confirm(`Supprimer "${word}" ?`)) return;
+
+  // 1. Supprimer de la page spécifique
+  const pageWords = loadFromLocalStorage(`selectedWords_${page}`) || [];
+  saveToLocalStorage(`selectedWords_${page}`, pageWords.filter(w => w !== word));
+
+  // 2. Supprimer du global
+  const globalWords = loadFromLocalStorage('selectedWords') || [];
+  saveToLocalStorage('selectedWords', globalWords.filter(w => w !== word));
+
+  // 3. Mettre à jour l'affichage
+  displayWordsForPage(page);
+
+  // 4. Mettre à jour le cadre global
+  updateGlobalSelectedWords();
+
+  // 5. Notifier les pages annexes
+  localStorage.setItem('forceGlobalUpdate', Date.now().toString());
+
+  console.log(`Mot "${word}" supprimé de ${page}`);
+}

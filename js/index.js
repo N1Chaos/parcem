@@ -3498,22 +3498,21 @@ window.addEventListener('storage', (e) => {
 function deleteWordFromMainPage(page, word) {
   if (!confirm(`Supprimer "${word}" ?`)) return;
 
-  // 1. Supprimer de la page spécifique
   const pageWords = loadFromLocalStorage(`selectedWords_${page}`) || [];
   saveToLocalStorage(`selectedWords_${page}`, pageWords.filter(w => w !== word));
 
-  // 2. Supprimer du global
   const globalWords = loadFromLocalStorage('selectedWords') || [];
   saveToLocalStorage('selectedWords', globalWords.filter(w => w !== word));
 
-  // 3. Mettre à jour l'affichage
   displayWordsForPage(page);
-
-  // 4. Mettre à jour le cadre global
   updateGlobalSelectedWords();
-
-  // 5. Notifier les pages annexes
   localStorage.setItem('forceGlobalUpdate', Date.now().toString());
+
+  // FERMER LE PANNEAU DE DÉFINITION (même s'il est ouvert dans une page annexe)
+  const definitionPanel = document.getElementById('definition-container');
+  if (definitionPanel) {
+    definitionPanel.style.display = 'none';
+  }
 
   console.log(`Mot "${word}" supprimé de ${page}`);
 }

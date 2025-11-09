@@ -3435,3 +3435,45 @@ function clearSelection() {
     console.log('Toutes les sélections ont été effacées');
   }
 }
+// === MISE À JOUR CADRE GLOBAL ===
+function updateGlobalSelectedWords() {
+  const allWords = [];
+  Object.keys(PAGES).forEach(page => {
+    const words = loadFromLocalStorage(`selectedWords_${page}`) || [];
+    allWords.push(...words);
+  });
+
+  const container = document.getElementById('globalSelectedWords');
+  const list = document.getElementById('globalWordsList');
+  if (!container || !list) return;
+
+  if (allWords.length === 0) {
+    container.style.display = 'none';
+    return;
+  }
+
+  container.style.display = 'block';
+  list.innerHTML = allWords.map(word => `
+    <span class="badge bg-primary text-white me-1" data-bs-toggle="tooltip" title="${wordDefinitions[word]?.definition || ''}">
+      ${word}
+    </span>
+  `).join('');
+
+  // Réactiver les tooltips
+  list.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+    const t = bootstrap.Tooltip.getInstance(el);
+    if (t) t.dispose();
+    new bootstrap.Tooltip(el, { trigger: 'hover' });
+  });
+}
+
+// === ÉCOUTE LES CHANGEMENTS (localStorage) ===
+document.addEventListener("DOMContentLoaded", () => {
+  updateGlobalSelectedWords();
+
+  window.addEventListener('storage', (e) => {
+    if (e.key?.startsWith('selectedWords_') || e.key === 'forceGlobalUpdate') {
+      updateGlobalSelectedWords();
+    }
+  });
+});

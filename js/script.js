@@ -1921,7 +1921,9 @@ function updateSelectedWords() {
     localStorage.setItem('selectedWords', JSON.stringify(selectedWords));
     localStorage.setItem(`selectedWords_${pageName}`, JSON.stringify(selectedWordsOnPage));
     console.log(`Mots mis à jour pour ${pageName}:`, selectedWordsOnPage);
-}
+localStorage.setItem('forceGlobalUpdate', Date.now().toString());
+
+  }
 
 // Gestion des mots
 words.forEach(word => {
@@ -2012,6 +2014,7 @@ function clearSelection() {
         // Masquer le panneau
         definitionContainer.style.display = 'none';
         console.log(`Sélections annulées pour ${pageName}`);
+        localStorage.setItem('forceGlobalUpdate', Date.now().toString());
     }
 }
 
@@ -2273,3 +2276,4 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.appendChild(definitionContainer);
     }
 });
+

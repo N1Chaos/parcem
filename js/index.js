@@ -1899,30 +1899,6 @@ function displayWordsForPage(page) {
   console.log(`Mots affichés pour ${page}:`, words);
 }
 
-function deleteWordFromPage(page, word) {
-  if (confirm(`Supprimer "${word}" ?`)) {
-    // Fermer tous les tooltips avant la suppression
-    const tooltipInstances = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    tooltipInstances.forEach(el => {
-      const tooltip = bootstrap.Tooltip.getInstance(el);
-      if (tooltip) {
-        tooltip.hide(); // Force la fermeture du tooltip
-      }
-    });
-
-    // Mettre à jour la liste des mots pour la page
-    const pageWords = loadFromLocalStorage(`selectedWords_${page}`);
-    saveToLocalStorage(`selectedWords_${page}`, pageWords.filter(w => w !== word));
-
-    // Mettre à jour la liste globale des mots sélectionnés
-    const selectedWords = loadFromLocalStorage('selectedWords');
-    saveToLocalStorage('selectedWords', selectedWords.filter(w => w !== word));
-
-    displayWordsForPage(page);
-    console.log(`Mot "${word}" supprimé pour ${page}`);
-  }
-  updateGlobalSelectedWords();
-}
 
 // Mettre à jour les mots affichés lorsqu’un changement est détecté dans localStorage
 function updateWordsOnStorageChange() {
@@ -3416,55 +3392,22 @@ carteMondeModal.addEventListener('hidden.bs.modal', function () {
   }
 });
 
-// Fonction pour effacer toutes les sélections et réinitialiser les boutons
+// Fonction pour effacer toutes les sélections
 function clearSelection() {
   if (confirm("Voulez-vous vraiment effacer toutes les sélections ?")) {
-    // Effacer toutes les clés de localStorage pour les mots sélectionnés
     Object.keys(PAGES).forEach(page => {
       saveToLocalStorage(`selectedWords_${page}`, []);
     });
     saveToLocalStorage('selectedWords', []);
 
-    // Mettre à jour l'affichage des mots pour toutes les pages
     Object.keys(PAGES).forEach(page => {
       displayWordsForPage(page);
     });
 
-    // Déclencher un événement de stockage pour réinitialiser les boutons sur les pages annexes
     localStorage.setItem('clearSelectionEvent', Date.now().toString());
-
     console.log('Toutes les sélections ont été effacées');
 
-    // MISE À JOUR DU CADRE GLOBAL
-    updateGlobalSelectedWords();
-  }
-}
-
-// Fonction pour supprimer un mot d'une page
-function deleteWordFromPage(page, word) {
-  if (confirm(`Supprimer "${word}" ?`)) {
-    // Fermer tous les tooltips avant la suppression
-    const tooltipInstances = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    tooltipInstances.forEach(el => {
-      const tooltip = bootstrap.Tooltip.getInstance(el);
-      if (tooltip) {
-        tooltip.hide();
-      }
-    });
-
-    // Mettre à jour la liste des mots pour la page
-    const pageWords = loadFromLocalStorage(`selectedWords_${page}`);
-    saveToLocalStorage(`selectedWords_${page}`, pageWords.filter(w => w !== word));
-
-    // Mettre à jour la liste globale des mots sélectionnés
-    const selectedWords = loadFromLocalStorage('selectedWords');
-    saveToLocalStorage('selectedWords', selectedWords.filter(w => w !== word));
-
-    displayWordsForPage(page);
-    console.log(`Mot "${word}" supprimé pour ${page}`);
-
-    // MISE À JOUR DU CADRE GLOBAL
-    updateGlobalSelectedWords();
+    updateGlobalSelectedWords(); // MISE À JOUR CADRE
   }
 }
 
@@ -3493,19 +3436,18 @@ function updateGlobalSelectedWords() {
     </span>
   `).join('');
 
-  // Réinitialiser les tooltips
   list.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
-    const existingTooltip = bootstrap.Tooltip.getInstance(el);
-    if (existingTooltip) existingTooltip.dispose();
-    new bootstrap.Tooltip(el, { trigger: 'hover', delay: { show: 100, hide: 100 } });
+    const existing = bootstrap.Tooltip.getInstance(el);
+    if (existing) existing.dispose();
+    new bootstrap.Tooltip(el, { trigger: 'hover' });
   });
 }
 
-// === INITIALISATION ET SYNCHRONISATION ===
+// === SYNCHRONISATION COMPLÈTE ===
 document.addEventListener("DOMContentLoaded", () => {
   updateGlobalSelectedWords();
 
-  // Écoute les changements via localStorage (entre onglets ou pages annexes)
+  // Écoute localStorage
   window.addEventListener('storage', (event) => {
     if (event.key === 'clearSelectionEvent' || 
         event.key === 'forceGlobalUpdate' || 
@@ -3514,12 +3456,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Écoute les messages postMessage des pages annexes (iframe ou navigation)
+  // Écoute postMessage des pages annexes
   window.addEventListener('message', (event) => {
     if (event.data?.type === 'updateGlobalWords') {
       updateGlobalSelectedWords();
     }
   });
 });
-
-// Appelé automatiquement au chargement et à chaque modification

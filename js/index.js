@@ -1921,6 +1921,7 @@ function deleteWordFromPage(page, word) {
     displayWordsForPage(page);
     console.log(`Mot "${word}" supprimé pour ${page}`);
   }
+  updateGlobalSelectedWords();
 }
 
 // Mettre à jour les mots affichés lorsqu’un changement est détecté dans localStorage
@@ -3433,5 +3434,92 @@ function clearSelection() {
     localStorage.setItem('clearSelectionEvent', Date.now().toString());
 
     console.log('Toutes les sélections ont été effacées');
+
+    // MISE À JOUR DU CADRE GLOBAL
+    updateGlobalSelectedWords();
   }
 }
+
+// Fonction pour supprimer un mot d'une page
+function deleteWordFromPage(page, word) {
+  if (confirm(`Supprimer "${word}" ?`)) {
+    // Fermer tous les tooltips avant la suppression
+    const tooltipInstances = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    tooltipInstances.forEach(el => {
+      const tooltip = bootstrap.Tooltip.getInstance(el);
+      if (tooltip) {
+        tooltip.hide();
+      }
+    });
+
+    // Mettre à jour la liste des mots pour la page
+    const pageWords = loadFromLocalStorage(`selectedWords_${page}`);
+    saveToLocalStorage(`selectedWords_${page}`, pageWords.filter(w => w !== word));
+
+    // Mettre à jour la liste globale des mots sélectionnés
+    const selectedWords = loadFromLocalStorage('selectedWords');
+    saveToLocalStorage('selectedWords', selectedWords.filter(w => w !== word));
+
+    displayWordsForPage(page);
+    console.log(`Mot "${word}" supprimé pour ${page}`);
+
+    // MISE À JOUR DU CADRE GLOBAL
+    updateGlobalSelectedWords();
+  }
+}
+
+// === MISE À JOUR GLOBALE DES MOTS SÉLECTIONNÉS ===
+function updateGlobalSelectedWords() {
+  const allWords = [];
+  Object.keys(PAGES).forEach(page => {
+    const words = loadFromLocalStorage(`selectedWords_${page}`) || [];
+    allWords.push(...words);
+  });
+
+  const container = document.getElementById('globalSelectedWords');
+  const list = document.getElementById('globalWordsList');
+
+  if (!container || !list) return;
+
+  if (allWords.length === 0) {
+    container.style.display = 'none';
+    return;
+  }
+
+  container.style.display = 'block';
+  list.innerHTML = allWords.map(word => `
+    <span class="tag" data-bs-toggle="tooltip" title="${wordDefinitions[word]?.definition || 'Aucune définition'}">
+      ${word}
+    </span>
+  `).join('');
+
+  // Réinitialiser les tooltips
+  list.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+    const existingTooltip = bootstrap.Tooltip.getInstance(el);
+    if (existingTooltip) existingTooltip.dispose();
+    new bootstrap.Tooltip(el, { trigger: 'hover', delay: { show: 100, hide: 100 } });
+  });
+}
+
+// === INITIALISATION ET SYNCHRONISATION ===
+document.addEventListener("DOMContentLoaded", () => {
+  updateGlobalSelectedWords();
+
+  // Écoute les changements via localStorage (entre onglets ou pages annexes)
+  window.addEventListener('storage', (event) => {
+    if (event.key === 'clearSelectionEvent' || 
+        event.key === 'forceGlobalUpdate' || 
+        event.key?.startsWith('selectedWords_')) {
+      updateGlobalSelectedWords();
+    }
+  });
+
+  // Écoute les messages postMessage des pages annexes (iframe ou navigation)
+  window.addEventListener('message', (event) => {
+    if (event.data?.type === 'updateGlobalWords') {
+      updateGlobalSelectedWords();
+    }
+  });
+});
+
+// Appelé automatiquement au chargement et à chaque modification

@@ -2272,4 +2272,78 @@ document.addEventListener('DOMContentLoaded', () => {
         definitionContainer.style.maxWidth = '600px';
         document.body.appendChild(definitionContainer);
     }
+
+    // === COMMUNICATION AVEC index.html POUR LE CADRE GLOBAL ===
+function notifyMainPageUpdate() {
+  // Envoie un message au parent (index.html dans l'iframe)
+  if (window.parent && window.parent !== window) {
+    window.parent.postMessage({ type: 'updateGlobalWords' }, '*');
+  }
+  // Sinon, si pas dans iframe, on met à jour localStorage (déjà fait)
+  // Mais on force aussi via storage pour compatibilité
+  localStorage.setItem('forceGlobalUpdate', Date.now().toString());
+}
+
+// Appelle cette fonction après chaque modification
+function updateSelectedWords() {
+  const pageName = window.location.pathname.split('/').pop().replace('.html', '');
+  const selectedWordsOnPage = Array.from(document.querySelectorAll('.selected')).map(el => el.textContent);
+  let selectedWords = JSON.parse(localStorage.getItem('selectedWords')) || [];
+  
+  const pageWords = Array.from(words).map(el => el.textContent);
+  selectedWords = selectedWords.filter(word => !pageWords.includes(word) || selectedWordsOnPage.includes(word));
+  selectedWordsOnPage.forEach(word => {
+    if (!selectedWords.includes(word)) {
+      selectedWords.push(word);
+    }
+  });
+  
+  localStorage.setItem('selectedWords', JSON.stringify(selectedWords));
+  localStorage.setItem(`selectedWords_${pageName}`, JSON.stringify(selectedWordsOnPage));
+  
+  console.log(`Mots mis à jour pour ${pageName}:`, selectedWordsOnPage);
+  
+  // NOUVEAU : NOTIFIER LA PAGE PRINCIPALE
+  notifyMainPageUpdate();
+}
+
+// Surcharge le gestionnaire de clic
+words.forEach(word => {
+  word.addEventListener('click', () => {
+    word.classList.toggle('selected');
+    updateSelectedWords(); // ← cette fonction appelle maintenant notifyMainPageUpdate()
+    
+    // ... ton code existant pour afficher la définition ...
+    if (word.classList.contains('selected')) {
+      const wordData = wordDefinitions[word.textContent] || { definition: "Aucune définition disponible." };
+      definitionTitle.textContent = word.textContent;
+      definitionText.innerHTML = wordData.definition.replace(/\n/g, '<br>');
+      // ... reste du code inchangé ...
+    } else {
+      const anySelected = document.querySelectorAll('.selected').length > 0;
+      if (!anySelected) {
+        definitionContainer.style.display = 'none';
+      }
+    }
+    // ... repositionnement ...
+  });
+});
+
+// Aussi appeler lors de clearSelection()
+function clearSelection() {
+  if (confirm('Êtes-vous sûr de vouloir annuler toutes vos sélections ?')) {
+    words.forEach(word => word.classList.remove('selected'));
+    const pageName = window.location.pathname.split('/').pop().replace('.html', '');
+    localStorage.setItem(`selectedWords_${pageName}`, JSON.stringify([]));
+    let selectedWords = JSON.parse(localStorage.getItem('selectedWords')) || [];
+    const pageWords = Array.from(words).map(el => el.textContent);
+    selectedWords = selectedWords.filter(word => !pageWords.includes(word));
+    localStorage.setItem('selectedWords', JSON.stringify(selectedWords));
+    definitionContainer.style.display = 'none';
+    console.log(`Sélections annulées pour ${pageName}`);
+    
+    // NOTIFIER LA PAGE PRINCIPALE
+    notifyMainPageUpdate();
+  }
+}
 });

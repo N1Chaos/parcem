@@ -3437,29 +3437,32 @@ function updateGlobalSelectedWords() {
   `).join('');
 
   list.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
-    const existing = bootstrap.Tooltip.getInstance(el);
-    if (existing) existing.dispose();
+    const t = bootstrap.Tooltip.getInstance(el);
+    if (t) t.dispose();
     new bootstrap.Tooltip(el, { trigger: 'hover' });
   });
 }
 
-// === SYNCHRONISATION COMPLÈTE ===
+// === SYNCHRONISATION ===
 document.addEventListener("DOMContentLoaded", () => {
   updateGlobalSelectedWords();
 
-  // Écoute localStorage
   window.addEventListener('storage', (event) => {
-    if (event.key === 'clearSelectionEvent' || 
-        event.key === 'forceGlobalUpdate' || 
-        event.key?.startsWith('selectedWords_')) {
-      updateGlobalSelectedWords();
-    }
-  });
-
-  // Écoute postMessage des pages annexes
-  window.addEventListener('message', (event) => {
-    if (event.data?.type === 'updateGlobalWords') {
+    if (event.key === 'forceGlobalUpdate' || 
+        event.key?.startsWith('selectedWords_') || 
+        event.key === 'clearSelectionEvent') {
       updateGlobalSelectedWords();
     }
   });
 });
+
+// Effacer tout
+function clearSelection() {
+  if (confirm("Voulez-vous vraiment effacer toutes les sélections ?")) {
+    Object.keys(PAGES).forEach(page => saveToLocalStorage(`selectedWords_${page}`, []));
+    saveToLocalStorage('selectedWords', []);
+    Object.keys(PAGES).forEach(page => displayWordsForPage(page));
+    localStorage.setItem('clearSelectionEvent', Date.now().toString());
+    updateGlobalSelectedWords();
+  }
+}

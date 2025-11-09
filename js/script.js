@@ -1,9 +1,4 @@
-// === SÉCURITÉ : NE CHARGER QUE SI LE PANNEAU EXISTE ===
-if (!document.getElementById('definition-container')) {
-  console.log('Panneau absent → script ignoré (index.html)');
-  // Arrête tout
-  return;
-}
+
 // Définir les définitions des mots
 const wordDefinitions = 
         {
@@ -1946,28 +1941,23 @@ const isMainPage = window.location.pathname === '/' ||
                     window.location.pathname.includes('index.html') ||
                     !window.location.pathname.includes('/pages/');
 
-// === GESTION DES MOTS (sélection + définition + tooltip) ===
+// === GESTION DES MOTS (SÉCURISÉE) ===
 words.forEach(word => {
-  word.addEventListener('click', function () {
+  word.addEventListener('click', function (e) {
+    // ARRÊTER LA PROPAGATION SI C'EST LA CROIX
+    if (e.target.closest('.delete-word')) return;
+
     const wordText = this.textContent.trim();
     const isSelected = this.classList.toggle('selected');
 
-    // === MISE À JOUR DU LOCALSTORAGE ===
     updateSelectedWords();
 
-    // === SI SÉLECTIONNÉ : CHARGER LES DONNÉES ===
     if (isSelected) {
-      const wordData = wordDefinitions[wordText] || { 
-        definition: "Aucune définition disponible." 
-      };
+      const wordData = wordDefinitions[wordText] || { definition: "Aucune définition disponible." };
 
-      // Titre
       definitionTitle.textContent = wordText;
-
-      // Texte
       definitionText.innerHTML = wordData.definition.replace(/\n/g, '<br>');
 
-      // Image
       definitionImageContainer.style.display = wordData.image ? 'block' : 'none';
       if (wordData.image) {
         definitionImage.src = wordData.image;
@@ -1976,7 +1966,6 @@ words.forEach(word => {
         definitionImage.style.display = 'none';
       }
 
-      // Audio
       definitionAudioContainer.style.display = wordData.audio ? 'block' : 'none';
       if (wordData.audio) {
         definitionAudioSource.src = wordData.audio;
@@ -1986,7 +1975,6 @@ words.forEach(word => {
         definitionAudio.style.display = 'none';
       }
 
-      // Vidéo
       definitionVideoContainer.style.display = wordData.video ? 'block' : 'none';
       if (wordData.video) {
         definitionVideoSource.src = wordData.video;
@@ -1996,23 +1984,20 @@ words.forEach(word => {
         definitionVideo.style.display = 'none';
       }
 
-      // === AFFICHER LE PANNEAU UNIQUEMENT SUR LES PAGES ANNEXES ===
+      // NE PAS AFFICHER LE PANNEAU SUR index.html
       if (!isMainPage) {
         definitionContainer.style.display = 'block';
       }
-    } 
-    // === SI DÉSÉLECTIONNÉ ===
-    else {
+    } else {
       if (!isMainPage && document.querySelectorAll('.selected').length === 0) {
         definitionContainer.style.display = 'none';
       }
     }
 
-    // === POSITIONNEMENT DU PANNEAU (uniquement si visible et sur page annexe) ===
+    // POSITIONNEMENT (uniquement si panneau visible et pas index.html)
     if (!isMainPage && definitionContainer.style.display === 'block') {
       const isMobile = window.matchMedia("(max-width: 767px)").matches;
 
-      // Retirer du DOM précédent
       if (definitionContainer.parentElement) {
         definitionContainer.parentElement.removeChild(definitionContainer);
       }
@@ -2031,20 +2016,8 @@ words.forEach(word => {
         definitionContainer.style.top = '20px';
         definitionContainer.style.width = '300px';
         definitionContainer.style.maxWidth = '600px';
-        document.body.appendChild(definitionContainer);
+       document.body.appendChild(definitionContainer);
       }
-    }
-
-    // === TOOLTIP AU SURVOL (toujours actif, même sur index.html) ===
-    if (isSelected) {
-      this.setAttribute('data-bs-toggle', 'tooltip');
-      this.setAttribute('title', wordDefinitions[wordText]?.definition || 'Aucune définition');
-      new bootstrap.Tooltip(this, { trigger: 'hover', delay: { show: 100, hide: 100 } });
-    } else {
-      const tooltip = bootstrap.Tooltip.getInstance(this);
-      if (tooltip) tooltip.dispose();
-      this.removeAttribute('data-bs-toggle');
-      this.removeAttribute('title');
     }
   });
 });

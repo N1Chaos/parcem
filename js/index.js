@@ -3507,5 +3507,8 @@ function deleteWordFromMainPage(page, word) {
   displayWordsForPage(page);
   updateGlobalSelectedWords();
 
-  localStorage.setItem('disposeTooltipForWord', word);
+  // SIGNAL : "Dispose le tooltip du mot X"
+  localStorage.setItem('disposeTooltip', JSON.stringify({ page, word }));
+
+  console.log(`Mot "${word}" supprimé de ${page}`);
 }

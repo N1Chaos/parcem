@@ -1,3 +1,23 @@
+// === SÉCURITÉ : BLOQUER LE PANNEAU DE DÉFINITION SUR index.html ===
+const isMainPage = window.location.pathname === '/' || window.location.pathname.includes('index.html');
+
+if (isMainPage) {
+  // Désactiver le panneau de définition
+  const definitionContainer = document.getElementById('definition-container');
+  if (definitionContainer) {
+    definitionContainer.style.display = 'none';
+    definitionContainer.remove(); // Supprime du DOM
+  }
+
+  // Empêcher toute ouverture future
+  window.addEventListener('click', (e) => {
+    if (e.target.closest('.selectable')) {
+      const panel = document.getElementById('definition-container');
+      if (panel) panel.style.display = 'none';
+    }
+  });
+}
+
 // Définir les définitions des mots
 const wordDefinitions = 
         {
@@ -1933,71 +1953,112 @@ function updateSelectedWords() {
   localStorage.setItem('forceGlobalUpdate', Date.now().toString());
 }
 
-// Gestion des mots
+// === DÉTECTION DE LA PAGE PRINCIPALE ===
+const isMainPage = window.location.pathname === '/' || 
+                    window.location.pathname.includes('index.html') ||
+                    !window.location.pathname.includes('/pages/');
+
+// === GESTION DES MOTS (sélection + définition + tooltip) ===
 words.forEach(word => {
-    word.addEventListener('click', () => {
-        word.classList.toggle('selected');
-        updateSelectedWords();
-        if (word.classList.contains('selected')) {
-            const wordData = wordDefinitions[word.textContent] || { definition: "Aucune définition disponible." };
-            definitionTitle.textContent = word.textContent;
-            definitionText.innerHTML = wordData.definition.replace(/\n/g, '<br>');
-            // Gérer l'image
-            definitionImageContainer.style.display = wordData.image ? 'block' : 'none';
-            if (wordData.image) {
-                definitionImage.src = wordData.image;
-                definitionImage.style.display = 'block';
-            } else {
-                definitionImage.style.display = 'none';
-            }
-            // Gérer l'audio
-            definitionAudioContainer.style.display = wordData.audio ? 'block' : 'none';
-            if (wordData.audio) {
-                definitionAudioSource.src = wordData.audio;
-                definitionAudio.style.display = 'block';
-                definitionAudio.load();
-            } else {
-                definitionAudio.style.display = 'none';
-            }
-            // Gérer la vidéo
-            definitionVideoContainer.style.display = wordData.video ? 'block' : 'none';
-            if (wordData.video) {
-                definitionVideoSource.src = wordData.video;
-                definitionVideo.style.display = 'block';
-                definitionVideo.load();
-            } else {
-                definitionVideo.style.display = 'none';
-            }
-            // Afficher le panneau
-            definitionContainer.style.display = 'block';
-        } else {
-            // Masquer le panneau si aucun mot n'est sélectionné
-            const anySelected = document.querySelectorAll('.selected').length > 0;
-            if (!anySelected) {
-                definitionContainer.style.display = 'none';
-            }
-        }
-        // Positionner le conteneur de définitions
-        const isMobile = window.matchMedia("(max-width: 767px)").matches;
-        if (definitionContainer.parentElement) {
-            definitionContainer.parentElement.removeChild(definitionContainer);
-        }
-        if (isMobile) {
-            definitionContainer.style.position = 'relative';
-            definitionContainer.style.left = '';
-            definitionContainer.style.top = '';
-            definitionContainer.style.width = '100%';
-            definitionContainer.style.maxWidth = '';
-            word.insertAdjacentElement('afterend', definitionContainer);
-        } else {
-            definitionContainer.style.position = 'fixed';
-            definitionContainer.style.right = '20px';
-            definitionContainer.style.top = '20px';
-            definitionContainer.style.width = '300px';
-            definitionContainer.style.maxWidth = '600px';
-            document.body.appendChild(definitionContainer);
-        }
-    });
+  word.addEventListener('click', function () {
+    const wordText = this.textContent.trim();
+    const isSelected = this.classList.toggle('selected');
+
+    // === MISE À JOUR DU LOCALSTORAGE ===
+    updateSelectedWords();
+
+    // === SI SÉLECTIONNÉ : CHARGER LES DONNÉES ===
+    if (isSelected) {
+      const wordData = wordDefinitions[wordText] || { 
+        definition: "Aucune définition disponible." 
+      };
+
+      // Titre
+      definitionTitle.textContent = wordText;
+
+      // Texte
+      definitionText.innerHTML = wordData.definition.replace(/\n/g, '<br>');
+
+      // Image
+      definitionImageContainer.style.display = wordData.image ? 'block' : 'none';
+      if (wordData.image) {
+        definitionImage.src = wordData.image;
+        definitionImage.style.display = 'block';
+      } else {
+        definitionImage.style.display = 'none';
+      }
+
+      // Audio
+      definitionAudioContainer.style.display = wordData.audio ? 'block' : 'none';
+      if (wordData.audio) {
+        definitionAudioSource.src = wordData.audio;
+        definitionAudio.load();
+        definitionAudio.style.display = 'block';
+      } else {
+        definitionAudio.style.display = 'none';
+      }
+
+      // Vidéo
+      definitionVideoContainer.style.display = wordData.video ? 'block' : 'none';
+      if (wordData.video) {
+        definitionVideoSource.src = wordData.video;
+        definitionVideo.load();
+        definitionVideo.style.display = 'block';
+      } else {
+        definitionVideo.style.display = 'none';
+      }
+
+      // === AFFICHER LE PANNEAU UNIQUEMENT SUR LES PAGES ANNEXES ===
+      if (!isMainPage) {
+        definitionContainer.style.display = 'block';
+      }
+    } 
+    // === SI DÉSÉLECTIONNÉ ===
+    else {
+      if (!isMainPage && document.querySelectorAll('.selected').length === 0) {
+        definitionContainer.style.display = 'none';
+      }
+    }
+
+    // === POSITIONNEMENT DU PANNEAU (uniquement si visible et sur page annexe) ===
+    if (!isMainPage && definitionContainer.style.display === 'block') {
+      const isMobile = window.matchMedia("(max-width: 767px)").matches;
+
+      // Retirer du DOM précédent
+      if (definitionContainer.parentElement) {
+        definitionContainer.parentElement.removeChild(definitionContainer);
+      }
+
+      if (isMobile) {
+        definitionContainer.style.position = 'relative';
+        definitionContainer.style.left = '';
+        definitionContainer.style.top = '';
+        definitionContainer.style.right = '';
+        definitionContainer.style.width = '100%';
+        definitionContainer.style.maxWidth = '';
+        this.insertAdjacentElement('afterend', definitionContainer);
+      } else {
+        definitionContainer.style.position = 'fixed';
+        definitionContainer.style.right = '20px';
+        definitionContainer.style.top = '20px';
+        definitionContainer.style.width = '300px';
+        definitionContainer.style.maxWidth = '600px';
+        document.body.appendChild(definitionContainer);
+      }
+    }
+
+    // === TOOLTIP AU SURVOL (toujours actif, même sur index.html) ===
+    if (isSelected) {
+      this.setAttribute('data-bs-toggle', 'tooltip');
+      this.setAttribute('title', wordDefinitions[wordText]?.definition || 'Aucune définition');
+      new bootstrap.Tooltip(this, { trigger: 'hover', delay: { show: 100, hide: 100 } });
+    } else {
+      const tooltip = bootstrap.Tooltip.getInstance(this);
+      if (tooltip) tooltip.dispose();
+      this.removeAttribute('data-bs-toggle');
+      this.removeAttribute('title');
+    }
+  });
 });
 
 // NOUVEAU: Écouter les événements de réinitialisation

@@ -2285,3 +2285,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+window.addEventListener('storage', (e) => {
+  if (e.key === 'forceGlobalUpdate') {
+    const pageName = window.location.pathname.split('/').pop().replace('.html', '');
+    const saved = JSON.parse(localStorage.getItem(`selectedWords_${pageName}`)) || [];
+    document.querySelectorAll('.selectable').forEach(span => {
+      const text = span.textContent.trim();
+      span.classList.toggle('selected', saved.includes(text));
+    });
+    if (saved.length === 0) {
+      document.getElementById('definition-container').style.display = 'none';
+    }
+  }
+});

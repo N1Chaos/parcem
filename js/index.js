@@ -3507,8 +3507,8 @@ function deleteWordFromMainPage(page, word) {
   displayWordsForPage(page);
   updateGlobalSelectedWords();
 
-  // SIGNAL : "Ferme le panneau de définition"
-  localStorage.setItem('closeDefinitionPanel', Date.now().toString());
+  // SIGNAL : "Supprime le tooltip du mot X"
+  localStorage.setItem('disposeTooltipForWord', word);
 
   console.log(`Mot "${word}" supprimé de ${page}`);
 }

@@ -2312,3 +2312,31 @@ window.addEventListener('storage', (e) => {
     localStorage.removeItem('closeDefinitionPanel');
   }
 });
+
+// FERMER LE PANNEAU + DISPOSE TOOLTIP LORS D'UNE SUPPRESSION DEPUIS index.html
+window.addEventListener('storage', (e) => {
+  if (e.key === 'disposeTooltipForWord') {
+    const wordToRemove = e.newValue;
+    
+    // 1. Fermer le panneau
+    const panel = document.getElementById('definition-container');
+    if (panel) {
+      panel.style.display = 'none';
+    }
+
+    // 2. Trouver l'élément .selectable correspondant
+    const selectable = Array.from(document.querySelectorAll('.selectable'))
+      .find(el => el.textContent.trim() === wordToRemove);
+
+    if (selectable) {
+      // 3. Dispose du tooltip Bootstrap
+      const tooltip = bootstrap.Tooltip.getInstance(selectable);
+      if (tooltip) {
+        tooltip.dispose();
+      }
+    }
+
+    // Nettoyer
+    localStorage.removeItem('disposeTooltipForWord');
+  }
+});

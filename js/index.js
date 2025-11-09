@@ -3476,4 +3476,30 @@ document.addEventListener("DOMContentLoaded", () => {
       updateGlobalSelectedWords();
     }
   });
+
+  
+});
+
+// Écoute les suppressions depuis index.html
+window.addEventListener('storage', (e) => {
+  if (e.key === 'forceGlobalUpdate') {
+    // Recharger les mots sélectionnés localement
+    const pageName = window.location.pathname.split('/').pop().replace('.html', '');
+    const saved = JSON.parse(localStorage.getItem(`selectedWords_${pageName}`)) || [];
+    
+    // Mettre à jour les classes .selected
+    document.querySelectorAll('.selectable').forEach(span => {
+      const text = span.textContent.trim();
+      if (saved.includes(text)) {
+        span.classList.add('selected');
+      } else {
+        span.classList.remove('selected');
+      }
+    });
+
+    // Masquer le panneau si plus rien
+    if (saved.length === 0) {
+      document.getElementById('definition-container').style.display = 'none';
+    }
+  }
 });

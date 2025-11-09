@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Commentaire d'écoute</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Open+Sans:wght@400;700&display=swap" rel="stylesheet"/>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/index.css"/>
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- LameJS pour conversion WAV en MP3 -->
+  <script src="https://cdn.jsdelivr.net/npm/lamejs@0.1.0/lame.min.js"></script>
+  
+  <!-- Meta tags for SEO -->
+  <meta name="description" content="Écoutez, commentez et partagez vos impressions musicales. Un outil interactif pour commenter la musique."/>
+  <meta name="keywords" content="musique, commentaires, écoute, audio, vidéo, interaction"/>
+  <meta name="author" content="Amar, Sagiadinos"/>
+</head>
+
+<body class="container-fluid">
+  <header class="text-black text-center py-3 mb-4">
+    <h1>Commentaire d'écoute</h1>
+    <p>Écoutez, commentez et partagez vos impressions musicales</p>
+  </header>
+
+<!-- Lecteur audio -->
+<div class="col-md-8 mb-4 w-100 audio-player-wrapper">
+  <div class="card h-100 audio-player-container">
+    <div class="card-body">
+      <h3 class="card-title">Lecteur audio</h3>
+      <input type="file" id="audioFile" class="form-control mb-3" accept="audio/*" />
+      <span id="audioFileName" class="form-text"></span>
+      <canvas id="spectrumCanvas" class="visualization-canvas spectrum"></canvas>
+      <audio id="audioPlayer" class="w-100 audio-player" controls></audio>
+      <button id="toggleControls" class="btn btn-primary mt-3">Contrôles</button>
+      <div id="audioControls" class="audio-controls mt-3">
+        <div class="control-group">
+          <label>Égaliseur :</label>
+          <div class="equalizer-controls">
+            <label>Basses <input type="range" id="eqLow" min="-12" max="12" step="0.1" value="0" class="form-range" /></label>
+            <label>Médiums <input type="range" id="eqMid" min="-12" max="12" step="0.1" value="0" class="form-range" /></label>
+            <label>Aigus <input type="range" id="eqHigh" min="-12" max="12" step="0.1" value="0" class="form-range" /></label>
+          </div>
+        </div>
+        <div class="control-group">
+          <label for="volumeControl">Volume :</label>
+          <input type="range" id="volumeControl" min="0" max="1" step="0.01" value="1" class="form-range" />
+        </div>
+        <div class="control-group">
+          <label for="playbackSpeed">Vitesse de lecture :</label>
+          <select id="playbackSpeed" class="form-control">
+            <option value="0.5">0.5x</option>
+            <option value="1" selected>1x</option>
+            <option value="1.5">1.5x</option>
+            <option value="2">2x</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label for="balanceControl">Balance stéréo (Gauche/Droite) :</label>
+          <input type="range" id="balanceControl" min="-1" max="1" step="0.01" value="0" class="form-range" />
+        </div>
+      </div>
+      <div class="visualizations mt-3">
+        <div class="row g-2">
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">VU-mètres</h5>
+                <div class="d-flex flex-row gap-2">
+                  <div class="vu-meter-container">
+                    <label>Gauche</label>
+                    <canvas id="vuMeterLeftCanvas" class="visualization-canvas"></canvas>
+                  </div>
+                  <div class="vu-meter-container">
+                    <label>Droite</label>
+                    <canvas id="vuMeterRightCanvas" class="visualization-canvas"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Formes d'onde</h5>
+                <div class="d-flex flex-row gap-2">
+                  <div class="waveform-container">
+                    <label>Gauche</label>
+                    <canvas id="waveformLeftCanvas" class="visualization-canvas"></canvas>
+                  </div>
+                  <div class="waveform-container">
+                    <label>Droite</label>
+                    <canvas id="waveformRightCanvas" class="visualization-canvas"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Boutons de navigation -->
+  <div class="col-md-8 mb-4 w-100">
+    <div class="card bg-secondary-light h-100">
+      <div class="card-body">
+        <h3 class="card-title">Mots à sélectionner</h3>
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body p-2">
+              <div class="container-fluid">
+                <!-- Section 1: Caractéristiques principales -->
+                <div class="section-title" aria-label="Section Caractéristiques principales">
+                  <h4>Caractéristiques principales</h4>
+                </div>
+                <div class="row g-1 mb-3">
+                  <div class="col">
+                    <a href="pages/page2.html" class="btn btn-outline-primary w-100">Effectif</a>
+                    <div class="selected-words-container" data-page="page2"></div>
+                  </div>
+                  <div class="col">
+                    <a href="pages/page4.html" class="btn btn-outline-primary w-100">Voix</a>
+                    <div class="selected-words-container" data-page="page4"></div>
+                  </div>
+                  <div class="col">
+                    <a href="pages/page13.html" class="btn btn-outline-primary w-100">Langues</a>
+                    <div class="selected-words-container" data-page="page13"></div>
+                  </div>
+                  <div class="col">
+                    <a href="pages/page3.html" class="btn btn-outline-primary w-100">Instruments</a>
+                    <div class="selected-words-container" data-page="page3"></div>
+                  </div>
+                </div>
+
+                <!-- Section 2: Paramètres musicaux -->
+                <div class="section-title" aria-label="Section Paramètres musicaux">
+                  <h4>Paramètres musicaux</h4>
+                </div>
+                <div class="row g-1 mb-3">
+                  <div class="col">
+                    <a href="pages/page9.html" class="btn btn-outline-primary w-100">Tempo</a>
+                    <div class="selected-words-container" data-page="page9"></div>
+                  </div>
+                  <div class="col">
+                    <a href="pages/page10.html" class="btn btn-outline-primary w-100">Rythme</a>
+                    <div class="selected-words-container" data-page="page10"></div>
+                  </div>
+                  <div class="col">
+                    <a href="pages/page12.html" class="btn btn-outline-primary w-100">Dynamique</a>
+                    <div class="selected-words-container" data-page="page12"></div>
+                  </div>
+                  <div class="col">
+                    <a href="pages/page5.html" class="btn btn-outline-primary w-100">Timbre</a>
+                    <div class="selected-words-container" data-page="page5"></div>
+                  </div>
+                </div>
+
+                <!-- Section 3: Structure et style -->
+                <div class="section-title" aria-label="Section Structure et style">
+                  <h4>Structure et style</h4>
+                </div>
+                <div class="row g-1 mb-3">
+                  <div class="col">
+                    <a href="pages/page6.html" class="btn btn-outline-primary w-100">Forme</a>
+                    <div class="selected-words-container" data-page="page6"></div>
+                  </div>
+                  <div class="col">
+                    <a href="pages/page7.html" class="btn btn-outline-primary w-100">Harmonie</a>
+                    <div class="selected-words-container" data-page="page7"></div>
+                  </div>
+                  <div class="col">
+                    <a href="pages/page8.html" class="btn btn-outline-primary w-100">Procédé</a>
+                    <div class="selected-words-container" data-page="page8"></div>
+                  </div>
+                  <div class="col">
+                    <a href="pages/page11.html" class="btn btn-outline-primary w-100">Genre</a>
+                    <div class="selected-words-container" data-page="page11"></div>
+                  </div>
+                  <div class="col">
+                    <a href="pages/page1.html" class="btn btn-outline-primary w-100">Styles</a>
+                    <div class="selected-words-container" data-page="page1"></div>
+                  </div>
+                  <div class="col">
+                    <a href="pages/page14.html" class="btn btn-outline-primary w-100">Adjectifs</a>
+                    <div class="selected-words-container" data-page="page14"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex justify-content-end mt-3">
+            <button class="btn btn-danger btn-mobile-full" onclick="clearSelection()">
+              <i class="bi bi-x-circle-fill me-2"></i>Effacer toute la sélection
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Boutons Carte/Frise -->
+  <div class="row mb-4">
+    <div class="col-12 text-center p-2 d-flex justify-content-center gap-3">
+      <!-- Bouton Carte du monde avec modale -->
+      <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#carteMondeModal">
+        <i class="bi bi-globe"></i> Carte du monde
+      </button>
+      <!-- Bouton Frise chronologique avec modale -->
+      <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#friseChronoModal">
+        <i class="bi bi-calendar-range"></i> Frise chronologique
+      </button>
+    </div>
+  </div>
+
+  <!-- Modale pour la carte du monde -->
+  <div class="modal fade" id="carteMondeModal" tabindex="-1" aria-labelledby="carteMondeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="carteMondeModalLabel">Carte du monde interactive</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="map" style="height: 500px;"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modale pour la frise chronologique -->
+  <div class="modal fade" id="friseChronoModal" tabindex="-1" aria-labelledby="friseChronoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="friseChronoModalLabel">Frise chronologique</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center">
+          <img src="images/frise.jpg" class="img-fluid" alt="Frise chronologique">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Zone de commentaire -->
+  <div class="col-md-8 mb-4 w-100">
+    <div class="card bg-primary bg-opacity-10 h-100">
+      <div class="card-body">
+        <h3 class="card-title">Commentaire écrit</h3>
+        <textarea id="commentText" class="form-control" style="min-height: 120px; resize: vertical" rows="5" placeholder="Écrivez votre commentaire"></textarea>
+        <button class="btn btn-primary mt-3" id="generateTextButton" onclick="generateTextFile()">
+          <i class="bi bi-file-earmark-text"></i> Générer un fichier texte
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Enregistrement audio -->
+  <div class="w-100 p-2 col-md-6 mb-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h3 class="card-title">Commentaire audio</h3>
+        <div class="d-flex flex-column gap-3">
+          <button id="recordButton" class="btn btn-danger">
+            <i class="bi bi-mic-fill"></i> Enregistrer votre commentaire
+          </button>
+          <span id="recordingIndicator" class="recording-indicator" style="display: none;">Enregistrement en cours...</span>
+          <span id="recordingConfirmation" class="recording-confirmation" style="display: none;">Commentaire enregistré ! Ecoutez-le grâce au lecteur ci-dessous.</span>
+          <audio id="audioPlayback" class="w-100" controls></audio>
+          <input type="text" id="fileName" class="form-control" placeholder="Nommer le fichier audio" />
+          <button id="downloadButton" class="btn btn-success">
+            <i class="bi bi-download"></i> Télécharger votre commentaire
+          </button>
+    </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lecteur YouTube -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="card-title">Lecteur YouTube</h3>
+          <div class="input-group mb-3">
+            <input type="text" id="videoUrl" class="form-control" placeholder="Entrez l'URL de la vidéo YouTube" />
+            <button id="search-button" class="btn btn-primary" onclick="loadVideo()">
+              <i class="bi bi-play-fill"></i> Charger
+            </button>
+          </div>
+          <div class="ratio ratio-16x9">
+            <iframe id="youtubePlayer" src="" allowfullscreen></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/index.js"></script>
+</body>
+</html>

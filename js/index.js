@@ -3419,6 +3419,9 @@ function clearSelection() {
     // Déclencher un événement de stockage pour réinitialiser les boutons sur les pages annexes
     localStorage.setItem('clearSelectionEvent', Date.now().toString());
 
+    // MISE À JOUR DU CADRE GLOBAL
+    updateGlobalSelectedWords();
+
     console.log('Toutes les sélections ont été effacées');
   }
 }

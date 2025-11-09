@@ -1899,6 +1899,29 @@ function displayWordsForPage(page) {
   console.log(`Mots affichés pour ${page}:`, words);
 }
 
+function deleteWordFromPage(page, word) {
+  if (confirm(`Supprimer "${word}" ?`)) {
+    // Fermer tous les tooltips avant la suppression
+    const tooltipInstances = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    tooltipInstances.forEach(el => {
+      const tooltip = bootstrap.Tooltip.getInstance(el);
+      if (tooltip) {
+        tooltip.hide(); // Force la fermeture du tooltip
+      }
+    });
+
+    // Mettre à jour la liste des mots pour la page
+    const pageWords = loadFromLocalStorage(`selectedWords_${page}`);
+    saveToLocalStorage(`selectedWords_${page}`, pageWords.filter(w => w !== word));
+
+    // Mettre à jour la liste globale des mots sélectionnés
+    const selectedWords = loadFromLocalStorage('selectedWords');
+    saveToLocalStorage('selectedWords', selectedWords.filter(w => w !== word));
+
+    displayWordsForPage(page);
+    console.log(`Mot "${word}" supprimé pour ${page}`);
+  }
+}
 
 // Mettre à jour les mots affichés lorsqu’un changement est détecté dans localStorage
 function updateWordsOnStorageChange() {
@@ -3392,77 +3415,23 @@ carteMondeModal.addEventListener('hidden.bs.modal', function () {
   }
 });
 
-// Fonction pour effacer toutes les sélections
+// Fonction pour effacer toutes les sélections et réinitialiser les boutons
 function clearSelection() {
   if (confirm("Voulez-vous vraiment effacer toutes les sélections ?")) {
+    // Effacer toutes les clés de localStorage pour les mots sélectionnés
     Object.keys(PAGES).forEach(page => {
       saveToLocalStorage(`selectedWords_${page}`, []);
     });
     saveToLocalStorage('selectedWords', []);
 
+    // Mettre à jour l'affichage des mots pour toutes les pages
     Object.keys(PAGES).forEach(page => {
       displayWordsForPage(page);
     });
 
+    // Déclencher un événement de stockage pour réinitialiser les boutons sur les pages annexes
     localStorage.setItem('clearSelectionEvent', Date.now().toString());
+
     console.log('Toutes les sélections ont été effacées');
-
-    updateGlobalSelectedWords(); // MISE À JOUR CADRE
-  }
-}
-
-// === MISE À JOUR GLOBALE DES MOTS SÉLECTIONNÉS ===
-function updateGlobalSelectedWords() {
-  const allWords = [];
-  Object.keys(PAGES).forEach(page => {
-    const words = loadFromLocalStorage(`selectedWords_${page}`) || [];
-    allWords.push(...words);
-  });
-
-  const container = document.getElementById('globalSelectedWords');
-  const list = document.getElementById('globalWordsList');
-
-  if (!container || !list) return;
-
-  if (allWords.length === 0) {
-    container.style.display = 'none';
-    return;
-  }
-
-  container.style.display = 'block';
-  list.innerHTML = allWords.map(word => `
-    <span class="tag" data-bs-toggle="tooltip" title="${wordDefinitions[word]?.definition || 'Aucune définition'}">
-      ${word}
-    </span>
-  `).join('');
-
-  list.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
-    const t = bootstrap.Tooltip.getInstance(el);
-    if (t) t.dispose();
-    new bootstrap.Tooltip(el, { trigger: 'hover' });
-  });
-}
-
-// === SYNCHRONISATION ===
-document.addEventListener("DOMContentLoaded", () => {
-  updateGlobalSelectedWords();
-
-  window.addEventListener('storage', (event) => {
-    if (event.key === 'forceGlobalUpdate' || 
-        event.key?.startsWith('selectedWords_') || 
-        event.key === 'clearSelectionEvent') {
-      updateGlobalSelectedWords();
-    }
-  });
-});
-
-// Effacer tout
-function clearSelection() {
-  if (confirm("Voulez-vous vraiment effacer toutes les sélections ?")) {
-    Object.keys(PAGES).forEach(page => saveToLocalStorage(`selectedWords_${page}`, []));
-    saveToLocalStorage('selectedWords', []);
-    Object.keys(PAGES).forEach(page => displayWordsForPage(page));
-    localStorage.setItem('clearSelectionEvent', Date.now().toString());
-    updateGlobalSelectedWords();
   }
 }

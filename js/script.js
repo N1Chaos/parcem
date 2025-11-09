@@ -1923,65 +1923,71 @@ function updateSelectedWords() {
     console.log(`Mots mis à jour pour ${pageName}:`, selectedWordsOnPage);
 }
 
-// === GESTION DU CLIC SUR LES MOTS (CORRIGÉE) ===
+// Gestion des mots
 words.forEach(word => {
-  word.addEventListener('click', function () {
-    this.classList.toggle('selected');
-    
-    // Mise à jour localStorage
-    updateSelectedWords();
-
-    // Afficher la définition
-    if (this.classList.contains('selected')) {
-      const wordData = wordDefinitions[this.textContent] || { definition: "Aucune définition disponible." };
-      definitionTitle.textContent = this.textContent;
-      definitionText.innerHTML = wordData.definition.replace(/\n/g, '<br>');
-
-      // Image
-      definitionImageContainer.style.display = wordData.image ? 'block' : 'none';
-      if (wordData.image) definitionImage.src = wordData.image;
-
-      // Audio
-      definitionAudioContainer.style.display = wordData.audio ? 'block' : 'none';
-      if (wordData.audio) {
-        definitionAudioSource.src = wordData.audio;
-        definitionAudio.load();
-      }
-
-      // Vidéo
-      definitionVideoContainer.style.display = wordData.video ? 'block' : 'none';
-      if (wordData.video) {
-        definitionVideoSource.src = wordData.video;
-        definitionVideo.load();
-      }
-
-      definitionContainer.style.display = 'block';
-    } else {
-      if (document.querySelectorAll('.selected').length === 0) {
-        definitionContainer.style.display = 'none';
-      }
-    }
-
-    // Repositionnement
-    const isMobile = window.matchMedia("(max-width: 767px)").matches;
-    if (definitionContainer.parentElement) {
-      definitionContainer.parentElement.removeChild(definitionContainer);
-    }
-    if (isMobile) {
-      definitionContainer.style.position = 'relative';
-      definitionContainer.style.width = '100%';
-      this.insertAdjacentElement('afterend', definitionContainer);
-    } else {
-      definitionContainer.style.position = 'fixed';
-      definitionContainer.style.right = '20px';
-      definitionContainer.style.top = '20px';
-      definitionContainer.style.width = '300px';
-      document.body.appendChild(definitionContainer);
-    }
-
-    // NOTIFIER index.html (même si pas dans iframe)
-    notifyMainPageUpdate();
-  });
+    word.addEventListener('click', () => {
+        word.classList.toggle('selected');
+        updateSelectedWords();
+        if (word.classList.contains('selected')) {
+            const wordData = wordDefinitions[word.textContent] || { definition: "Aucune définition disponible." };
+            definitionTitle.textContent = word.textContent;
+            definitionText.innerHTML = wordData.definition.replace(/\n/g, '<br>');
+            // Gérer l'image
+            definitionImageContainer.style.display = wordData.image ? 'block' : 'none';
+            if (wordData.image) {
+                definitionImage.src = wordData.image;
+                definitionImage.style.display = 'block';
+            } else {
+                definitionImage.style.display = 'none';
+            }
+            // Gérer l'audio
+            definitionAudioContainer.style.display = wordData.audio ? 'block' : 'none';
+            if (wordData.audio) {
+                definitionAudioSource.src = wordData.audio;
+                definitionAudio.style.display = 'block';
+                definitionAudio.load();
+            } else {
+                definitionAudio.style.display = 'none';
+            }
+            // Gérer la vidéo
+            definitionVideoContainer.style.display = wordData.video ? 'block' : 'none';
+            if (wordData.video) {
+                definitionVideoSource.src = wordData.video;
+                definitionVideo.style.display = 'block';
+                definitionVideo.load();
+            } else {
+                definitionVideo.style.display = 'none';
+            }
+            // Afficher le panneau
+            definitionContainer.style.display = 'block';
+        } else {
+            // Masquer le panneau si aucun mot n'est sélectionné
+            const anySelected = document.querySelectorAll('.selected').length > 0;
+            if (!anySelected) {
+                definitionContainer.style.display = 'none';
+            }
+        }
+        // Positionner le conteneur de définitions
+        const isMobile = window.matchMedia("(max-width: 767px)").matches;
+        if (definitionContainer.parentElement) {
+            definitionContainer.parentElement.removeChild(definitionContainer);
+        }
+        if (isMobile) {
+            definitionContainer.style.position = 'relative';
+            definitionContainer.style.left = '';
+            definitionContainer.style.top = '';
+            definitionContainer.style.width = '100%';
+            definitionContainer.style.maxWidth = '';
+            word.insertAdjacentElement('afterend', definitionContainer);
+        } else {
+            definitionContainer.style.position = 'fixed';
+            definitionContainer.style.right = '20px';
+            definitionContainer.style.top = '20px';
+            definitionContainer.style.width = '300px';
+            definitionContainer.style.maxWidth = '600px';
+            document.body.appendChild(definitionContainer);
+        }
+    });
 });
 
 // NOUVEAU: Écouter les événements de réinitialisation
@@ -2266,146 +2272,4 @@ document.addEventListener('DOMContentLoaded', () => {
         definitionContainer.style.maxWidth = '600px';
         document.body.appendChild(definitionContainer);
     }
-
-   // === COMMUNICATION AVEC index.html (CADRE GLOBAL) ===
-function notifyMainPageUpdate() {
-  // Envoie via postMessage si dans iframe
-  if (window.parent && window.parent !== window) {
-    window.parent.postMessage({ type: 'updateGlobalWords' }, '*');
-  }
-  // Force via localStorage (toujours fiable, même sans iframe)
-  localStorage.setItem('forceGlobalUpdate', Date.now().toString());
-}
-
-// === MISE À JOUR DES MOTS SÉLECTIONNÉS (localStorage + notification) ===
-function updateSelectedWords() {
-  const pageName = window.location.pathname.split('/').pop().replace('.html', '');
-  const selectedWordsOnPage = Array.from(document.querySelectorAll('.selected')).map(el => el.textContent.trim());
-  let globalSelectedWords = JSON.parse(localStorage.getItem('selectedWords')) || [];
-
-  // Récupérer tous les mots de cette page (pour nettoyage)
-  const pageAllWords = Array.from(words).map(el => el.textContent.trim());
-
-  // Nettoyer les mots de cette page qui ne sont plus sélectionnés
-  globalSelectedWords = globalSelectedWords.filter(word => 
-    !pageAllWords.includes(word) || selectedWordsOnPage.includes(word)
-  );
-
-  // Ajouter les nouveaux mots sélectionnés
-  selectedWordsOnPage.forEach(word => {
-    if (!globalSelectedWords.includes(word)) {
-      globalSelectedWords.push(word);
-    }
-  });
-
-  // Sauvegarde
-  localStorage.setItem('selectedWords', JSON.stringify(globalSelectedWords));
-  localStorage.setItem(`selectedWords_${pageName}`, JSON.stringify(selectedWordsOnPage));
-
-  console.log(`Mots mis à jour [${pageName}]:`, selectedWordsOnPage);
-
-  // NOTIFIER index.html
-  notifyMainPageUpdate();
-}
-
-// === GESTIONNAIRE DE CLIC SUR LES MOTS (SÉLECTION + DÉFINITION) ===
-words.forEach(word => {
-  word.addEventListener('click', function () {
-    const wordText = this.textContent.trim();
-    this.classList.toggle('selected');
-
-    // Mise à jour localStorage + notification
-    updateSelectedWords();
-
-    // === AFFICHAGE DE LA DÉFINITION ===
-    if (this.classList.contains('selected')) {
-      const wordData = wordDefinitions[wordText] || { definition: "Aucune définition disponible." };
-
-      definitionTitle.textContent = wordText;
-      definitionText.innerHTML = wordData.definition.replace(/\n/g, '<br>');
-
-      // Image
-      if (wordData.image) {
-        definitionImage.src = wordData.image;
-        definitionImage.style.display = 'block';
-        definitionImageContainer.style.display = 'block';
-      } else {
-        definitionImage.style.display = 'none';
-        definitionImageContainer.style.display = 'none';
-      }
-
-      // Audio
-      if (wordData.audio) {
-        definitionAudioSource.src = wordData.audio;
-        definitionAudio.load();
-        definitionAudio.style.display = 'block';
-        definitionAudioContainer.style.display = 'block';
-      } else {
-        definitionAudio.style.display = 'none';
-        definitionAudioContainer.style.display = 'none';
-      }
-
-      // Vidéo
-      if (wordData.video) {
-        definitionVideoSource.src = wordData.video;
-        definitionVideo.load();
-        definitionVideo.style.display = 'block';
-        definitionVideoContainer.style.display = 'block';
-      } else {
-        definitionVideo.style.display = 'none';
-        definitionVideoContainer.style.display = 'none';
-      }
-
-      definitionContainer.style.display = 'block';
-    } else {
-      // Masquer si plus aucun mot sélectionné
-      if (document.querySelectorAll('.selected').length === 0) {
-        definitionContainer.style.display = 'none';
-      }
-    }
-
-    // === REPOSITIONNEMENT DU PANNEAU ===
-    const isMobile = window.matchMedia("(max-width: 767px)").matches;
-    if (definitionContainer.parentElement) {
-      definitionContainer.parentElement.removeChild(definitionContainer);
-    }
-
-    if (isMobile) {
-      definitionContainer.style.position = 'relative';
-      definitionContainer.style.left = '';
-      definitionContainer.style.top = '';
-      definitionContainer.style.width = '100%';
-      definitionContainer.style.maxWidth = '';
-      this.insertAdjacentElement('afterend', definitionContainer);
-    } else {
-      definitionContainer.style.position = 'fixed';
-      definitionContainer.style.right = '20px';
-      definitionContainer.style.top = '20px';
-      definitionContainer.style.width = '300px';
-      definitionContainer.style.maxWidth = '600px';
-      document.body.appendChild(definitionContainer);
-    }
-  });
-});
-
-// === CLEAR SELECTION (bouton "Annuler") ===
-function clearSelection() {
-  if (confirm('Êtes-vous sûr de vouloir annuler toutes vos sélections ?')) {
-    words.forEach(word => word.classList.remove('selected'));
-
-    const pageName = window.location.pathname.split('/').pop().replace('.html', '');
-    localStorage.setItem(`selectedWords_${pageName}`, JSON.stringify([]));
-
-    const pageAllWords = Array.from(words).map(el => el.textContent.trim());
-    let globalSelectedWords = JSON.parse(localStorage.getItem('selectedWords')) || [];
-    globalSelectedWords = globalSelectedWords.filter(word => !pageAllWords.includes(word));
-    localStorage.setItem('selectedWords', JSON.stringify(globalSelectedWords));
-
-    definitionContainer.style.display = 'none';
-    console.log(`Sélections annulées pour ${pageName}`);
-
-    // NOTIFIER index.html
-    notifyMainPageUpdate();
-}
-}
 });

@@ -1883,19 +1883,29 @@ function displayWordsForPage(page) {
   const container = document.querySelector(`.selected-words-container[data-page="${page}"]`);
   if (!container) return;
 
-  const words = loadFromLocalStorage(`selectedWords_${page}`);
-  container.innerHTML = words.length > 0 
-    ? words.map(word => `
+  const words = loadFromLocalStorage(`selectedWords_${page}`) || [];
+  
+  if (words.length === 0) {
+    container.innerHTML = "<span class='empty'>Aucun mot sélectionné</span>";
+  } else {
+    container.innerHTML = words.map(word => {
+      const escapedWord = word.replace(/'/g, "\\'"); // Échappe les apostrophes
+      return `
         <span class="tag" data-bs-toggle="tooltip" title="${wordDefinitions[word]?.definition || 'Pas de définition'}">
           ${word}
-          <span class="delete-word" onclick="deleteWordFromPage('${page}', '${word.replace(/'/g, "\\'")}')">×</span>
+          <span class="delete-word" onclick="deleteWordFromMainPage('${page}', '${escapedWord}')">×</span>
         </span>
-      `).join(' ')
-    : "<span class='empty'>Aucun mot sélectionné</span>";
+      `;
+    }).join(' ');
+  }
 
+  // Réactiver les tooltips
   container.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+    const existing = bootstrap.Tooltip.getInstance(el);
+    if (existing) existing.dispose();
     new bootstrap.Tooltip(el, { trigger: 'hover' });
   });
+
   console.log(`Mots affichés pour ${page}:`, words);
 }
 

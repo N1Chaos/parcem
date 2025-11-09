@@ -3506,13 +3506,9 @@ function deleteWordFromMainPage(page, word) {
 
   displayWordsForPage(page);
   updateGlobalSelectedWords();
-  localStorage.setItem('forceGlobalUpdate', Date.now().toString());
 
-  // FERMER LE PANNEAU DE DÉFINITION (même s'il est ouvert dans une page annexe)
-  const definitionPanel = document.getElementById('definition-container');
-  if (definitionPanel) {
-    definitionPanel.style.display = 'none';
-  }
+  // SIGNAL : "Ferme le panneau de définition"
+  localStorage.setItem('closeDefinitionPanel', Date.now().toString());
 
   console.log(`Mot "${word}" supprimé de ${page}`);
 }

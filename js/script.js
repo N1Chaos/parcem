@@ -2011,19 +2011,21 @@ window.addEventListener('storage', (event) => {
 });
 
 function clearSelection() {
-    if (confirm('Êtes-vous sûr de vouloir annuler toutes vos sélections ?')) {
-        words.forEach(word => word.classList.remove('selected'));
-        const pageName = window.location.pathname.split('/').pop().replace('.html', '');
-        localStorage.setItem(`selectedWords_${pageName}`, JSON.stringify([]));
-        let selectedWords = JSON.parse(localStorage.getItem('selectedWords')) || [];
-        const pageWords = Array.from(words).map(el => el.textContent);
-        selectedWords = selectedWords.filter(word => !pageWords.includes(word));
-        localStorage.setItem('selectedWords', JSON.stringify(selectedWords));
-        // Masquer le panneau
-        definitionContainer.style.display = 'none';
-        console.log(`Sélections annulées pour ${pageName}`);
-        localStorage.setItem('forceGlobalUpdate', Date.now().toString());
-    }
+  if (confirm('Êtes-vous sûr de vouloir annuler toutes vos sélections ?')) {
+    words.forEach(word => word.classList.remove('selected'));
+    const pageName = window.location.pathname.split('/').pop().replace('.html', '');
+    localStorage.setItem(`selectedWords_${pageName}`, JSON.stringify([]));
+    let selectedWords = JSON.parse(localStorage.getItem('selectedWords')) || [];
+    const pageWords = Array.from(words).map(el => el.textContent);
+    selectedWords = selectedWords.filter(word => !pageWords.includes(word));
+    localStorage.setItem('selectedWords', JSON.stringify(selectedWords));
+    definitionContainer.style.display = 'none';
+
+    // SIGNAL DE FERMETURE
+    localStorage.setItem('closeDefinitionPanel', Date.now().toString());
+
+    console.log(`Sélections annulées pour ${pageName}`);
+  }
 }
 
 function returnWords() {
@@ -2296,5 +2298,17 @@ window.addEventListener('storage', (e) => {
     if (saved.length === 0) {
       document.getElementById('definition-container').style.display = 'none';
     }
+  }
+});
+
+// FERMER LE PANNEAU SI SUPPRESSION DEPUIS index.html
+window.addEventListener('storage', (e) => {
+  if (e.key === 'closeDefinitionPanel') {
+    const panel = document.getElementById('definition-container');
+    if (panel) {
+      panel.style.display = 'none';
+    }
+    // Nettoyer le signal
+    localStorage.removeItem('closeDefinitionPanel');
   }
 });

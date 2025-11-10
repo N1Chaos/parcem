@@ -3499,16 +3499,16 @@ window.addEventListener('storage', (e) => {
 function deleteWordFromMainPage(page, word) {
   if (!confirm(`Supprimer "${word}" ?`)) return;
 
-  // Désactiver le tooltip avant suppression
+  // Désactiver tous les tooltips du conteneur avant suppression
   const container = document.querySelector(`.selected-words-container[data-page="${page}"]`);
   if (container) {
-    const wordElement = container.querySelector(`.tag:contains('${word}')`);
-    if (wordElement) {
-      const tooltip = bootstrap.Tooltip.getInstance(wordElement);
+    const tooltips = container.querySelectorAll('.tag');
+    tooltips.forEach(tag => {
+      const tooltip = bootstrap.Tooltip.getInstance(tag);
       if (tooltip) {
         tooltip.dispose();
       }
-    }
+    });
   }
 
   const pageWords = loadFromLocalStorage(`selectedWords_${page}`) || [];
@@ -3517,6 +3517,7 @@ function deleteWordFromMainPage(page, word) {
   const globalWords = loadFromLocalStorage('selectedWords') || [];
   saveToLocalStorage('selectedWords', globalWords.filter(w => w !== word));
 
+  // Recréer l'affichage (ce qui réinitialisera les tooltips)
   displayWordsForPage(page);
   updateGlobalSelectedWords();
 

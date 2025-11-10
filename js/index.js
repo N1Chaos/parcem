@@ -3495,8 +3495,21 @@ window.addEventListener('storage', (e) => {
 });
 
 // === SUPPRESSION D'UN MOT DEPUIS index.html (croix) ===
+// === SUPPRESSION D'UN MOT DEPUIS index.html (croix) ===
 function deleteWordFromMainPage(page, word) {
   if (!confirm(`Supprimer "${word}" ?`)) return;
+
+  // Désactiver le tooltip avant suppression
+  const container = document.querySelector(`.selected-words-container[data-page="${page}"]`);
+  if (container) {
+    const wordElement = container.querySelector(`.tag:contains('${word}')`);
+    if (wordElement) {
+      const tooltip = bootstrap.Tooltip.getInstance(wordElement);
+      if (tooltip) {
+        tooltip.dispose();
+      }
+    }
+  }
 
   const pageWords = loadFromLocalStorage(`selectedWords_${page}`) || [];
   saveToLocalStorage(`selectedWords_${page}`, pageWords.filter(w => w !== word));
@@ -3506,9 +3519,6 @@ function deleteWordFromMainPage(page, word) {
 
   displayWordsForPage(page);
   updateGlobalSelectedWords();
-
-  // SIGNAL : "Dispose le tooltip du mot X"
-  localStorage.setItem('disposeTooltip', JSON.stringify({ page, word }));
 
   console.log(`Mot "${word}" supprimé de ${page}`);
 }

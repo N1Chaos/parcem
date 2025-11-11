@@ -2097,6 +2097,33 @@ async function setupAudioPlayer() {
   const audioControls = document.getElementById('audioControls');
   const visualizations = document.querySelector('.visualizations');
 
+
+  function updateProgressBar() {
+    const progress = (player.currentTime / player.duration) * 100;
+    const progressBar = document.getElementById('progressBar');
+    if (progressBar) {
+      progressBar.style.width = `${progress}%`;
+    }
+  }
+
+  player.addEventListener('timeupdate', updateProgressBar);
+
+  // Ajoutez cette fonction APRÈS updateProgressBar()
+function setupProgressBarClick() {
+  const progressContainer = document.querySelector('.progress');
+  if (progressContainer) {
+    progressContainer.addEventListener('click', (e) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const percent = (e.clientX - rect.left) / rect.width;
+      player.currentTime = percent * player.duration;
+    });
+  }
+}
+
+// Et appelez-la après avoir ajouté l'event listener
+player.addEventListener('timeupdate', updateProgressBar);
+setupProgressBarClick(); 
+
   // Vérification des éléments DOM
   if (!player || !fileInput || !fileNameDisplay || !vuMeterLeftCanvas || !vuMeterRightCanvas || !waveformLeftCanvas || !waveformRightCanvas || !spectrumCanvas || !toggleControls || !audioControls || !visualizations) {
     console.error('Éléments audio, affichage ou visualisations non trouvés dans le DOM:', {
@@ -2841,69 +2868,21 @@ if (commentText) {
 
   setupAudioRecorder();
 
-  document.getElementById('downloadButton').onclick = async () => {
-    if (!window.audioBlob) return alert('Aucun enregistrement disponible');
+document.getElementById('downloadButton').onclick = () => {
+  if (!window.audioBlob) {
+    // Utiliser alert ou votre système de notification
+    alert('Aucun enregistrement disponible');
+    return;
+  }
 
-    const fileName = document.getElementById('fileName').value || 'enregistrement';
-    
-    // Convertir WAV en MP3
-    try {
-      const arrayBuffer = await window.audioBlob.arrayBuffer();
-      const audioContext = new AudioContext();
-      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-
-      // Extraire les données audio (mono ou stéréo)
-      const channels = audioBuffer.numberOfChannels;
-      const sampleRate = audioBuffer.sampleRate;
-      const length = audioBuffer.length;
-      const channelData = [];
-      for (let i = 0; i < channels; i++) {
-        channelData.push(audioBuffer.getChannelData(i));
-      }
-
-      // Initialiser Lamejs
-      const mp3Encoder = new lamejs.Mp3Encoder(channels, sampleRate, 128); // 128 kbps
-      const mp3Data = [];
-      const sampleBlockSize = 1152; // Taille des blocs pour Lamejs
-
-      for (let i = 0; i < length; i += sampleBlockSize) {
-        const left = channelData[0].slice(i, i + sampleBlockSize);
-        const right = channels > 1 ? channelData[1].slice(i, i + sampleBlockSize) : left;
-
-        // Convertir les échantillons en entiers 16 bits
-        const leftInt = Int16Array.from(left, x => x * 32767);
-        const rightInt = Int16Array.from(right, x => x * 32767);
-
-        // Encoder en MP3
-        const mp3buf = mp3Encoder.encodeBuffer(leftInt, rightInt);
-        if (mp3buf.length > 0) {
-          mp3Data.push(mp3buf);
-        }
-      }
-
-      // Finaliser l'encodage
-      const mp3buf = mp3Encoder.flush();
-      if (mp3buf.length > 0) {
-        mp3Data.push(mp3buf);
-      }
-
-      // Créer le Blob MP3
-      const mp3Blob = new Blob(mp3Data, { type: 'audio/mp3' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(mp3Blob);
-      link.download = `${fileName}.mp3`;
-      link.click();
-      console.log('Fichier MP3 téléchargé:', `${fileName}.mp3`);
-    } catch (error) {
-      console.error('Erreur lors de la conversion en MP3:', error);
-      alert('Erreur lors de la conversion en MP3. Téléchargement en WAV à la place.');
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(window.audioBlob);
-      link.download = `${fileName}.wav`;
-      link.click();
-    }
-  };
-});
+  const fileName = document.getElementById('fileName').value || 'enregistrement';
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(window.audioBlob);
+  link.download = `${fileName}.wav`;
+  link.click();
+  
+  console.log('Fichier WAV téléchargé:', `${fileName}.wav`);
+};
 
 // ==================== GÉNÉRATION FICHIER TEXTE ====================
 function generateTextFile() {
@@ -3604,14 +3583,3 @@ function deleteWordFromMainPage(page, word) {
 
   console.log(`Mot "${word}" supprimé de ${page}`);
 }
-
-function updateProgressBar() {
-  const progress = (player.currentTime / player.duration) * 100;
-  const progressBar = document.getElementById('progressBar');
-  if (progressBar) {
-    progressBar.style.width = `${progress}%`;
-  }
-}
-
-// AJOUTER CET ÉVÉNEMENT
-player.addEventListener('timeupdate', updateProgressBar);

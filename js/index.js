@@ -2921,6 +2921,7 @@ function generateTextFile() {
   // Le commentaire reste dans la zone de texte
 }
 // ==================== EXPORT WORD ====================
+// ==================== EXPORT WORD ====================
 function exportToWord() {
   const commentText = document.getElementById('commentText');
   const text = commentText.value.trim();
@@ -2929,23 +2930,15 @@ function exportToWord() {
     return;
   }
 
-  // Créer un contenu formaté pour Word/LibreOffice
-  const date = new Date().toLocaleDateString('fr-FR', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
-
-  const content = `COMMENTAIRE MUSICAL\n\nDate : ${date}\n\n${text}`;
+  // Format simple avec tabulations pour la mise en forme
+  const date = new Date().toLocaleDateString('fr-FR');
+  const content = `Commentaire musical\n\nDate: ${date}\n\n${text}`;
   
-  // Créer et télécharger le fichier
-  const blob = new Blob([content], { 
-    type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' 
-  });
+  // Utiliser le type text/plain avec extension .doc pour plus de compatibilité
+  const blob = new Blob([content], { type: 'text/plain' });
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
-  link.download = `commentaire_musical_${new Date().toISOString().split('T')[0]}.docx`;
+  link.download = `commentaire_musical_${date.replace(/\//g, '-')}.doc`;
   link.click();
   
   console.log('Fichier Word exporté');

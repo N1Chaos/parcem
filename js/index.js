@@ -2774,28 +2774,28 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.log('Initialisation de setupAudioPlayer sur la page principale');
     await setupAudioPlayer();
 
-    // Sauvegarde et restauration du brouillon de commentaire
-    const commentText = document.getElementById('commentText');
-    if (commentText) {
-      const savedDraft = localStorage.getItem('commentDraft');
-      if (savedDraft) {
-        commentText.value = savedDraft;
-      }
-      commentText.addEventListener('input', () => {
-        localStorage.setItem('commentDraft', commentText.value);
-      });
-      const generateTextButton = document.getElementById('generateTextButton');
-      if (generateTextButton) {
-        generateTextButton.addEventListener('click', () => {
-          if (commentText.value.trim()) {
-            localStorage.removeItem('commentDraft');
-            commentText.value = '';
-          }
-        });
-      }
-    } else {
-      console.warn('Champ de commentaire avec id="commentText" non trouvé.');
-    }
+   // Sauvegarde et restauration du brouillon de commentaire
+const commentText = document.getElementById('commentText');
+if (commentText) {
+  const savedDraft = localStorage.getItem('commentDraft');
+  if (savedDraft) {
+    commentText.value = savedDraft;
+  }
+  commentText.addEventListener('input', () => {
+    localStorage.setItem('commentDraft', commentText.value);
+  });
+  
+  const generateTextButton = document.getElementById('generateTextButton');
+  if (generateTextButton) {
+    generateTextButton.addEventListener('click', () => {
+      // NE RIEN FAIRE après la génération du fichier
+      // Le texte reste dans le champ et le brouillon est conservé
+      console.log('Fichier généré, commentaire conservé');
+    });
+  }
+} else {
+  console.warn('Champ de commentaire avec id="commentText" non trouvé.');
+}
   }
 
   Object.keys(PAGES).forEach(displayWordsForPage);
@@ -2874,7 +2874,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 // ==================== GÉNÉRATION FICHIER TEXTE ====================
 function generateTextFile() {
-  const text = document.getElementById('commentText').value.trim();
+  const commentText = document.getElementById('commentText');
+  const text = commentText.value.trim();
   if (!text) return alert('Veuillez écrire un commentaire');
 
   const blob = new Blob([text], { type: 'text/plain' });
@@ -2882,6 +2883,9 @@ function generateTextFile() {
   link.href = URL.createObjectURL(blob);
   link.download = 'commentaire.txt';
   link.click();
+  
+  // NE PAS SUPPRIMER le texte après génération
+  // Le commentaire reste dans la zone de texte
 }
 
 // ==================== INITIALISATION ====================
@@ -3494,7 +3498,7 @@ window.addEventListener('storage', (e) => {
   }
 });
 
-// === SUPPRESSION D'UN MOT DEPUIS index.html (croix) ===
+
 // === SUPPRESSION D'UN MOT DEPUIS index.html (croix) ===
 function deleteWordFromMainPage(page, word) {
   if (!confirm(`Supprimer "${word}" ?`)) return;

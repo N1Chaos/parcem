@@ -2933,16 +2933,11 @@ function exportToWord() {
 // Ajouter BOM UTF-8 pour que Word reconnaisse automatiquement l'encodage
   const BOM = '\uFEFF';
   const content = BOM + text;
-
-  // Format simple avec tabulations pour la mise en forme
-  const date = new Date().toLocaleDateString('fr-FR');
-  const content = `Commentaire musical\n\nDate: ${date}\n\n${text}`;
   
-  // Utiliser le type text/plain avec extension .doc pour plus de compatibilité
-  const blob = new Blob([content], { type: 'text/plain' });
+  const blob = new Blob([content], { type: 'text/plain; charset=utf-8' });
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
-  link.download = `commentaire_musical_${date.replace(/\//g, '-')}.doc`;
+  link.download = 'commentaire_musical.doc';
   link.click();
   
   console.log('Fichier Word exporté');
@@ -2960,14 +2955,19 @@ document.addEventListener("DOMContentLoaded", () => {
   setupAudioRecorder();
   setupAudioPlayer();
 
-  document.getElementById('downloadButton').onclick = () => {
-    if (!window.audioBlob) return alert('Aucun enregistrement disponible');
-    const fileName = document.getElementById('fileName').value || 'enregistrement';
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(window.audioBlob);
-    link.download = `${fileName}.wav`;
-    link.click();
-  };
+  document.getElementById('downloadButton').onclick = async () => {
+  if (!window.audioBlob) return alert('Aucun enregistrement disponible');
+
+  const fileName = document.getElementById('fileName').value || 'enregistrement';
+  
+  // Téléchargement direct en WAV - 100% fiable
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(window.audioBlob);
+  link.download = `${fileName}.wav`;
+  link.click();
+  
+  console.log('Fichier WAV téléchargé:', `${fileName}.wav`);
+};
 });
 
 // Stocker les données des pays

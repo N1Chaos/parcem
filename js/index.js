@@ -2920,7 +2920,36 @@ function generateTextFile() {
   // NE PAS SUPPRIMER le texte après génération
   // Le commentaire reste dans la zone de texte
 }
+// ==================== EXPORT WORD ====================
+function exportToWord() {
+  const commentText = document.getElementById('commentText');
+  const text = commentText.value.trim();
+  if (!text) {
+    alert('Veuillez écrire un commentaire');
+    return;
+  }
 
+  // Créer un contenu formaté pour Word/LibreOffice
+  const date = new Date().toLocaleDateString('fr-FR', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+
+  const content = `COMMENTAIRE MUSICAL\n\nDate : ${date}\n\n${text}`;
+  
+  // Créer et télécharger le fichier
+  const blob = new Blob([content], { 
+    type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' 
+  });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `commentaire_musical_${new Date().toISOString().split('T')[0]}.docx`;
+  link.click();
+  
+  console.log('Fichier Word exporté');
+}
 // ==================== INITIALISATION ====================
 document.addEventListener("DOMContentLoaded", () => {
   Object.keys(PAGES).forEach(displayWordsForPage);

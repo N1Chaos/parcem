@@ -2930,6 +2930,10 @@ function exportToWord() {
     return;
   }
 
+// Ajouter BOM UTF-8 pour que Word reconnaisse automatiquement l'encodage
+  const BOM = '\uFEFF';
+  const content = BOM + text;
+
   // Format simple avec tabulations pour la mise en forme
   const date = new Date().toLocaleDateString('fr-FR');
   const content = `Commentaire musical\n\nDate: ${date}\n\n${text}`;

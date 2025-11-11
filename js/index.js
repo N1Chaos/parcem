@@ -3536,6 +3536,18 @@ window.addEventListener('storage', (e) => {
 function deleteWordFromMainPage(page, word) {
   if (!confirm(`Supprimer "${word}" ?`)) return;
 
+// Si c'est page13, chercher dans les deux pages
+  if (page === 'page13') {
+    const page13Words = loadFromLocalStorage('selectedWords_page13') || [];
+    const classificationWords = loadFromLocalStorage('selectedWords_langues-classification') || [];
+    
+    saveToLocalStorage('selectedWords_page13', page13Words.filter(w => w !== word));
+    saveToLocalStorage('selectedWords_langues-classification', classificationWords.filter(w => w !== word));
+  } else {
+    const pageWords = loadFromLocalStorage(`selectedWords_${page}`) || [];
+    saveToLocalStorage(`selectedWords_${page}`, pageWords.filter(w => w !== word));
+  }
+
   // Désactiver tous les tooltips du conteneur avant suppression
   const container = document.querySelector(`.selected-words-container[data-page="${page}"]`);
   if (container) {

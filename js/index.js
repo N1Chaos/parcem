@@ -3604,3 +3604,14 @@ function deleteWordFromMainPage(page, word) {
 
   console.log(`Mot "${word}" supprimé de ${page}`);
 }
+
+function updateProgressBar() {
+  const progress = (player.currentTime / player.duration) * 100;
+  const progressBar = document.getElementById('progressBar');
+  if (progressBar) {
+    progressBar.style.width = `${progress}%`;
+  }
+}
+
+// AJOUTER CET ÉVÉNEMENT
+player.addEventListener('timeupdate', updateProgressBar);

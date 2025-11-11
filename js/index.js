@@ -3442,18 +3442,24 @@ carteMondeModal.addEventListener('hidden.bs.modal', function () {
 // Fonction pour effacer toutes les sélections et réinitialiser les boutons
 function clearSelection() {
   if (confirm("Voulez-vous vraiment effacer toutes les sélections ?")) {
-    // Effacer toutes les clés de localStorage pour les mots sélectionnés
+    // Effacer toutes les pages principales
     Object.keys(PAGES).forEach(page => {
       saveToLocalStorage(`selectedWords_${page}`, []);
     });
+    
+    // EFFACER AUSSI la page classification des langues
+    saveToLocalStorage('selectedWords_langues-classification', []);
     saveToLocalStorage('selectedWords', []);
 
-    // Mettre à jour l'affichage des mots pour toutes les pages
+    // Mettre à jour l'affichage de toutes les pages
     Object.keys(PAGES).forEach(page => {
       displayWordsForPage(page);
     });
 
-    // Déclencher un événement de stockage pour réinitialiser les boutons sur les pages annexes
+    // Mettre à jour aussi l'affichage de la page13 (qui inclut classification)
+    displayWordsForPage('page13');
+
+    // Déclencher un événement de stockage
     localStorage.setItem('clearSelectionEvent', Date.now().toString());
 
     // MISE À JOUR DU CADRE GLOBAL

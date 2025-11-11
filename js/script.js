@@ -829,10 +829,10 @@ const wordDefinitions =
   "russe": {
     "definition": "Langue officielle de la Russie."
   },
-  "langues extra‑européennes": {
+  "langues extra-européennes": {
   "definition": "Langues parlées en dehors du continent européen, comme l’arabe, le mandarin, ou le hindi... Elles sont souvent entendues en France dans les musiques du monde."
   },
-          "musique occidentale de tradition écrite": {
+        "musique occidentale de tradition écrite": {
             "definition": "Style musical savant européen caractérisé par son système de notation et son évolution historique à travers les périodes stylistiques majeures."
         },
         "musique du Moyen-Age": {

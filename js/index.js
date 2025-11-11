@@ -859,7 +859,7 @@ const wordDefinitions =
   "russe": {
     "definition": "Langue officielle de la Russie."
   },
-  "langues extra‑européennes": {
+  "langues extra-européennes": {
   "definition": "Langues parlées en dehors du continent européen, comme l’arabe, le mandarin, ou le hindi... Elles sont souvent entendues en France dans les musiques du monde."
   },
         "musique occidentale de tradition écrite": {
@@ -1907,7 +1907,16 @@ function displayWordsForPage(page) {
   const container = document.querySelector(`.selected-words-container[data-page="${page}"]`);
   if (!container) return;
 
-  const words = loadFromLocalStorage(`selectedWords_${page}`) || [];
+  // Si c'est la page Langues, fusionner page13 + langues-classification
+  let words = [];
+  if (page === 'page13') {
+    const wordsPage13 = loadFromLocalStorage('selectedWords_page13') || [];
+    const wordsClassification = loadFromLocalStorage('selectedWords_langues-classification') || [];
+    words = [...wordsPage13, ...wordsClassification];
+  } else {
+    words = loadFromLocalStorage(`selectedWords_${page}`) || [];
+  }
+
 
   if (words.length === 0) {
     container.innerHTML = "<span class='empty'>Aucun mot sélectionné</span>";

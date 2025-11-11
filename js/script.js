@@ -787,7 +787,7 @@ const wordDefinitions =
         "langues celtiques": {
           "definition": "Anciennes langues indo-européennes parlées historiquement en Europe de l'Ouest, dont le breton, le gaélique irlandais et le gallois."
         },
-        "langue basque": {
+        "basque": {
           "definition": "Langue isolée, sans lien connu avec d'autres familles, parlée au Pays basque entre la France et l'Espagne."
         },
         "langues polynésiennes": {
@@ -808,7 +808,31 @@ const wordDefinitions =
   "esperanto": {
     "definition": "Langue construite créée en 1887 par L.L. Zamenhof pour faciliter la communication internationale, avec une grammaire régulière et un vocabulaire dérivé de langues européennes, parlée par une communauté mondiale estimée à plusieurs milliers de locuteurs."
   },
-        "musique occidentale de tradition écrite": {
+  "français": {
+    "definition": "Langue officielle de la France, de la Belgique, de la Suisse, du Canada et de nombreux pays d’Afrique."
+  },
+  "anglais": {
+    "definition": "Langue officielle du Royaume-Uni, des États-Unis, de l’Australie et de nombreux autres pays. Langue dominante dans la pop, le rock, le rap et le cinéma mondial."
+  },
+  "espagnol": {
+    "definition": "Langue officielle de l’Espagne et de la plupart des pays d’Amérique latine. Très présente dans le reggaeton, la salsa et la musique latine."
+  },
+  "portugais": {
+    "definition": "Langue officielle du Portugal et du Brésil. Utilisée dans la samba, la bossa nova et le fado."
+  },
+  "italien": {
+    "definition": "Langue officielle de l’Italie. Employée dans l’opéra italien."
+  },
+  "allemand": {
+    "definition": "Langue officielle de l’Allemagne, de l’Autriche et d’une partie de la Suisse. Langue de la musique de Bach, Mozart ou Beethoven."
+  },
+  "russe": {
+    "definition": "Langue officielle de la Russie."
+  },
+  "langues extra‑européennes": {
+  "definition": "Langues parlées en dehors du continent européen, comme l’arabe, le mandarin, ou le hindi... Elles sont souvent entendues en France dans les musiques du monde."
+  },
+          "musique occidentale de tradition écrite": {
             "definition": "Style musical savant européen caractérisé par son système de notation et son évolution historique à travers les périodes stylistiques majeures."
         },
         "musique du Moyen-Age": {

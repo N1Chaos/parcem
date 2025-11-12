@@ -2098,32 +2098,6 @@ async function setupAudioPlayer() {
   const visualizations = document.querySelector('.visualizations');
 
 
-  function updateProgressBar() {
-    const progress = (player.currentTime / player.duration) * 100;
-    const progressBar = document.getElementById('progressBar');
-    if (progressBar) {
-      progressBar.style.width = `${progress}%`;
-    }
-  }
-
-  player.addEventListener('timeupdate', updateProgressBar);
-
-  // Ajoutez cette fonction APRÈS updateProgressBar()
-function setupProgressBarClick() {
-  const progressContainer = document.querySelector('.progress');
-  if (progressContainer) {
-    progressContainer.addEventListener('click', (e) => {
-      const rect = e.currentTarget.getBoundingClientRect();
-      const percent = (e.clientX - rect.left) / rect.width;
-      player.currentTime = percent * player.duration;
-    });
-  }
-}
-
-// Et appelez-la après avoir ajouté l'event listener
-player.addEventListener('timeupdate', updateProgressBar);
-setupProgressBarClick(); 
-
   // Vérification des éléments DOM
   if (!player || !fileInput || !fileNameDisplay || !vuMeterLeftCanvas || !vuMeterRightCanvas || !waveformLeftCanvas || !waveformRightCanvas || !spectrumCanvas || !toggleControls || !audioControls || !visualizations) {
     console.error('Éléments audio, affichage ou visualisations non trouvés dans le DOM:', {
@@ -3444,42 +3418,565 @@ carteMondeModal.addEventListener('hidden.bs.modal', function () {
   }
 });
 
-// Fonction pour effacer toutes les sélections et réinitialiser les boutons
-function clearSelection() {
-  if (confirm("Voulez-vous vraiment effacer toutes les sélections ?")) {
-    // Effacer toutes les pages principales
-    Object.keys(PAGES).forEach(page => {
-      saveToLocalStorage(`selectedWords_${page}`, []);
-    });
-    
-    // EFFACER AUSSI la page classification des langues
-    saveToLocalStorage('selectedWords_langues-classification', []);
-    saveToLocalStorage('selectedWords', []);
+// ==================== GESTION DES MOTS SÉLECTIONNÉS ====================
 
-    // Mettre à jour l'affichage de toutes les pages
-    Object.keys(PAGES).forEach(page => {
-      displayWordsForPage(page);
-    });
+/**
+ * Affiche les mots sélectionnés pour une page donnée
+ * @param {string} page - Nom de la page (ex: 'page1', 'page13')
+ */
+function displayWordsForPage(page) {
+  const container = document.querySelector(`.selected-words-container[data-page="${page}"]`);
+  if (!container) return;
 
-    // Mettre à jour aussi l'affichage de la page13 (qui inclut classification)
-    displayWordsForPage('page13');
+  let words = [];
 
-    // Déclencher un événement de stockage
-    localStorage.setItem('clearSelectionEvent', Date.now().toString());
+  // Cas spécial : page13 fusionne page13 + langues-classification
+  if (page === 'page13') {
+    const wordsPage13 = loadFromLocalStorage('selectedWords_page13') || [];
+    const wordsClassification = loadFromLocalStorage('selectedWords_langues-classification') || [];
+    words = [...wordsPage13, ...wordsClassification];
+  } else {
+    words = loadFromLocalStorage(`selectedWords_${page}`) || [];
+  }
 
-    // MISE À JOUR DU CADRE GLOBAL
+  if (words.length === 0) {
+    container.innerHTML = "<span class='empty'>Aucun mot sélectionné</span>";
+  } else {
+    container.innerHTML = words
+      .map(word => {
+        const escaped = word.replace(/'/g, "\\'").replace(/"/g, "\\\"");
+        const definition = wordDefinitions[word]?.definition || 'Pas de définition';
+        return `
+          <span class="tag" data-bs-toggle="tooltip" title="${definition}">
+            ${word}
+            <span class="delete-word" onclick="deleteWordFromMainPage('${page}', '${escaped}')">×</span>
+          </span>
+        `;
+      })
+      .join(' ');
+  }
+
+  // Réinitialiser et activer les tooltips
+  container.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+    const tooltip = bootstrap.Tooltip.getInstance(el);
+    if (tooltip) tooltip.dispose();
+    new bootstrap.Tooltip(el, { trigger: 'hover' });
+  });
+
+  console.log(`Mots affichés pour ${page}:`, words);
+}
+
+/**
+ * Met à jour l'affichage de toutes les pages
+ */
+function updateWordsOnStorageChange() {
+  const pages = Object.keys(PAGES);
+  pages.forEach(displayWordsForPage);
+}
+
+/**
+ * Écoute les changements dans localStorage
+ */
+window.addEventListener('storage', (event) => {
+  if (
+    event.key &&
+    (event.key.startsWith('selectedWords_') ||
+     event.key === 'selectedWords' ||
+     event.key === 'clearSelectionEvent' ||
+     event.key === 'forceGlobalUpdate')
+  ) {
+    console.log('Changement localStorage détecté:', event.key);
+    updateWordsOnStorageChange();
     updateGlobalSelectedWords();
+  }
+});
 
-    console.log('Toutes les sélections ont été effacées');
+// ==================== LECTEUR YOUTUBE ====================
+
+/**
+ * Extrait l'ID d'une vidéo YouTube
+ */
+function extractVideoID(url) {
+  const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+  return url.match(regex)?.[1];
+}
+
+/**
+ * Charge une vidéo YouTube dans le lecteur
+ */
+function loadVideo() {
+  const videoID = extractVideoID(document.getElementById('videoUrl').value);
+  if (!videoID) return alert('URL YouTube invalide');
+
+  const player = document.getElementById('youtubePlayer');
+  player.src = `https://www.youtube.com/embed/${videoID}`;
+  localStorage.setItem('youtubeVideoID', videoID);
+}
+
+// ==================== BASE DE DONNÉES INDEXEDDB ====================
+
+let db = null;
+
+async function openDB() {
+  if (db) return db;
+
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open('AudioDB', 1);
+    request.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains('audioStore')) {
+        db.createObjectStore('audioStore', { keyPath: 'id' });
+      }
+    };
+    request.onsuccess = (e) => {
+      db = e.target.result;
+      resolve(db);
+    };
+    request.onerror = (e) => reject(e.target.error);
+  });
+}
+
+async function saveToDB(id, data) {
+  try {
+    const db = await openDB();
+    const tx = db.transaction('audioStore', 'readwrite');
+    const store = tx.objectStore('audioStore');
+    await store.put({ id, ...data });
+    console.log(`Sauvegarde IndexedDB [${id}]:`, data);
+  } catch (err) {
+    console.error(`Erreur sauvegarde [${id}]:`, err);
   }
 }
-// === MISE À JOUR CADRE GLOBAL ===
-function updateGlobalSelectedWords() {
-  const allWords = [];
-  Object.keys(PAGES).forEach(page => {
-    const words = loadFromLocalStorage(`selectedWords_${page}`) || [];
-    allWords.push(...words);
+
+async function loadFromDB(id) {
+  try {
+    const db = await openDB();
+    const tx = db.transaction('audioStore', 'readonly');
+    const store = tx.objectStore('audioStore');
+    const request = store.get(id);
+    return new Promise((resolve) => {
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => resolve(null);
+    });
+  } catch (err) {
+    console.error(`Erreur chargement [${id}]:`, err);
+    return null;
+  }
+}
+
+// ==================== GESTION AUDIO UTILISATEUR ====================
+
+let audioContext, source, gainNode, pannerNode, lowFilter, midFilter, highFilter;
+let analyserLeft, analyserRight, splitter;
+let isMono = false;
+let animationId = null;
+
+async function setupAudioPlayer() {
+  const player = document.getElementById('audioPlayer');
+  const fileInput = document.getElementById('audioFile');
+  const fileNameDisplay = document.getElementById('audioFileName');
+  const playbackSpeed = document.getElementById('playbackSpeed');
+  const volumeControl = document.getElementById('volumeControl');
+  const balanceControl = document.getElementById('balanceControl');
+  const eqLow = document.getElementById('eqLow');
+  const eqMid = document.getElementById('eqMid');
+  const eqHigh = document.getElementById('eqHigh');
+  const vuMeterLeftCanvas = document.getElementById('vuMeterLeftCanvas');
+  const vuMeterRightCanvas = document.getElementById('vuMeterRightCanvas');
+  const waveformLeftCanvas = document.getElementById('waveformLeftCanvas');
+  const waveformRightCanvas = document.getElementById('waveformRightCanvas');
+  const spectrumCanvas = document.getElementById('spectrumCanvas');
+  const toggleControls = document.getElementById('toggleControls');
+  const audioControls = document.getElementById('audioControls');
+  const visualizations = document.querySelector('.visualizations');
+
+  // Vérification des éléments
+  if (!player || !fileInput || !fileNameDisplay || !toggleControls || !audioControls || !visualizations) {
+    console.error('Éléments audio manquants dans le DOM');
+    fileNameDisplay.textContent = 'Erreur: éléments manquants';
+    return;
+  }
+
+  // Initialisation AudioContext
+  audioContext = new AudioContext();
+  try {
+    source = audioContext.createMediaElementSource(player);
+  } catch (err) {
+    console.error('Erreur création source audio:', err);
+    fileNameDisplay.textContent = 'Erreur: réimporter le fichier';
+    return;
+  }
+
+  // Analyseurs
+  analyserLeft = audioContext.createAnalyser();
+  analyserRight = audioContext.createAnalyser();
+  analyserLeft.fftSize = analyserRight.fftSize = 2048;
+
+  // Effets
+  gainNode = audioContext.createGain();
+  pannerNode = audioContext.createStereoPanner();
+  lowFilter = audioContext.createBiquadFilter(); lowFilter.type = 'lowshelf'; lowFilter.frequency.value = 200;
+  midFilter = audioContext.createBiquadFilter(); midFilter.type = 'peaking'; midFilter.frequency.value = 1000;
+  highFilter = audioContext.createBiquadFilter(); highFilter.type = 'highshelf'; highFilter.frequency.value = 4000;
+
+  // Splitter pour canaux
+  splitter = audioContext.createChannelSplitter(2);
+
+  // Chaîne audio
+  source.connect(pannerNode)
+    .connect(lowFilter).connect(midFilter).connect(highFilter)
+    .connect(gainNode).connect(splitter).connect(audioContext.destination);
+
+  splitter.connect(analyserLeft, 0);
+  splitter.connect(analyserRight, 1);
+
+  // Contrôles
+  const controls = { playbackSpeed, volumeControl, balanceControl, eqLow, eqMid, eqHigh };
+  Object.values(controls).forEach(ctrl => ctrl?.addEventListener('input', updateAudioState));
+
+  // Vérification mono/stéréo
+  async function checkChannels() {
+    if (!player.src) return;
+    try {
+      const response = await fetch(player.src);
+      const buffer = await response.arrayBuffer();
+      const audioBuffer = await audioContext.decodeAudioData(buffer);
+      isMono = audioBuffer.numberOfChannels === 1;
+      balanceControl.disabled = isMono;
+      balanceControl.title = isMono ? 'Non disponible (mono)' : 'Balance stéréo';
+    } catch (err) {
+      console.error('Erreur vérification canaux:', err);
+    }
+  }
+
+  // Canvas
+  const canvases = { vuMeterLeftCanvas, vuMeterRightCanvas, waveformLeftCanvas, waveformRightCanvas, spectrumCanvas };
+  Object.values(canvases).forEach(canvas => {
+    if (canvas) {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.id.includes('vu') || canvas.id.includes('waveform') ? 125 : 100;
+    }
   });
+
+  const ctx = {
+    vuL: vuMeterLeftCanvas?.getContext('2d'),
+    vuR: vuMeterRightCanvas?.getContext('2d'),
+    waveL: waveformLeftCanvas?.getContext('2d'),
+    waveR: waveformRightCanvas?.getContext('2d'),
+    spec: spectrumCanvas?.getContext('2d')
+  };
+
+  const bufferLength = analyserLeft.frequencyBinCount;
+  const dataLeft = new Uint8Array(bufferLength);
+  const dataRight = new Uint8Array(bufferLength);
+
+  // RMS pour VU-mètre
+  function getRMS(analyser, data) {
+    analyser.getByteTimeDomainData(data);
+    let sum = 0;
+    for (let i = 0; i < data.length; i++) {
+      const v = (data[i] - 128) / 128;
+      sum += v * v;
+    }
+    return Math.sqrt(sum / data.length);
+  }
+
+  // Dessins
+  function drawVUMeter(ctx, rms, isRight = false) {
+    const w = ctx.canvas.width, h = ctx.canvas.height;
+    const cx = w / 2, cy = h - 23.4375, r = Math.min(w / 2 - 10, h - 39.0625);
+    ctx.clearRect(0, 0, w, h);
+
+    const grad = ctx.createRadialGradient(cx, cy, 10, cx, cy, r);
+    grad.addColorStop(0, '#f0f0f0'); grad.addColorStop(1, '#d0d0d0');
+    ctx.fillStyle = grad; ctx.fillRect(0, 0, w, h);
+    ctx.strokeStyle = '#555'; ctx.lineWidth = 4; ctx.strokeRect(2, 2, w - 4, h - 4);
+
+    if (isMono && isRight) {
+      ctx.fillStyle = 'var(--font-color)';
+      ctx.font = '12px var(--body-font)';
+      ctx.textAlign = 'center';
+      ctx.fillText('Mono', w / 2, h / 2);
+      return;
+    }
+
+    const levels = [-60, -50, -40, -30, -20, -10, 0];
+    ctx.beginPath(); ctx.arc(cx, cy, r, -Math.PI / 2, Math.PI / 2);
+    ctx.lineWidth = 10; ctx.strokeStyle = '#e0e0e0'; ctx.stroke();
+
+    levels.forEach(l => {
+      const a = -Math.PI / 2 + ((l + 60) / 60) * Math.PI;
+      const x = cx + Math.cos(a) * (r + 5), y = cy + Math.sin(a) * (r + 5);
+      ctx.fillStyle = '#0000FF'; ctx.font = '10px var(--body-font)';
+      ctx.fillText(`${l} dB`, x - 15, y + 5);
+    });
+
+    const angle = -Math.PI / 2 + rms * Math.PI;
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(angle) * r, cy + Math.sin(angle) * r);
+    ctx.lineWidth = 2; ctx.strokeStyle = isRight ? '#f4a261' : '#e63946'; ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx, cy, 5, 0, 2 * Math.PI); ctx.fillStyle = '#333'; ctx.fill();
+  }
+
+  function drawWaveform() {
+    if (!ctx.waveL || !ctx.waveR) return;
+    analyserLeft.getByteTimeDomainData(dataLeft);
+    analyserRight.getByteTimeDomainData(dataRight);
+
+    [ctx.waveL, ctx.waveR].forEach((c, i) => {
+      const data = i === 0 ? dataLeft : dataRight;
+      c.clearRect(0, 0, c.canvas.width, c.canvas.height);
+      c.beginPath(); c.strokeStyle = i === 0 ? '#e63946' : '#f4a261'; c.lineWidth = 2;
+      let x = 0, slice = c.canvas.width / bufferLength;
+      for (let j = 0; j < bufferLength; j++) {
+        const y = (data[j] / 128) * (c.canvas.height / 2);
+        i === 0 ? (j === 0 ? c.moveTo(x, y) : c.lineTo(x, y)) : null;
+        x += slice;
+      }
+      c.stroke();
+    });
+  }
+
+  function drawSpectrum() {
+    if (!ctx.spec) return;
+    analyserLeft.getByteFrequencyData(dataLeft);
+    const barW = (ctx.spec.canvas.width / bufferLength) * 2.5;
+    let x = 0;
+    ctx.spec.clearRect(0, 0, ctx.spec.canvas.width, ctx.spec.canvas.height);
+    for (let i = 0; i < bufferLength; i++) {
+      const h = dataLeft[i] / 2;
+      const f = (i / bufferLength) * (audioContext.sampleRate / 2);
+      ctx.spec.fillStyle = f <= 200 ? '#ff4c4c' : f <= 4000 ? '#ffeb3b' : '#2196f3';
+      ctx.spec.fillRect(x, ctx.spec.canvas.height - h, barW, h);
+      x += barW + 1;
+    }
+  }
+
+  function animate() {
+    drawSpectrum();
+    if (visualizations.classList.contains('active')) {
+      drawVUMeter(ctx.vuL, getRMS(analyserLeft, dataLeft));
+      drawVUMeter(ctx.vuR, getRMS(analyserRight, dataRight), true);
+      drawWaveform();
+    }
+    animationId = requestAnimationFrame(animate);
+  }
+
+  // État audio
+  async function updateAudioState() {
+    const state = {
+      time: player.currentTime,
+      isPlaying: !player.paused,
+      duration: player.duration || 0,
+      playbackRate: player.playbackRate,
+      volume: gainNode.gain.value,
+      balance: pannerNode.pan.value,
+      eqLow: lowFilter.gain.value,
+      eqMid: midFilter.gain.value,
+      eqHigh: highFilter.gain.value,
+      controlsVisible: audioControls.classList.contains('active'),
+      visualizationsVisible: visualizations.classList.contains('active')
+    };
+    await saveToDB('audioState', state);
+    localStorage.setItem('audioState', JSON.stringify(state));
+  }
+
+  // Chargement audio sauvegardé
+  const savedAudio = await loadFromDB('userAudio');
+  const savedState = await loadFromDB('audioState') || {};
+
+  if (savedAudio?.blob) {
+    const url = URL.createObjectURL(savedAudio.blob);
+    player.src = url;
+    fileNameDisplay.textContent = savedAudio.fileName ? `Fichier chargé : ${savedAudio.fileName}` : 'Fichier chargé';
+
+    const applyState = () => {
+      player.currentTime = savedState.time || 0;
+      player.playbackRate = savedState.playbackRate || 1;
+      gainNode.gain.value = savedState.volume || 1;
+      pannerNode.pan.value = savedState.balance || 0;
+      lowFilter.gain.value = savedState.eqLow || 0;
+      midFilter.gain.value = savedState.eqMid || 0;
+      highFilter.gain.value = savedState.eqHigh || 0;
+
+      [playbackSpeed, volumeControl, balanceControl, eqLow, eqMid, eqHigh].forEach((el, i) => {
+        if (el) el.value = Object.values(savedState)[i + 3] || el.defaultValue;
+      });
+
+      if (savedState.isPlaying) player.play();
+    };
+
+    player.addEventListener('canplaythrough', () => {
+      checkChannels();
+      applyState();
+      animate();
+    }, { once: true });
+  } else {
+    fileNameDisplay.textContent = 'Aucun fichier chargé';
+  }
+
+  // Contrôles UI
+  toggleControls.addEventListener('click', () => {
+    const visible = audioControls.classList.toggle('active');
+    visualizations.classList.toggle('active', visible);
+    toggleControls.textContent = visible ? 'Masquer' : 'Contrôles';
+    updateAudioState();
+    if (visible) Object.values(canvases).forEach(c => c.width = c.offsetWidth);
+  });
+
+  // Événements player
+  player.addEventListener('timeupdate', updateAudioState);
+  player.addEventListener('play', () => { audioContext.resume(); updateAudioState(); if (!animationId) animate(); });
+  player.addEventListener('pause', updateAudioState);
+  player.addEventListener('ended', () => updateAudioState());
+
+  // Import fichier
+  fileInput.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    fileNameDisplay.textContent = `Fichier chargé : ${file.name}`;
+    const url = URL.createObjectURL(file);
+    player.src = url;
+    await saveToDB('userAudio', { blob: file, fileName: file.name, time: 0 });
+    player.addEventListener('canplaythrough', () => { checkChannels(); animate(); }, { once: true });
+  });
+}
+
+// ==================== ENREGISTREMENT AUDIO ====================
+
+async function setupAudioRecorder() {
+  const recordButton = document.getElementById('recordButton');
+  const indicator = document.getElementById('recordingIndicator');
+  const confirmation = document.getElementById('recordingConfirmation');
+
+  if (!recordButton || !indicator || !confirmation) return;
+
+  let recorder = null, chunks = [], timer = null, seconds = 0;
+
+  recordButton.onclick = async () => {
+    if (!recorder || recorder.state === 'inactive') {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        recorder = new MediaRecorder(stream);
+        chunks = [];
+
+        recorder.ondataavailable = e => chunks.push(e.data);
+        recorder.onstop = () => {
+          const blob = new Blob(chunks, { type: 'audio/wav' });
+          const url = URL.createObjectURL(blob);
+          document.getElementById('audioPlayback').src = url;
+          window.audioBlob = blob;
+
+          recordButton.classList.replace('btn-warning', 'btn-danger');
+          recordButton.innerHTML = '<i class="bi bi-mic-fill"></i> Enregistrer';
+          indicator.style.display = 'none';
+          confirmation.style.display = 'inline';
+          setTimeout(() => confirmation.style.display = 'none', 10000);
+          clearInterval(timer);
+          stream.getTracks().forEach(t => t.stop());
+        };
+
+        recorder.start();
+        recordButton.classList.replace('btn-danger', 'btn-warning');
+        recordButton.innerHTML = '<i class="bi bi-stop-fill"></i> Arrêter';
+        indicator.style.display = 'inline';
+        seconds = 0;
+        indicator.textContent = `Enregistrement... (0 s)`;
+        timer = setInterval(() => indicator.textContent = `Enregistrement... (${++seconds} s)`, 1000);
+      } catch (err) {
+        console.error('Erreur microphone:', err);
+      }
+    } else {
+      recorder.stop();
+    }
+  };
+}
+
+// ==================== INITIALISATION GLOBALE ====================
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const currentPage = getPageName();
+
+  // Initialisation commune
+  Object.keys(PAGES).forEach(displayWordsForPage);
+  updateGlobalSelectedWords();
+
+  // YouTube
+  const savedVideoID = localStorage.getItem('youtubeVideoID');
+  if (savedVideoID) {
+    const player = document.getElementById('youtubePlayer');
+    const input = document.getElementById('videoUrl');
+    if (player && input) {
+      player.src = `https://www.youtube.com/embed/${savedVideoID}`;
+      input.value = `https://youtu.be/${savedVideoID}`;
+    }
+  }
+
+  // Audio
+  if (currentPage === '' || currentPage === 'index') {
+    await setupAudioPlayer();
+    setupAudioRecorder();
+
+    // Brouillon commentaire
+    const commentText = document.getElementById('commentText');
+    if (commentText) {
+      const draft = localStorage.getItem('commentDraft');
+      if (draft) commentText.value = draft;
+      commentText.addEventListener('input', () => localStorage.setItem('commentDraft', commentText.value));
+    }
+  }
+
+  // Téléchargement
+  document.getElementById('downloadButton')?.addEventListener('click', () => {
+    if (!window.audioBlob) return alert('Aucun enregistrement');
+    const name = document.getElementById('fileName').value || 'enregistrement';
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(window.audioBlob);
+    a.download = `${name}.wav`;
+    a.click();
+  });
+
+  // Génération texte
+  document.getElementById('generateTextButton')?.addEventListener('click', () => {
+    const text = document.getElementById('commentText')?.value.trim();
+    if (!text) return alert('Veuillez écrire un commentaire');
+    const blob = new Blob([text], { type: 'text/plain' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'commentaire.txt';
+    a.click();
+  });
+
+  // Export Word
+  document.getElementById('exportWordButton')?.addEventListener('click', () => {
+    const text = document.getElementById('commentText')?.value.trim();
+    if (!text) return alert('Veuillez écrire un commentaire');
+    const blob = new Blob(['\uFEFF' + text], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'commentaire_musical.doc';
+    a.click();
+  });
+});
+
+// ==================== FONCTIONS GLOBALES ====================
+
+function clearSelection() {
+  if (!confirm("Effacer toutes les sélections ?")) return;
+
+  Object.keys(PAGES).forEach(page => saveToLocalStorage(`selectedWords_${page}`, []));
+  saveToLocalStorage('selectedWords_langues-classification', []);
+  saveToLocalStorage('selectedWords', []);
+  localStorage.setItem('clearSelectionEvent', Date.now().toString());
+
+  Object.keys(PAGES).forEach(displayWordsForPage);
+  displayWordsForPage('page13');
+  updateGlobalSelectedWords();
+}
+
+function updateGlobalSelectedWords() {
+  const allWords = Object.keys(PAGES).flatMap(page =>
+    loadFromLocalStorage(`selectedWords_${page}`) || []
+  );
 
   const container = document.getElementById('globalSelectedWords');
   const list = document.getElementById('globalWordsList');
@@ -3491,13 +3988,12 @@ function updateGlobalSelectedWords() {
   }
 
   container.style.display = 'block';
-  list.innerHTML = allWords.map(word => `
-    <span class="badge bg-primary text-white me-1" data-bs-toggle="tooltip" title="${wordDefinitions[word]?.definition || ''}">
+  list.innerHTML = allWords.map(word =>
+    `<span class="badge bg-primary text-white me-1" data-bs-toggle="tooltip" title="${wordDefinitions[word]?.definition || ''}">
       ${word}
-    </span>
-  `).join('');
+    </span>`
+  ).join('');
 
-  // Réactiver les tooltips
   list.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
     const t = bootstrap.Tooltip.getInstance(el);
     if (t) t.dispose();
@@ -3505,81 +4001,22 @@ function updateGlobalSelectedWords() {
   });
 }
 
-// === ÉCOUTE LES CHANGEMENTS (localStorage) ===
-document.addEventListener("DOMContentLoaded", () => {
-  updateGlobalSelectedWords();
-
-  window.addEventListener('storage', (e) => {
-    if (e.key?.startsWith('selectedWords_') || e.key === 'forceGlobalUpdate') {
-      updateGlobalSelectedWords();
-    }
-  });
-
-  
-});
-
-// Écoute les suppressions depuis index.html
-window.addEventListener('storage', (e) => {
-  if (e.key === 'forceGlobalUpdate') {
-    // Recharger les mots sélectionnés localement
-    const pageName = window.location.pathname.split('/').pop().replace('.html', '');
-    const saved = JSON.parse(localStorage.getItem(`selectedWords_${pageName}`)) || [];
-    
-    // Mettre à jour les classes .selected
-    document.querySelectorAll('.selectable').forEach(span => {
-      const text = span.textContent.trim();
-      if (saved.includes(text)) {
-        span.classList.add('selected');
-      } else {
-        span.classList.remove('selected');
-      }
-    });
-
-    // Masquer le panneau si plus rien
-    if (saved.length === 0) {
-      document.getElementById('definition-container').style.display = 'none';
-    }
-  }
-});
-
-
-// === SUPPRESSION D'UN MOT DEPUIS index.html (croix) ===
 function deleteWordFromMainPage(page, word) {
   if (!confirm(`Supprimer "${word}" ?`)) return;
 
-// Si c'est page13, chercher dans les deux pages
   if (page === 'page13') {
-    const page13Words = loadFromLocalStorage('selectedWords_page13') || [];
-    const classificationWords = loadFromLocalStorage('selectedWords_langues-classification') || [];
-    
-    saveToLocalStorage('selectedWords_page13', page13Words.filter(w => w !== word));
-    saveToLocalStorage('selectedWords_langues-classification', classificationWords.filter(w => w !== word));
-  } else {
-    const pageWords = loadFromLocalStorage(`selectedWords_${page}`) || [];
-    saveToLocalStorage(`selectedWords_${page}`, pageWords.filter(w => w !== word));
-  }
-
-  // Désactiver tous les tooltips du conteneur avant suppression
-  const container = document.querySelector(`.selected-words-container[data-page="${page}"]`);
-  if (container) {
-    const tooltips = container.querySelectorAll('.tag');
-    tooltips.forEach(tag => {
-      const tooltip = bootstrap.Tooltip.getInstance(tag);
-      if (tooltip) {
-        tooltip.dispose();
-      }
+    ['selectedWords_page13', 'selectedWords_langues-classification'].forEach(key => {
+      const words = loadFromLocalStorage(key) || [];
+      saveToLocalStorage(key, words.filter(w => w !== word));
     });
+  } else {
+    const words = loadFromLocalStorage(`selectedWords_${page}`) || [];
+    saveToLocalStorage(`selectedWords_${page}`, words.filter(w => w !== word));
   }
 
-  const pageWords = loadFromLocalStorage(`selectedWords_${page}`) || [];
-  saveToLocalStorage(`selectedWords_${page}`, pageWords.filter(w => w !== word));
+  const global = loadFromLocalStorage('selectedWords') || [];
+  saveToLocalStorage('selectedWords', global.filter(w => w !== word));
 
-  const globalWords = loadFromLocalStorage('selectedWords') || [];
-  saveToLocalStorage('selectedWords', globalWords.filter(w => w !== word));
-
-  // Recréer l'affichage (ce qui réinitialisera les tooltips)
   displayWordsForPage(page);
   updateGlobalSelectedWords();
-
-  console.log(`Mot "${word}" supprimé de ${page}`);
 }

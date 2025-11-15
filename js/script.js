@@ -2072,7 +2072,7 @@ function clearSelection() {
 
 function returnWords() {
     const selectedWordsOnPage = Array.from(document.querySelectorAll('.selected')).map(el => el.textContent);
-    console.log(`Retour à la page principale, mots sélectionnés pour ${window.location.pathname.split('/').pop().replace('.html', '')}:`, selectedWordsOnPage);
+    console.log(`Retour à la page principale, vocabulaire sélectionné pour ${window.location.pathname.split('/').pop().replace('.html', '')}:`, selectedWordsOnPage);
     window.location.href = "../index.html";
 }
 

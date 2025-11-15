@@ -428,3 +428,35 @@ header p {
         margin-bottom: 1.5rem;
     }
 }
+
+/* Style amélioré pour le bouton "Pour aller plus loin" */
+.btn-outline-info {
+    border: 2px solid #17a2b8;
+    color: #17a2b8;
+    font-weight: 600;
+    padding: 12px 20px;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    background-color: rgba(23, 162, 184, 0.1);
+}
+
+.btn-outline-info:hover {
+    background-color: #17a2b8;
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(23, 162, 184, 0.4);
+    border-color: #17a2b8;
+}
+
+.btn-outline-info:focus {
+    box-shadow: 0 0 0 0.25rem rgba(23, 162, 184, 0.5);
+}
+
+/* Pour le rendre plus visible sur mobile */
+@media (max-width: 768px) {
+    .btn-outline-info {
+        font-size: 1rem;
+        padding: 10px 15px;
+        margin-top: 1rem !important;
+    }
+}

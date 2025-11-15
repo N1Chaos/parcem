@@ -2355,42 +2355,5 @@ window.addEventListener('storage', (e) => {
   }
 });
 
-// FERMER LE PANNEAU + DISPOSE TOOLTIP LORS D'UNE SUPPRESSION DEPUIS index.html
-// DISPOSE TOOLTIP + FERME PANNEAU LORS D'UNE SUPPRESSION DEPUIS index.html
-window.addEventListener('storage', (e) => {
-  if (e.key === 'disposeTooltip') {
-    try {
-      const { page, word } = JSON.parse(e.newValue);
-      const currentPage = window.location.pathname.split('/').pop().replace('.html', '');
-
-      // Ne traiter que si c'est la bonne page
-      if (currentPage !== page) return;
-
-      // 1. Fermer le panneau
-      const panel = document.getElementById('definition-container');
-      if (panel) panel.style.display = 'none';
-
-      // 2. Trouver l'élément .selectable
-      const selectable = Array.from(document.querySelectorAll('.selectable'))
-        .find(el => el.textContent.trim() === word);
-
-      if (selectable) {
-        // 3. Dispose du tooltip
-        const tooltip = bootstrap.Tooltip.getInstance(selectable);
-        if (tooltip) {
-          tooltip.dispose();
-        }
-        // Optionnel : forcer la suppression du DOM du tooltip
-        const tooltipEl = document.querySelector(`.tooltip[role="tooltip"]`);
-        if (tooltipEl) tooltipEl.remove();
-      }
-
-    } catch (err) {
-      console.error('Erreur disposeTooltip:', err);
-    } finally {
-      localStorage.removeItem('disposeTooltip');
-    }
-  }
 
   
-});

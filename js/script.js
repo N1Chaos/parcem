@@ -1932,7 +1932,7 @@ function updateSelectedWords() {
   const pageName = window.location.pathname.split('/').pop().replace('.html', '');
   const selectedWordsOnPage = Array.from(document.querySelectorAll('.selected')).map(el => el.textContent.trim());
 
-  // Récupérer les mots globaux actuels
+  // Récupérer les mots globaux
   let globalSelectedWords = JSON.parse(localStorage.getItem('selectedWords')) || [];
 
   // Récupérer TOUS les mots de cette page
@@ -1950,14 +1950,8 @@ function updateSelectedWords() {
     }
   });
 
-  // NOUVEAU : Fusionner avec TOUTES les autres pages
-  const allGlobalWords = Object.keys(PAGES).reduce((acc, page) => {
-    const words = JSON.parse(localStorage.getItem(`selectedWords_${page}`)) || [];
-    return acc.concat(words.filter(w => !acc.includes(w)));
-  }, [...globalSelectedWords]);
-
   // SAUVEGARDE
-  localStorage.setItem('selectedWords', JSON.stringify(allGlobalWords));
+  localStorage.setItem('selectedWords', JSON.stringify(globalSelectedWords));
   localStorage.setItem(`selectedWords_${pageName}`, JSON.stringify(selectedWordsOnPage));
 
   console.log(`Mots mis à jour [${pageName}]:`, selectedWordsOnPage);

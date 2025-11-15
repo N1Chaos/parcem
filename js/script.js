@@ -2198,9 +2198,6 @@ function setupMiniPlayer() {
         if (savedAudioData && savedAudioData.blob) {
             try {
                 audio = new Audio();
-                audio.preservesPitch = false; // Optionnel, mais utile
-                // NE PAS utiliser autoplay = true → bloqué sur desktop
-// On reprend la lecture MANUELLEMENT après interaction
                 audio.src = URL.createObjectURL(savedAudioData.blob);
                 console.log('URL audio créée:', audio.src);
 

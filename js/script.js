@@ -1932,29 +1932,25 @@ function updateSelectedWords() {
   const pageName = window.location.pathname.split('/').pop().replace('.html', '');
   const selectedWordsOnPage = Array.from(document.querySelectorAll('.selected')).map(el => el.textContent.trim());
 
-  // Récupérer les mots globaux
-  let globalSelectedWords = JSON.parse(localStorage.getItem('selectedWords')) || [];
+  // SAUVEGARDE LOCALE (page actuelle)
+  saveToLocalStorage(`selectedWords_${pageName}`, selectedWordsOnPage);
 
-  // Récupérer TOUS les mots de cette page
-  const allPageWords = Array.from(words).map(el => el.textContent.trim());
-
-  // 1. SUPPRIMER les mots de cette page qui ne sont PLUS sélectionnés
-  globalSelectedWords = globalSelectedWords.filter(word => 
-    !allPageWords.includes(word) || selectedWordsOnPage.includes(word)
-  );
-
-  // 2. AJOUTER les nouveaux mots sélectionnés
-  selectedWordsOnPage.forEach(word => {
-    if (!globalSelectedWords.includes(word)) {
-      globalSelectedWords.push(word);
-    }
+  // NOUVEAU : Fusion globale de TOUTES les pages
+  const allGlobalWords = [];
+  Object.keys(PAGES).forEach(page => {
+    const words = loadFromLocalStorage(`selectedWords_${page}`) || [];
+    words.forEach(word => {
+      if (!allGlobalWords.includes(word)) {
+        allGlobalWords.push(word);
+      }
+    });
   });
 
-  // SAUVEGARDE
-  localStorage.setItem('selectedWords', JSON.stringify(globalSelectedWords));
-  localStorage.setItem(`selectedWords_${pageName}`, JSON.stringify(selectedWordsOnPage));
+  // SAUVEGARDE GLOBALE
+  localStorage.setItem('selectedWords', JSON.stringify(allGlobalWords));
 
   console.log(`Mots mis à jour [${pageName}]:`, selectedWordsOnPage);
+  console.log('Global fusionné:', allGlobalWords);
 
   // NOTIFIER index.html
   localStorage.setItem('forceGlobalUpdate', Date.now().toString());
@@ -2202,6 +2198,8 @@ function setupMiniPlayer() {
         if (savedAudioData && savedAudioData.blob) {
             try {
                 audio = new Audio();
+                audio.preservesPitch = false; // Optionnel, mais utile
+audio.autoplay = true;        // FORCE LA REPRISE
                 audio.src = URL.createObjectURL(savedAudioData.blob);
                 console.log('URL audio créée:', audio.src);
 

@@ -13,7 +13,8 @@ const PAGES = {
   page11: "Genre",
   page12: "Dynamique",
   page13: "Langues",
-  page14: "Adjectifs"
+  page14: "Adjectifs",
+  'langues-classification': "Classification"
 };
 
 // ==================== FONCTIONS UTILITAIRES ====================

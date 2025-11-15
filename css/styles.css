@@ -460,3 +460,38 @@ header p {
         margin-top: 1rem !important;
     }
 }
+
+/* Style spécifique pour le bouton classification des langues */
+.btn-outline-info {
+    border: 3px solid #0dcaf0 !important;
+    color: #0dcaf0 !important;
+    font-weight: 700 !important;
+    font-size: 1.2rem !important;
+    padding: 15px 25px !important;
+    background-color: rgba(13, 202, 240, 0.1) !important;
+    border-radius: 10px !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease !important;
+}
+
+.btn-outline-info:hover {
+    background-color: #0dcaf0 !important;
+    color: white !important;
+    transform: translateY(-4px) !important;
+    box-shadow: 0 8px 20px rgba(13, 202, 240, 0.5) !important;
+    border-color: #0dcaf0 !important;
+}
+
+/* Pour l'icône */
+.btn-outline-info .bi {
+    font-size: 1.3rem !important;
+}
+
+/* Version mobile */
+@media (max-width: 768px) {
+    .btn-outline-info {
+        font-size: 1.1rem !important;
+        padding: 12px 20px !important;
+    }
+}

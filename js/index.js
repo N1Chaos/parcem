@@ -288,6 +288,7 @@ async function setupAudioPlayer() {
 
   // Vérification du nombre de canaux après chargement
   let isMono = false;
+  let currentAudioURL = null;
   async function checkChannels() {
     try {
       if (!player.src) {
@@ -818,49 +819,47 @@ async function setupAudioPlayer() {
     localStorage.setItem('audioState', JSON.stringify(state));
   });
 
-  fileInput.addEventListener('change', async (e) => {
-    const file = e.target.files[0];
-    if (!file) {
-      console.log('Aucun fichier sélectionné');
-      fileNameDisplay.textContent = 'Aucun fichier chargé';
-      return;
+ fileInput.addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) {
+    console.log('Aucun fichier sélectionné');
+    fileNameDisplay.textContent = 'Aucun fichier chargé';
+    return;
+  }
+
+  console.log('Importation d\'un nouveau fichier:', file.name, 'Taille (octets):', file.size);
+  fileNameDisplay.textContent = `Fichier chargé : ${file.name}`;
+  localStorage.setItem('audioFileName', file.name);
+
+  // ARRÊTE L'ANCIEN SON (ÉVITE LA SUPERPOSITION)
+  player.pause();
+  player.currentTime = 0;
+  player.src = '';
+  if (currentAudioURL) {
+    URL.revokeObjectURL(currentAudioURL);
+    currentAudioURL = null;
+  }
+
+  await new Promise(r => setTimeout(r, 50));
+
+  // CHARGE DIRECTEMENT AVEC BLOB URL (PLUS RAPIDE, PLUS SÛR)
+  currentAudioURL = URL.createObjectURL(file);
+  player.src = currentAudioURL;
+  player.load();
+
+  // SAUVEGARDE DANS INDEXEDDB
+  await saveAudioToDB(file, 0, file.name);
+  await updateAudioState(); // ou saveAudioStateToDB({ time: 0, isPlaying: false })
+
+  player.addEventListener('canplaythrough', () => {
+    if (!animationId) {
+      animate();
+      console.log('Animation démarrée après chargement');
     }
+  }, { once: true });
 
-    console.log('Importation d\'un nouveau fichier:', file.name, 'Taille (octets):', file.size);
-    fileNameDisplay.textContent = `Fichier chargé : ${file.name}`;
-    localStorage.setItem('audioFileName', file.name);
-
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      try {
-        const audioData = e.target.result;
-        player.src = audioData;
-        player.load();
-        await saveAudioToDB(file, 0, file.name);
-        console.log('Nouveau fichier audio sauvegardé dans IndexedDB');
-        player.addEventListener('canplaythrough', async () => {
-          player.currentTime = 0;
-          updateAudioState();
-          await checkChannels();
-          if (!animationId) {
-            animate();
-            console.log('Animation démarrée après chargement de nouveau fichier');
-          }
-        }, { once: true });
-      } catch (error) {
-        console.error('Erreur lors du chargement du nouveau fichier:', error);
-        alert('Erreur lors du chargement du fichier audio.');
-        fileNameDisplay.textContent = 'Erreur lors du chargement';
-      }
-    };
-    reader.onerror = (e) => {
-      console.error('Erreur de lecture du fichier:', e);
-      alert('Impossible de lire le fichier audio.');
-      fileNameDisplay.textContent = 'Erreur lors du chargement';
-    };
-    reader.readAsDataURL(file);
-  });
-}
+  await checkChannels();
+});
 
 // ==================== ENREGISTREMENT AUDIO ====================
 async function setupAudioRecorder() {

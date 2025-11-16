@@ -288,7 +288,6 @@ async function setupAudioPlayer() {
 
   // Vérification du nombre de canaux après chargement
   let isMono = false;
-  let currentAudioURL = null;
   async function checkChannels() {
     try {
       if (!player.src) {
@@ -819,47 +818,49 @@ async function setupAudioPlayer() {
     localStorage.setItem('audioState', JSON.stringify(state));
   });
 
- fileInput.addEventListener('change', async (e) => {
-  const file = e.target.files[0];
-  if (!file) {
-    console.log('Aucun fichier sélectionné');
-    fileNameDisplay.textContent = 'Aucun fichier chargé';
-    return;
-  }
-
-  console.log('Importation d\'un nouveau fichier:', file.name, 'Taille (octets):', file.size);
-  fileNameDisplay.textContent = `Fichier chargé : ${file.name}`;
-  localStorage.setItem('audioFileName', file.name);
-
-  // ARRÊTE L'ANCIEN SON (ÉVITE LA SUPERPOSITION)
-  player.pause();
-  player.currentTime = 0;
-  player.src = '';
-  if (currentAudioURL) {
-    URL.revokeObjectURL(currentAudioURL);
-    currentAudioURL = null;
-  }
-
-  await new Promise(r => setTimeout(r, 50));
-
-  // CHARGE DIRECTEMENT AVEC BLOB URL (PLUS RAPIDE, PLUS SÛR)
-  currentAudioURL = URL.createObjectURL(file);
-  player.src = currentAudioURL;
-  player.load();
-
-  // SAUVEGARDE DANS INDEXEDDB
-  await saveAudioToDB(file, 0, file.name);
-  await updateAudioState(); // ou saveAudioStateToDB({ time: 0, isPlaying: false })
-
-  player.addEventListener('canplaythrough', () => {
-    if (!animationId) {
-      animate();
-      console.log('Animation démarrée après chargement');
+  fileInput.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) {
+      console.log('Aucun fichier sélectionné');
+      fileNameDisplay.textContent = 'Aucun fichier chargé';
+      return;
     }
-  }, { once: true });
 
-  await checkChannels();
-});
+    console.log('Importation d\'un nouveau fichier:', file.name, 'Taille (octets):', file.size);
+    fileNameDisplay.textContent = `Fichier chargé : ${file.name}`;
+    localStorage.setItem('audioFileName', file.name);
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      try {
+        const audioData = e.target.result;
+        player.src = audioData;
+        player.load();
+        await saveAudioToDB(file, 0, file.name);
+        console.log('Nouveau fichier audio sauvegardé dans IndexedDB');
+        player.addEventListener('canplaythrough', async () => {
+          player.currentTime = 0;
+          updateAudioState();
+          await checkChannels();
+          if (!animationId) {
+            animate();
+            console.log('Animation démarrée après chargement de nouveau fichier');
+          }
+        }, { once: true });
+      } catch (error) {
+        console.error('Erreur lors du chargement du nouveau fichier:', error);
+        alert('Erreur lors du chargement du fichier audio.');
+        fileNameDisplay.textContent = 'Erreur lors du chargement';
+      }
+    };
+    reader.onerror = (e) => {
+      console.error('Erreur de lecture du fichier:', e);
+      alert('Impossible de lire le fichier audio.');
+      fileNameDisplay.textContent = 'Erreur lors du chargement';
+    };
+    reader.readAsDataURL(file);
+  });
+}
 
 // ==================== ENREGISTREMENT AUDIO ====================
 async function setupAudioRecorder() {
@@ -967,19 +968,69 @@ if (commentText) {
   }
 
   setupAudioRecorder();
-document.getElementById('downloadButton').onclick = async () => {
-  if (!window.audioBlob) return alert('Aucun enregistrement disponible');
 
-  const fileName = document.getElementById('fileName').value || 'enregistrement';
-  
-  // Téléchargement direct en WAV - 100% fiable
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(window.audioBlob);
-  link.download = `${fileName}.wav`;
-  link.click();
-  
-  console.log('Fichier WAV téléchargé:', `${fileName}.wav`);
-};
+  document.getElementById('downloadButton').onclick = async () => {
+    if (!window.audioBlob) return alert('Aucun enregistrement disponible');
+
+    const fileName = document.getElementById('fileName').value || 'enregistrement';
+    
+    // Convertir WAV en MP3
+    try {
+      const arrayBuffer = await window.audioBlob.arrayBuffer();
+      const audioContext = new AudioContext();
+      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+      // Extraire les données audio (mono ou stéréo)
+      const channels = audioBuffer.numberOfChannels;
+      const sampleRate = audioBuffer.sampleRate;
+      const length = audioBuffer.length;
+      const channelData = [];
+      for (let i = 0; i < channels; i++) {
+        channelData.push(audioBuffer.getChannelData(i));
+      }
+
+      // Initialiser Lamejs
+      const mp3Encoder = new lamejs.Mp3Encoder(channels, sampleRate, 128); // 128 kbps
+      const mp3Data = [];
+      const sampleBlockSize = 1152; // Taille des blocs pour Lamejs
+
+      for (let i = 0; i < length; i += sampleBlockSize) {
+        const left = channelData[0].slice(i, i + sampleBlockSize);
+        const right = channels > 1 ? channelData[1].slice(i, i + sampleBlockSize) : left;
+
+        // Convertir les échantillons en entiers 16 bits
+        const leftInt = Int16Array.from(left, x => x * 32767);
+        const rightInt = Int16Array.from(right, x => x * 32767);
+
+        // Encoder en MP3
+        const mp3buf = mp3Encoder.encodeBuffer(leftInt, rightInt);
+        if (mp3buf.length > 0) {
+          mp3Data.push(mp3buf);
+        }
+      }
+
+      // Finaliser l'encodage
+      const mp3buf = mp3Encoder.flush();
+      if (mp3buf.length > 0) {
+        mp3Data.push(mp3buf);
+      }
+
+      // Créer le Blob MP3
+      const mp3Blob = new Blob(mp3Data, { type: 'audio/mp3' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(mp3Blob);
+      link.download = `${fileName}.mp3`;
+      link.click();
+      console.log('Fichier MP3 téléchargé:', `${fileName}.mp3`);
+    } catch (error) {
+      console.error('Erreur lors de la conversion en MP3:', error);
+      alert('Erreur lors de la conversion en MP3. Téléchargement en WAV à la place.');
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(window.audioBlob);
+      link.download = `${fileName}.wav`;
+      link.click();
+    }
+  };
 });
 
 // ==================== GÉNÉRATION FICHIER TEXTE ====================

@@ -11,6 +11,7 @@ function getPageName() {
   return window.location.pathname.split('/').pop().replace('.html', '');
 }
 
+
 // PAGES doit être défini pour les pages annexes aussi
 const PAGES = window.PAGES || {
   page1: "Styles", page2: "Effectif", page3: "Instruments", 

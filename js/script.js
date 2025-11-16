@@ -1,4 +1,24 @@
+// === FONCTIONS MANQUANTES POUR PAGES ANNEXES ===
+function saveToLocalStorage(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
 
+function loadFromLocalStorage(key) {
+  return JSON.parse(localStorage.getItem(key)) || [];
+}
+
+function getPageName() {
+  return window.location.pathname.split('/').pop().replace('.html', '');
+}
+
+// PAGES doit être défini pour les pages annexes aussi
+const PAGES = window.PAGES || {
+  page1: "Styles", page2: "Effectif", page3: "Instruments", 
+  page4: "Voix", page5: "Timbre", page6: "Forme", page7: "Harmonie", 
+  page8: "Procédé", page9: "Tempo", page10: "Rythme", page11: "Genre", 
+  page12: "Dynamique", page13: "Langues", page14: "Adjectifs",
+  'langues-classification': "Classification"
+};
 
 // Fonction pour gérer la sélection des mots
 const words = document.querySelectorAll('.selectable');

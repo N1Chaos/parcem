@@ -1,3 +1,4 @@
+let frameCount = 0;
 let analyserLeftGlobal;
 let dataArrayLeftGlobal;
 
@@ -645,7 +646,7 @@ async function setupAudioPlayer() {
   try {
     drawSpectrum();
     // nouveau : dessiner le spectrogramme ici, avec accès aux variables locales
-    drawSpectrogram();
+    if (frameCount++ % 2 === 0) drawSpectrogram();
     if (visualizations.classList.contains('active')) {
       drawVUMeters();
       drawWaveform();

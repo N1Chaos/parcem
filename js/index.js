@@ -270,6 +270,13 @@ async function setupAudioPlayer() {
   highFilter.type = 'highshelf';
   highFilter.frequency.value = 4000;
 
+    // === LARGEUR STÉRÉO (Mid-Side) – VERSION ULTRA SÛRE ===
+  const merger = audioContext.createChannelMerger(2);
+  const midGain = audioContext.createGain();
+  const sideGain = audioContext.createGain();
+  midGain.gain.value = 1;
+  sideGain.gain.value = 1; // on contrôle ça avec le curseur après
+
   // Chaîne audio principale avec analyseurs après les effets
   const splitter = audioContext.createChannelSplitter(2);
   source.connect(pannerNode);
@@ -277,10 +284,26 @@ async function setupAudioPlayer() {
   lowFilter.connect(midFilter);
   midFilter.connect(highFilter);
   highFilter.connect(gainNode);
+    // On garde le son normal
   gainNode.connect(splitter);
+  gainNode.connect(audioContext.destination);     // son garanti
+
+  // On ajoute le traitement Mid-Side en parallèle
+  splitter.connect(midGain, 0);
+  splitter.connect(midGain, 1);
+  splitter.connect(sideGain, 0);
+  splitter.connect(sideGain, 1);
+
+  midGain.connect(merger, 0, 0);
+  midGain.connect(merger, 0, 1);
+  sideGain.connect(merger, 0, 0);
+  sideGain.connect(merger, 0, 1);
+  sideGain.gain.value = -1; // inversion côté droit pour le Side
+
+  merger.connect(audioContext.destination);
+
   splitter.connect(analyserLeft, 0);
   splitter.connect(analyserRight, 1);
-  gainNode.connect(audioContext.destination);
 
   // Activer le curseur de balance par défaut
   balanceControl.disabled = false;
@@ -644,6 +667,38 @@ async function setupAudioPlayer() {
     console.log('Balance stéréo ajustée:', pannerNode.pan.value);
     updateAudioState();
   });
+
+  // === LARGEUR STÉRÉO L12/R04 ===
+  const widthControl = document.getElementById('widthControl');
+  const widthLabel = document.getElementById('widthLabel');
+
+  if (widthControl && widthLabel) {
+    const updateWidth = () => {
+      const val = parseFloat(widthControl.value);
+      const level = val / 100;
+
+      // Courbe ultra douce et naturelle
+      const side = level < 0.42 
+        ? level * 2.4 
+        : (level - 0.42) * 3.6 + 1;
+
+      sideGain.gain.value = side;
+
+      let text = "Mono";
+      if (val <= 30) text = "Étroite";
+      else if (val <= 50) text = "Normal";
+      else if (val <= 75) text = "Large";
+      else if (val <= 90) text = "L12/R04";
+      else text = "Ultra-large";
+
+      if (val >= 83 && val <= 87) text = "L12/R04 – Orchestre";
+
+      widthLabel.textContent = `${text} (${val} %)`;
+    };
+
+    widthControl.addEventListener('input', updateWidth);
+    updateWidth();
+  }
 
   // Contrôle de la vitesse de lecture
   playbackSpeed.addEventListener('change', () => {

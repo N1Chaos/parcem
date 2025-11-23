@@ -697,13 +697,26 @@ async function setupAudioPlayer() {
       sideGain.gain.setValueAtTime(Math.min(sideLevel, 1.2), audioContext.currentTime);
 
       let text = "Mono";
-      if (val > 5 && val <=35) text = "Étroite";
-      else if (val <=55) text = "Normal";
-      else if (val <=75) text = "Large";
-      else if (val <=92) text = "L12/R04";
-      else text = "Ultra-large";
 
-      if (val >=83 && val <=88) text = "L12/R04 – Orchestre";
+if (val <= 10) {
+  text = "Mono";
+} else if (val <= 40) {
+  text = "Étroite";
+} else if (val <= 60) {
+  text = "Normale";
+} else if (val <= 80) {
+  text = "Large";
+} else if (val <= 92) {
+  text = "L12/R04";
+} else {
+  text = "Ultra-large";
+}
+
+// Ajustement spécial
+if (val >= 83 && val <= 88) {
+  text = "L12/R04 – Orchestre";
+}
+
 
       widthLabel.textContent = `${text} (${val} %)`;
     };

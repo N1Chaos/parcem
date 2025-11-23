@@ -668,38 +668,40 @@ async function setupAudioPlayer() {
     updateAudioState();
   });
 
-  // === LARGEUR STÉRÉO L12/R04 ===
+    // === LARGEUR STÉRÉO L12/R04 – VERSION FINALE PROPRE & IMMERSIVE CASQUE ===
   const widthControl = document.getElementById('widthControl');
-  const widthLabel = document.getElementById('widthLabel');
+  const widthLabel   = document.getElementById('widthLabel');
 
   if (widthControl && widthLabel) {
     const updateWidth = () => {
       const val = parseFloat(widthControl.value);
       const level = val / 100;
 
-      // Courbe ultra douce et naturelle
-      const side = level < 0.42 
-        ? level * 2.4 
-        : (level - 0.42) * 3.6 + 1;
+      let sideLevel;
+      if (level <= 0.42) {
+        sideLevel = level * 1.9;                    // montée très douce
+      } else {
+        sideLevel = 0.8 + (level - 0.42) * 2.4;     // boost progressif mais contrôlé
+      }
 
-      sideGain.gain.value = side;
+      sideGain.gain.setValueAtTime(Math.min(sideLevel, 1.2), audioContext.currentTime);
 
       let text = "Mono";
-      if (val <= 30) text = "Étroite";
-      else if (val <= 50) text = "Normal";
-      else if (val <= 75) text = "Large";
-      else if (val <= 90) text = "L12/R04";
+      if (val > 5 && val <=35) text = "Étroite";
+      else if (val <=55) text = "Normal";
+      else if (val <=75) text = "Large";
+      else if (val <=92) text = "L12/R04";
       else text = "Ultra-large";
 
-      if (val >= 83 && val <= 87) text = "L12/R04 – Orchestre";
+      if (val >=83 && val <=88) text = "L12/R04 – Orchestre";
 
       widthLabel.textContent = `${text} (${val} %)`;
     };
 
     widthControl.addEventListener('input', updateWidth);
-    updateWidth();
+    updateWidth(); // valeur initiale
   }
-
+  
   // Contrôle de la vitesse de lecture
   playbackSpeed.addEventListener('change', () => {
     player.playbackRate = parseFloat(playbackSpeed.value);

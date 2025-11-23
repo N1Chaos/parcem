@@ -287,7 +287,6 @@ async function setupAudioPlayer() {
     // On garde le son normal
   gainNode.connect(splitter);
   gainNode.connect(audioContext.destination);     // son garanti
-  initSpectrogram(audioContext, source, splitter);
 
   // On ajoute le traitement Mid-Side en parallèle
   splitter.connect(midGain, 0);
@@ -305,70 +304,6 @@ async function setupAudioPlayer() {
 
   splitter.connect(analyserLeft, 0);
   splitter.connect(analyserRight, 1);
-
-    // ==================== SPECTROGRAMME – VERSION QUI MARCHE À 100% ====================
-  const spectrogramCanvas = document.getElementById('spectrogramCanvas');
-  const spectrogramCtx = spectrogramCanvas.getContext('2d');
-  const spectrogramAnalyser = audioContext.createAnalyser();
-  spectrogramAnalyser.fftSize = 4096;
-  spectrogramAnalyser.smoothingTimeConstant = 0;
-
-  // On branche le spectrogramme sur le splitter (canal gauche suffit)
-  splitter.connect(spectrogramAnalyser, 0);
-
-  const bufferLength = spectrogramAnalyser.frequencyBinCount;
-  const dataArray = new Uint8Array(bufferLength);
-  let history = [];
-
-  // Initialisation du canvas
-  spectrogramCanvas.width = spectrogramCanvas.offsetWidth;
-  spectrogramCanvas.height = spectrogramCanvas.offsetHeight || 250;
-
-  // Fonction de dessin du spectrogramme
-  function drawSpectrogram() {
-    if (!spectrogramAnalyser || !dataArray) return;
-
-    spectrogramAnalyser.getByteFrequencyData(dataArray);
-
-    // Ajouter la nouvelle colonne
-    history.push(new Uint8Array(dataArray));
-    if (history.length > 600) history.shift();
-
-    // Fond noir
-    spectrogramCtx.fillStyle = 'rgb(0,0,0)';
-    spectrogramCtx.fillRect(0, 0, spectrogramCanvas.width, spectrogramCanvas.height);
-
-    const barWidth = spectrogramCanvas.width / 600;
-
-    for (let x = 0; x < history.length; x++) {
-      const column = history[x];
-      for (let i = 0; i < column.length; i += 8) {  // on saute des lignes pour la fluidité
-        const v = column[i] / 255;
-        const y = spectrogramCanvas.height - (i / column.length) * spectrogramCanvas.height;
-        const hue = 240 - v * 240;  // bleu → rouge
-        spectrogramCtx.fillStyle = `hsl(${hue}, 100%, ${30 + v * 60}%)`;
-        spectrogramCtx.fillRect(x * barWidth, y, barWidth + 1, 3);
-      }
-    }
-  }
-
-  // On l'ajoute à la boucle d'animation existante
-  const oldAnimate = animate;
-  animate = function() {
-    try {
-      drawSpectrum();
-      drawSpectrogram();  // ← le spectrogramme s'affiche maintenant
-      if (visualizations.classList.contains('active')) {
-        drawVUMeters();
-        drawWaveform();
-      }
-      animationId = requestAnimationFrame(animate);
-    } catch (e) {
-      console.error(e);
-      if (animationId) cancelAnimationFrame(animationId);
-    }
-  };
-  // =============================================================================
 
   // Activer le curseur de balance par défaut
   balanceControl.disabled = false;
@@ -701,7 +636,6 @@ async function setupAudioPlayer() {
     try {
       // Toujours dessiner le spectre
       drawSpectrum();
-          drawSpectrogram();
       // Dessiner les VU-mètres et formes d'onde uniquement si visualisations visibles
       if (visualizations.classList.contains('active')) {
         drawVUMeters();
@@ -958,7 +892,6 @@ async function setupAudioPlayer() {
       try {
         const audioData = e.target.result;
         player.src = audioData;
-        initSpectrogram();
 
         eqLow.value = -6;           // le curseur "Basses" démarre à -6
         lowFilter.gain.value = -6;  // applique immédiatement -6 dB sur les basses
@@ -1817,4 +1750,3 @@ function updateProgressBar() {
 
 // AJOUTER CET ÉVÉNEMENT
 player.addEventListener('timeupdate', updateProgressBar);
-

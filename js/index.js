@@ -769,7 +769,7 @@ async function setupAudioPlayer() {
       const savedTime = savedAudioState?.time || parseFloat(savedAudioData.time || 0);
       const isPlaying = savedAudioState?.isPlaying || false;
       const savedPlaybackRate = savedAudioState?.playbackRate || 1;
-      const savedVolume = savedAudioState?.volume ?? 0.5;
+      const savedVolume = savedAudioState?.volume ?? 0.4;
       const savedBalance = savedAudioState?.balance || 0;
       const savedEqLow = savedAudioState?.eqLow || 0;
       const savedEqMid = savedAudioState?.eqMid || 0;
@@ -892,6 +892,10 @@ async function setupAudioPlayer() {
       try {
         const audioData = e.target.result;
         player.src = audioData;
+
+        eqLow.value = -6;           // le curseur "Basses" démarre à -6
+        lowFilter.gain.value = -6;  // applique immédiatement -6 dB sur les basses
+
         player.load();
         await saveAudioToDB(file, 0, file.name);
         console.log('Nouveau fichier audio sauvegardé dans IndexedDB');

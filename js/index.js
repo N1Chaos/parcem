@@ -1797,18 +1797,21 @@ function drawSpectrogram() {
 
   const barW = spectroCanvas.width / 1000;
 
-  for (let x = 0; x < history.length; x++) {
-    const col = history[x];
-    for (let i = 0; i < col.length; i += 4) {
-      const v = col[i] / 255;
-      if (v > 0.03) {
-        const y = spectroCanvas.height - (i / col.length) * spectroCanvas.height;
-        const hue = 240 - v * 240;
-        spectroCtx.fillStyle = `hsl(${hue}, 100%, ${50 + v * 40}%)`;
-        spectroCtx.fillRect(x * barW, y, barW + 1, 3);
-      }
+for (let x = 0; x < history.length; x++) {
+  const col = history[x];
+  for (let i = 0; i < col.length; i += 6) {   // ← (1) était 4 → maintenant 6 pour réduire le lag
+    const v = col[i] / 255;
+    if (v > 0.03) {
+
+      const y = spectroCanvas.height * 0.98 - (i / col.length) * spectroCanvas.height * 0.98;
+      // ↑ (2) correction bande noire → on utilise 98% de la hauteur
+
+      const hue = 240 - v * 240;
+      spectroCtx.fillStyle = `hsl(${hue}, 100%, ${50 + v * 40}%)`;
+      spectroCtx.fillRect(x * barW, y, barW + 1, 3);
     }
   }
+}
 }
 
 

@@ -269,6 +269,13 @@ async function setupAudioPlayer() {
   const highFilter = audioContext.createBiquadFilter();
   highFilter.type = 'highshelf';
   highFilter.frequency.value = 4000;
+    // === LARGEUR STÉRÉO (Mid-Side) ===
+  const splitter = audioContext.createChannelSplitter(2);
+  const merger = audioContext.createChannelMerger(2);
+  const midGain = audioContext.createGain();
+  const sideGain = audioContext.createGain();
+  const sideInverter = audioContext.createGain();
+  sideInverter.gain.value = -1;
 
   // Chaîne audio principale avec analyseurs après les effets
   const splitter = audioContext.createChannelSplitter(2);
@@ -277,10 +284,29 @@ async function setupAudioPlayer() {
   lowFilter.connect(midFilter);
   midFilter.connect(highFilter);
   highFilter.connect(gainNode);
-  gainNode.connect(splitter);
+   gainNode.connect(splitter);
+
+  // Mid = L + R
+  splitter.connect(midGain, 0);
+  splitter.connect(midGain, 1);
+
+  // Side = L - R
+  splitter.connect(sideGain, 0);
+  splitter.connect(sideGain, 1);
+  sideGain.connect(sideInverter);
+
+  // Recomposition stéréo
+  midGain.connect(merger, 0, 0);
+  midGain.connect(merger, 0, 1);
+  sideInverter.connect(merger, 0, 0);  // -Side → gauche
+  sideGain.connect(merger, 0, 1);     // +Side → droite
+
+  // Analyseurs (on garde le signal original avant Mid-Side)
   splitter.connect(analyserLeft, 0);
   splitter.connect(analyserRight, 1);
-  gainNode.connect(audioContext.destination);
+
+  // Sortie finale
+  merger.connect(audioContext.destination);
 
   // Activer le curseur de balance par défaut
   balanceControl.disabled = false;
@@ -644,6 +670,37 @@ async function setupAudioPlayer() {
     console.log('Balance stéréo ajustée:', pannerNode.pan.value);
     updateAudioState();
   });
+    // === CONTRÔLE LARGEUR STÉRÉO (L12/R04 inside) ===
+  const widthControl = document.getElementById('widthControl');
+  const widthLabel = document.getElementById('widthLabel');
+
+  if (widthControl && widthLabel) {
+    const updateWidth = () => {
+      const val = parseFloat(widthControl.value);
+      const normalized = val / 100;
+
+      // Courbe naturelle + boost doux autour de L12/R04
+      const sideLevel = normalized < 0.42 
+        ? normalized * 2.4 
+        : (normalized - 0.42) * 3.6 + 1;
+
+      midGain.gain.value = 1;
+      sideGain.gain.value = sideLevel;
+
+      let text = val === 0 ? "Mono" :
+                 val <= 30 ? "Étroite" :
+                 val <= 50 ? "Normal" :
+                 val <= 75 ? "Large" :
+                 val <= 90 ? "L12/R04" : "Ultra-large";
+      if (val >= 83 && val <= 87) text = "L12/R04 – Orchestre";
+
+      widthLabel.textContent = `${text} (${val} %)`;
+      updateAudioState();
+    };
+
+    widthControl.addEventListener('input', updateWidth);
+    updateWidth(); // valeur initiale
+  }
 
   // Contrôle de la vitesse de lecture
   playbackSpeed.addEventListener('change', () => {

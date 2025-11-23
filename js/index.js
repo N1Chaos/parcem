@@ -701,7 +701,7 @@ async function setupAudioPlayer() {
     widthControl.addEventListener('input', updateWidth);
     updateWidth(); // valeur initiale
   }
-  
+
   // Contrôle de la vitesse de lecture
   playbackSpeed.addEventListener('change', () => {
     player.playbackRate = parseFloat(playbackSpeed.value);
@@ -769,7 +769,7 @@ async function setupAudioPlayer() {
       const savedTime = savedAudioState?.time || parseFloat(savedAudioData.time || 0);
       const isPlaying = savedAudioState?.isPlaying || false;
       const savedPlaybackRate = savedAudioState?.playbackRate || 1;
-      const savedVolume = savedAudioState?.volume || 1;
+      const savedVolume = savedAudioState?.volume || 0.5;
       const savedBalance = savedAudioState?.balance || 0;
       const savedEqLow = savedAudioState?.eqLow || 0;
       const savedEqMid = savedAudioState?.eqMid || 0;

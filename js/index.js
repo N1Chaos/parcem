@@ -260,8 +260,7 @@ async function setupAudioPlayer() {
   }
   const analyserLeft = audioContext.createAnalyser();
   const analyserRight = audioContext.createAnalyser();
-  analyserLeftGlobal = analyserLeft;
-  dataArrayLeftGlobal = dataArrayLeft;
+  
   analyserLeft.fftSize = 2048;
   analyserRight.fftSize = 2048;
   const gainNode = audioContext.createGain();
@@ -403,6 +402,10 @@ async function setupAudioPlayer() {
   const bufferLength = analyserLeft.frequencyBinCount;
   const dataArrayLeft = new Uint8Array(bufferLength);
   const dataArrayRight = new Uint8Array(bufferLength);
+  analyserLeftGlobal = analyserLeft;
+  dataArrayLeftGlobal = dataArrayLeft;
+  resizeSpectrogramCanvas();
+
 
   // Calcul du RMS pour les VU-mètres
   function calculateRMS(analyser, dataArray) {
@@ -639,24 +642,24 @@ async function setupAudioPlayer() {
   // Gestion de l'animation avec annulation
   let animationId = null;
   function animate() {
-    try {
-      // Toujours dessiner le spectre
-      drawSpectrum();
-      // Dessiner les VU-mètres et formes d'onde uniquement si visualisations visibles
-      if (visualizations.classList.contains('active')) {
-        drawVUMeters();
-        drawWaveform();
-      }
-      animationId = requestAnimationFrame(animate);
-    } catch (error) {
-      console.error('Erreur dans la boucle d\'animation:', error);
-      // Arrêter l'animation en cas d'erreur pour éviter une boucle infinie
-      if (animationId) {
-        cancelAnimationFrame(animationId);
-        animationId = null;
-      }
+  try {
+    drawSpectrum();
+    // nouveau : dessiner le spectrogramme ici, avec accès aux variables locales
+    drawSpectrogram();
+    if (visualizations.classList.contains('active')) {
+      drawVUMeters();
+      drawWaveform();
+    }
+    animationId = requestAnimationFrame(animate);
+  } catch (error) {
+    console.error('Erreur dans la boucle d\'animation:', error);
+    if (animationId) {
+      cancelAnimationFrame(animationId);
+      animationId = null;
     }
   }
+}
+
 
   // Arrêter l'animation lorsque la page est déchargée
   window.addEventListener('beforeunload', () => {
@@ -1799,23 +1802,7 @@ function drawSpectrogram() {
 window.addEventListener('load', resizeSpectrogramCanvas);
 window.addEventListener('resize', resizeSpectrogramCanvas);
 
-// On remplace la boucle d'animation
-const oldAnimate = animate;
-resizeSpectrogramCanvas();
 
-animate = function () {
-  try {
-    drawSpectrum();
-    drawSpectrogram();  // LE SPECTROGRAMME EST DESSINÉ ICI
-    if (visualizations.classList.contains('active')) {
-      drawVUMeters();
-      drawWaveform();
-    }
-    animationId = requestAnimationFrame(animate);
-  } catch (e) {
-    console.error(e);
-  }
-};
 
 // AJOUTER CET ÉVÉNEMENT
 player.addEventListener('timeupdate', updateProgressBar);

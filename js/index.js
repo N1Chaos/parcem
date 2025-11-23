@@ -683,6 +683,7 @@ async function setupAudioPlayer() {
                  val <= 75 ? "Large" :
                  val <= 90 ? "L12/R04" : "Ultra-large";
       if (val >= 83 && val <= 87) text = "L12/R04 – Orchestre";
+else if (val > 87) text = "Ultra-large";
 
       widthLabel.textContent = `${text} (${val} %)`;
       updateAudioState();

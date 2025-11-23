@@ -1,3 +1,7 @@
+let analyserLeftGlobal;
+let dataArrayLeftGlobal;
+
+
 // ==================== CONSTANTES ====================
 const PAGES = {
   page1: "Styles",
@@ -256,6 +260,8 @@ async function setupAudioPlayer() {
   }
   const analyserLeft = audioContext.createAnalyser();
   const analyserRight = audioContext.createAnalyser();
+  analyserLeftGlobal = analyserLeft;
+  dataArrayLeftGlobal = dataArrayLeft;
   analyserLeft.fftSize = 2048;
   analyserRight.fftSize = 2048;
   const gainNode = audioContext.createGain();
@@ -1762,11 +1768,11 @@ function resizeSpectrogramCanvas() {
 }
 
 function drawSpectrogram() {
-  if (!spectroCtx || !analyserLeft || !dataArrayLeft) return;
+  if (!spectroCtx || !analyserLeftGlobal || !dataArrayLeftGlobal) return;
 
-  analyserLeft.getByteFrequencyData(dataArrayLeft);
+  analyserLeftGlobal.getByteFrequencyData(dataArrayLeftGlobal);
 
-  history.push(new Uint8Array(dataArrayLeft));
+  history.push(new Uint8Array(dataArrayLeftGlobal));
   if (history.length > 1000) history.shift();
 
   spectroCtx.fillStyle = 'black';
@@ -1787,6 +1793,7 @@ function drawSpectrogram() {
     }
   }
 }
+
 
 // On redimensionne au chargement + au resize
 window.addEventListener('load', resizeSpectrogramCanvas);

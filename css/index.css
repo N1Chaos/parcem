@@ -785,3 +785,9 @@ textarea {
 #globalSelectedWords .badge {
   font-size: 0.85rem;
 }
+
+#spectrogramCanvas {
+  height: 250px !important;
+  display: block !important;
+  background: black !important;
+}

@@ -278,7 +278,6 @@ async function setupAudioPlayer() {
   sideInverter.gain.value = -1;
 
   // Chaîne audio principale avec analyseurs après les effets
-  const splitter = audioContext.createChannelSplitter(2);
   source.connect(pannerNode);
   pannerNode.connect(lowFilter);
   lowFilter.connect(midFilter);

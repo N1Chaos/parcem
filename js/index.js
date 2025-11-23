@@ -244,7 +244,7 @@ async function setupAudioPlayer() {
     return;
   }
 
-    // Initialisation de Web Audio API
+  // Initialisation de Web Audio API
   const audioContext = new AudioContext();
   let source;
   try {
@@ -254,51 +254,37 @@ async function setupAudioPlayer() {
     fileNameDisplay.textContent = 'Erreur: Veuillez réimporter le fichier';
     return;
   }
-
   const analyserLeft = audioContext.createAnalyser();
   const analyserRight = audioContext.createAnalyser();
-  analyserLeft.fftSize = analyserRight.fftSize = 2048;
-
+  analyserLeft.fftSize = 2048;
+  analyserRight.fftSize = 2048;
   const gainNode = audioContext.createGain();
   const pannerNode = audioContext.createStereoPanner();
-  const lowFilter = audioContext.createBiquadFilter(); lowFilter.type='lowshelf'; lowFilter.frequency.value=200;
-  const midFilter = audioContext.createBiquadFilter(); midFilter.type='peaking'; midFilter.frequency.value=1000;
-  const highFilter = audioContext.createBiquadFilter(); highFilter.type='highshelf'; highFilter.frequency.value=4000;
+  const lowFilter = audioContext.createBiquadFilter();
+  lowFilter.type = 'lowshelf';
+  lowFilter.frequency.value = 200;
+  const midFilter = audioContext.createBiquadFilter();
+  midFilter.type = 'peaking';
+  midFilter.frequency.value = 1000;
+  const highFilter = audioContext.createBiquadFilter();
+  highFilter.type = 'highshelf';
+  highFilter.frequency.value = 4000;
 
-  // LARGEUR STÉRÉO (Mid-Side) – VERSION 100 % STABLE
+  // Chaîne audio principale avec analyseurs après les effets
   const splitter = audioContext.createChannelSplitter(2);
-  const merger   = audioContext.createChannelMerger(2);
-  const midGain  = audioContext.createGain();
-  const sideGain = audioContext.createGain();
-
-  // Chaîne principale (le son passe TOUJOURS)
   source.connect(pannerNode);
   pannerNode.connect(lowFilter);
   lowFilter.connect(midFilter);
   midFilter.connect(highFilter);
   highFilter.connect(gainNode);
-
   gainNode.connect(splitter);
-  gainNode.connect(audioContext.destination);     // LIGNE MAGIQUE
-
-  // Mid (L+R)
-  splitter.connect(midGain, 0);
-  splitter.connect(midGain, 1);
-  midGain.connect(merger, 0, 0);
-  midGain.connect(merger, 0, 1);
-
-  // Side (L-R)
-  splitter.connect(sideGain, 0);
-  splitter.connect(sideGain, 1);
-  sideGain.connect(merger, 0, 0);
-  sideGain.connect(merger, 0, 1).gain.value = -1;
-
-  // Analyseurs
   splitter.connect(analyserLeft, 0);
   splitter.connect(analyserRight, 1);
+  gainNode.connect(audioContext.destination);
 
-  // Sortie finale du Mid-Side
-  merger.connect(audioContext.destination);
+  // Activer le curseur de balance par défaut
+  balanceControl.disabled = false;
+  balanceControl.title = 'Ajuster la balance stéréo (gauche/droite)';
 
   // Vérification du nombre de canaux après chargement
   let isMono = false;
@@ -658,38 +644,6 @@ async function setupAudioPlayer() {
     console.log('Balance stéréo ajustée:', pannerNode.pan.value);
     updateAudioState();
   });
-    // === CONTRÔLE LARGEUR STÉRÉO (L12/R04 inside) ===
-  const widthControl = document.getElementById('widthControl');
-  const widthLabel = document.getElementById('widthLabel');
-
-  if (widthControl && widthLabel) {
-    const updateWidth = () => {
-      const val = parseFloat(widthControl.value);
-      const normalized = val / 100;
-
-      // Courbe naturelle + boost doux autour de L12/R04
-      const sideLevel = normalized < 0.42 
-        ? normalized * 2.4 
-        : (normalized - 0.42) * 3.6 + 1;
-
-      midGain.gain.value = 1;
-      sideGain.gain.value = sideLevel;
-
-      let text = val === 0 ? "Mono" :
-                 val <= 30 ? "Étroite" :
-                 val <= 50 ? "Normal" :
-                 val <= 75 ? "Large" :
-                 val <= 90 ? "L12/R04" : "Ultra-large";
-      if (val >= 83 && val <= 87) text = "L12/R04 – Orchestre";
-else if (val > 87) text = "Ultra-large";
-
-      widthLabel.textContent = `${text} (${val} %)`;
-      updateAudioState();
-    };
-
-    widthControl.addEventListener('input', updateWidth);
-    updateWidth(); // valeur initiale
-  }
 
   // Contrôle de la vitesse de lecture
   playbackSpeed.addEventListener('change', () => {
@@ -1073,6 +1027,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   setupAudioRecorder();
+  setupAudioPlayer();
 
   document.getElementById('downloadButton').onclick = async () => {
   if (!window.audioBlob) return alert('Aucun enregistrement disponible');

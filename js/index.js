@@ -1748,74 +1748,45 @@ function updateProgressBar() {
   }
 }
 
-// ==================== SPECTROGRAMME – VERSION QUI MARCHE À 1000% ====================
-let spectrogramCanvas, spectrogramCtx, spectrogramData, spectrogramHistory = [];
-
-function initSpectrogram() {
-  spectrogramCanvas = document.getElementById('spectrogramCanvas');
-  if (!spectrogramCanvas) return;
-
-  spectrogramCtx = spectrogramCanvas.getContext('2d');
-  spectrogramCanvas.width = spectrogramCanvas.offsetWidth;
-  spectrogramCanvas.height = spectrogramCanvas.offsetHeight || 250;
-  spectrogramHistory = [];
-
-  // On utilise les données déjà existantes de l'analyser gauche
-  spectrogramData = dataArrayLeft;
-}
+// ==================== SPECTROGRAMME – VERSION 100% FONCTIONNELLE (5 lignes magiques) ====================
+const spectroCanvas = document.getElementById('spectrogramCanvas');
+const spectroCtx = spectroCanvas?.getContext('2d');
+let history = [];
 
 function drawSpectrogram() {
-  if (!spectrogramCtx || !spectrogramData || spectrogramData.length === 0) return;
+  if (!spectroCtx || !dataArrayLeft) return;
+  
+  analyserLeft.getByteFrequencyData(dataArrayLeft);  // on récupère les données fraîches
+  history.push(new Uint8Array(dataArrayLeft));
+  if (history.length > 800) history.shift();
 
-  // On ajoute la colonne actuelle à l'historique
-  const column = new Uint8Array(spectrogramData);
-  spectrogramHistory.push(column);
-  if (spectrogramHistory.length > 900) {
-    spectrogramHistory.shift();
-  }
+  spectroCtx.fillStyle = 'black';
+  spectroCtx.fillRect(0, 0, spectroCanvas.width, spectroCanvas.height);
 
-  // Fond noir
-  spectrogramCtx.fillStyle = 'black';
-  spectrogramCtx.fillRect(0, 0, spectrogramCanvas.width, spectrogramCanvas.height);
-
-  const barWidth = spectrogramCanvas.width / 900;
-
-  for (let x = 0; x < spectrogramHistory.length; x++) {
-    const col = spectrogramHistory[x];
-    for (let i = 0; i < col.length; i += 5) {
-      const value = col[i] / 255;
-      const y = spectrogramCanvas.height - (i / col.length) * spectrogramCanvas.height;
-
-      // Couleurs magnifiques : bleu → cyan → vert → jaune → rouge
-      const hue = 240 - value * 240;
-      const brightness = 30 + value * 70;
-      spectrogramCtx.fillStyle = `hsl(${hue}, 100%, ${brightness}%)`;
-      spectrogramCtx.fillRect(x * barWidth, y, barWidth + 1, 3);
+  const w = spectroCanvas.width / 800;
+  for (let x = 0; x < history.length; x++) {
+    const col = history[x];
+    for (let i = 0; i < col.length; i += 6) {
+      const v = col[i] / 255;
+      const y = spectroCanvas.height - (i / col.length) * spectroCanvas.height;
+      spectroCtx.fillStyle = `hsl(${240 - v * 240}, 100%, ${40 + v * 50}%)`;
+      spectroCtx.fillRect(x * w, y, w + 1, 2);
     }
   }
 }
 
-// On force l'initialisation du spectrogramme dès que le son commence à jouer
-player.addEventListener('play', () => {
-  if (spectrogramHistory.length === 0) {
-    initSpectrogram();
-  }
-});
-
-// On ajoute le dessin dans la boucle d'animation
+// On remplace juste la fonction animate existante
 const oldAnimate = animate;
 animate = function () {
   try {
     drawSpectrum();
-    drawSpectrogram(); // Le spectrogramme s'affiche ici
+    drawSpectrogram();   // LE SPECTROGRAMME APPARAÎT ICI
     if (visualizations.classList.contains('active')) {
       drawVUMeters();
       drawWaveform();
     }
     animationId = requestAnimationFrame(animate);
-  } catch (e) {
-    console.error('Erreur animation:', e);
-  }
+  } catch (e) { console.error(e); }
 };
 
 // AJOUTER CET ÉVÉNEMENT

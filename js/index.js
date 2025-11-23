@@ -1075,7 +1075,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   setupAudioRecorder();
-  setupAudioPlayer();
 
   document.getElementById('downloadButton').onclick = async () => {
   if (!window.audioBlob) return alert('Aucun enregistrement disponible');

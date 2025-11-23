@@ -790,4 +790,5 @@ textarea {
   height: 250px !important;
   display: block !important;
   background: black !important;
+  width: 100% !important;
 }

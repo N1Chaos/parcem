@@ -270,42 +270,10 @@ async function setupAudioPlayer() {
   highFilter.type = 'highshelf';
   highFilter.frequency.value = 4000;
 
-    // === LARGEUR STÉRÉO (Mid-Side) – VERSION QUI MARCHE À TOUS LES COUPS ===
-  const splitter = audioContext.createChannelSplitter(2);
-  const merger   = audioContext.createChannelMerger(2);
-
-  const midGain  = audioContext.createGain();  // L+R
-  const sideGain = audioContext.createGain();  // L−R (on inverse directement)
-
-  // Connexion de la chaîne principale
-  source.connect(pannerNode);
-  pannerNode.connect(lowFilter);
-  lowFilter.connect(midFilter);
-  midFilter.connect(highFilter);
-  highFilter.connect(gainNode);
   gainNode.connect(splitter);
-  gainNode.connect(audioContext.destination);   // ← ON GARDE CETTE LIGNE !
-
-  // Mid (L+R)
-  splitter.connect(midGain, 0);
-  splitter.connect(midGain, 1);
-  midGain.connect(merger, 0, 0);
-  midGain.connect(merger, 0, 1);
-
-  // Side (L−R)
-  splitter.connect(sideGain, 0);        // L
-  splitter.connect(sideGain, 1);        // R → devient −R grâce au gain négatif ci-dessous
-  sideGain.gain.value = 1;              // on commence à 1, on contrôle après
-  sideGain.connect(merger, 0, 0);       // +Side → gauche
-  sideGain.connect(merger, 0, 1);       // copie du même node
-  merger.connect(merger, 0, 1).gain.value = -1; // inversion côté droit
-
-  // Analyseurs (avant le traitement largeur)
   splitter.connect(analyserLeft, 0);
   splitter.connect(analyserRight, 1);
-
-  // Sortie finale
-  merger.connect(audioContext.destination);
+  gainNode.connect(audioContext.destination);   // ← cette ligne fait que le son passe
 
   // Activer le curseur de balance par défaut
   balanceControl.disabled = false;

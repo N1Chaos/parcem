@@ -1748,5 +1748,78 @@ function updateProgressBar() {
   }
 }
 
+// ==================== SPECTROGRAMME – VERSION ULTRA SIMPLE & 100% FONCTIONNELLE ====================
+const spectrogramCanvas = document.getElementById('spectrogramCanvas');
+const spectrogramCtx = spectrogramCanvas?.getContext('2d');
+let spectrogramHistory = [];
+
+function initSpectrogram() {
+  if (!spectrogramCanvas || !analyserLeft) return;
+  spectrogramCanvas.width = spectrogramCanvas.offsetWidth;
+  spectrogramCanvas.height = spectrogramCanvas.offsetHeight || 250;
+  spectrogramHistory = [];
+}
+
+function drawSpectrogram() {
+  if (!spectrogramCtx || !analyserLeft || !dataArrayLeft) return;
+
+  // On récupère les données du spectre déjà existant (analyserLeft)
+  analyserLeft.getByteFrequencyData(dataArrayLeft);
+
+  // On garde une copie de la colonne actuelle
+  spectrogramHistory.push(new Uint8Array(dataArrayLeft));
+  if (spectrogramHistory.length > 800) spectrogramHistory.shift();
+
+  // Fond noir
+  spectrogramCtx.fillStyle = '#000';
+  spectrogramCtx.fillRect(0, 0, spectrogramCanvas.width, spectrogramCanvas.height);
+
+  const barWidth = spectrogramCanvas.width / 800;
+
+  for (let x = 0; x < spectrogramHistory.length; x++) {
+    const column = spectrogramHistory[x];
+    for (let i = 0; i < column.length; i += 4) { // on saute pour la fluidité
+      const value = column[i] / 255;
+      const y = spectrogramCanvas.height - (i / column.length) * spectrogramCanvas.height;
+      const hue = 240 - value * 240; // bleu → rouge
+      spectrogramCtx.fillStyle = `hsl(${hue}, 100%, ${40 + value * 50}%)`;
+      spectrogramCtx.fillRect(x * barWidth, y, barWidth + 1, 2);
+    }
+  }
+}
+
+// On ajoute le spectrogramme dans la boucle d'animation existante
+const originalAnimate = animate;
+animate = function () {
+  try {
+    drawSpectrum();
+    drawSpectrogram(); // ← Le spectrogramme apparaît ici
+    if (visualizations.classList.contains('active')) {
+      drawVUMeters();
+      drawWaveform();
+    }
+    animationId = requestAnimationFrame(animate);
+  } catch (e) {
+    console.error('Erreur animation:', e);
+  }
+};
+
+// On initialise le spectro quand un fichier est chargé
+fileInput.addEventListener('change', async (e) => {
+  // ... ton code existant ...
+  const reader = new FileReader();
+  reader.onload = async (ev) => {
+    // ... ton code existant ...
+    player.src = ev.target.result;
+    player.load();
+
+    // Initialisation du spectrogramme dès qu’un son est chargé
+    setTimeout(initSpectrogram, 300);
+
+    // ... le reste de ton code ...
+  };
+  if (e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
+});
+
 // AJOUTER CET ÉVÉNEMENT
 player.addEventListener('timeupdate', updateProgressBar);

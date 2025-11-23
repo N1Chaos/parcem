@@ -244,7 +244,7 @@ async function setupAudioPlayer() {
     return;
   }
 
-  // Initialisation de Web Audio API
+    // Initialisation de Web Audio API
   const audioContext = new AudioContext();
   let source;
   try {
@@ -254,53 +254,51 @@ async function setupAudioPlayer() {
     fileNameDisplay.textContent = 'Erreur: Veuillez réimporter le fichier';
     return;
   }
+
   const analyserLeft = audioContext.createAnalyser();
   const analyserRight = audioContext.createAnalyser();
-  analyserLeft.fftSize = 2048;
-  analyserRight.fftSize = 2048;
+  analyserLeft.fftSize = analyserRight.fftSize = 2048;
+
   const gainNode = audioContext.createGain();
   const pannerNode = audioContext.createStereoPanner();
-  const lowFilter = audioContext.createBiquadFilter();
-  lowFilter.type = 'lowshelf';
-  lowFilter.frequency.value = 200;
-  const midFilter = audioContext.createBiquadFilter();
-  midFilter.type = 'peaking';
-  midFilter.frequency.value = 1000;
-  const highFilter = audioContext.createBiquadFilter();
-  highFilter.type = 'highshelf';
-  highFilter.frequency.value = 4000;
-    // === LARGEUR STÉRÉO (Mid-Side) ===
+  const lowFilter = audioContext.createBiquadFilter(); lowFilter.type='lowshelf'; lowFilter.frequency.value=200;
+  const midFilter = audioContext.createBiquadFilter(); midFilter.type='peaking'; midFilter.frequency.value=1000;
+  const highFilter = audioContext.createBiquadFilter(); highFilter.type='highshelf'; highFilter.frequency.value=4000;
+
+  // LARGEUR STÉRÉO (Mid-Side) – VERSION 100 % STABLE
   const splitter = audioContext.createChannelSplitter(2);
   const merger   = audioContext.createChannelMerger(2);
   const midGain  = audioContext.createGain();
   const sideGain = audioContext.createGain();
 
-    // Chaîne principale
+  // Chaîne principale (le son passe TOUJOURS)
   source.connect(pannerNode);
   pannerNode.connect(lowFilter);
   lowFilter.connect(midFilter);
   midFilter.connect(highFilter);
   highFilter.connect(gainNode);
+
   gainNode.connect(splitter);
-  gainNode.connect(audioContext.destination);  // son garanti
+  gainNode.connect(audioContext.destination);     // LIGNE MAGIQUE
 
-  // Mid-Side
-  splitter.connect(midGain, 0); splitter.connect(midGain, 1);
-  midGain.connect(merger, 0, 0); midGain.connect(merger, 0, 1);
+  // Mid (L+R)
+  splitter.connect(midGain, 0);
+  splitter.connect(midGain, 1);
+  midGain.connect(merger, 0, 0);
+  midGain.connect(merger, 0, 1);
 
+  // Side (L-R)
   splitter.connect(sideGain, 0);
   splitter.connect(sideGain, 1);
   sideGain.connect(merger, 0, 0);
   sideGain.connect(merger, 0, 1).gain.value = -1;
 
+  // Analyseurs
   splitter.connect(analyserLeft, 0);
   splitter.connect(analyserRight, 1);
 
+  // Sortie finale du Mid-Side
   merger.connect(audioContext.destination);
-
-  // Activer le curseur de balance par défaut
-  balanceControl.disabled = false;
-  balanceControl.title = 'Ajuster la balance stéréo (gauche/droite)';
 
   // Vérification du nombre de canaux après chargement
   let isMono = false;

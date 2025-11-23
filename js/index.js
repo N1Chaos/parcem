@@ -269,11 +269,34 @@ async function setupAudioPlayer() {
   const highFilter = audioContext.createBiquadFilter();
   highFilter.type = 'highshelf';
   highFilter.frequency.value = 4000;
+    // === LARGEUR STÉRÉO (Mid-Side) ===
+  const splitter = audioContext.createChannelSplitter(2);
+  const merger   = audioContext.createChannelMerger(2);
+  const midGain  = audioContext.createGain();
+  const sideGain = audioContext.createGain();
 
+    // Chaîne principale
+  source.connect(pannerNode);
+  pannerNode.connect(lowFilter);
+  lowFilter.connect(midFilter);
+  midFilter.connect(highFilter);
+  highFilter.connect(gainNode);
   gainNode.connect(splitter);
+  gainNode.connect(audioContext.destination);  // son garanti
+
+  // Mid-Side
+  splitter.connect(midGain, 0); splitter.connect(midGain, 1);
+  midGain.connect(merger, 0, 0); midGain.connect(merger, 0, 1);
+
+  splitter.connect(sideGain, 0);
+  splitter.connect(sideGain, 1);
+  sideGain.connect(merger, 0, 0);
+  sideGain.connect(merger, 0, 1).gain.value = -1;
+
   splitter.connect(analyserLeft, 0);
   splitter.connect(analyserRight, 1);
-  gainNode.connect(audioContext.destination);   // ← cette ligne fait que le son passe
+
+  merger.connect(audioContext.destination);
 
   // Activer le curseur de balance par défaut
   balanceControl.disabled = false;

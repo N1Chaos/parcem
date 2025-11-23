@@ -287,6 +287,7 @@ async function setupAudioPlayer() {
     // On garde le son normal
   gainNode.connect(splitter);
   gainNode.connect(audioContext.destination);     // son garanti
+  initSpectrogram(audioContext, source, splitter);
 
   // On ajoute le traitement Mid-Side en parallèle
   splitter.connect(midGain, 0);
@@ -1753,52 +1754,67 @@ function updateProgressBar() {
 // AJOUTER CET ÉVÉNEMENT
 player.addEventListener('timeupdate', updateProgressBar);
 
-// ==================== SPECTROGRAMME (ajouté en sécurité) ====================
-const spectrogramCanvas = document.getElementById('spectrogramCanvas');
-let spectrogramCtx = null;
-let spectrogramAnalyser = null;
-let spectrogramDataArray = null;
-let spectrogramHistory = [];
-const HISTORY_SIZE = 300;
+// ==================== SPECTROGRAMME – VERSION 100% FONCTIONNELLE ====================
+let spectrogramCanvas, spectrogramCtx, spectrogramAnalyser, spectrogramDataArray, spectrogramHistory;
+const HISTORY_SIZE = 512;  // un peu plus large = plus beau
 
-function initSpectrogram() {
-  if (!spectrogramCanvas || !audioContext || !splitter) return;
+function initSpectrogram(audioCtx, sourceNode, splitterNode) {
+  spectrogramCanvas = document.getElementById('spectrogramCanvas');
+  if (!spectrogramCanvas) return;
 
   spectrogramCtx = spectrogramCanvas.getContext('2d');
-  spectrogramAnalyser = audioContext.createAnalyser();
+
+  // Créer un analyser dédié pour le spectrogramme
+  spectrogramAnalyser = audioCtx.createAnalyser();
   spectrogramAnalyser.fftSize = 4096;
   spectrogramAnalyser.smoothingTimeConstant = 0;
-  splitter.connect(spectrogramAnalyser, 0);
+
+  // On se branche directement sur le splitter (ou sur la source si pas de splitter)
+  if (splitterNode) {
+    splitterNode.connect(spectrogramAnalyser, 0);
+  } else {
+    sourceNode.connect(spectrogramAnalyser);
+  }
 
   const bufferLength = spectrogramAnalyser.frequencyBinCount;
   spectrogramDataArray = new Uint8Array(bufferLength);
 
+  // Dimension du canvas
   spectrogramCanvas.width = spectrogramCanvas.offsetWidth;
   spectrogramCanvas.height = spectrogramCanvas.offsetHeight || 250;
 
-  spectrogramHistory = Array(HISTORY_SIZE).fill().map(() => new Uint8Array(bufferLength).fill(0));
+  // Historique vide
+  spectrogramHistory = [];
+  for (let i = 0; i < HISTORY_SIZE; i++) {
+    spectrogramHistory.push(new Uint8Array(bufferLength).fill(0));
+  }
 }
 
 function drawSpectrogram() {
   if (!spectrogramCtx || !spectrogramAnalyser || !spectrogramDataArray) return;
 
   spectrogramAnalyser.getByteFrequencyData(spectrogramDataArray);
+
+  // Ajouter la nouvelle colonne
   spectrogramHistory.push(new Uint8Array(spectrogramDataArray));
   if (spectrogramHistory.length > HISTORY_SIZE) spectrogramHistory.shift();
 
+  // Fond noir
   spectrogramCtx.fillStyle = '#000';
   spectrogramCtx.fillRect(0, 0, spectrogramCanvas.width, spectrogramCanvas.height);
 
-  const barWidth = Math.max(1, Math.floor(spectrogramCanvas.width / HISTORY_SIZE));
+  const barWidth = Math.max(1, spectrogramCanvas.width / HISTORY_SIZE);
 
   for (let x = 0; x < HISTORY_SIZE; x++) {
-    const column = spectrogramHistory[x] || spectrogramHistory[0];
+    const column = spectrogramHistory[x];
     for (let i = 0; i < column.length; i++) {
       const value = column[i] / 255;
       const y = spectrogramCanvas.height - (i / column.length) * spectrogramCanvas.height;
-      const brightness = 30 + value * 70;
-      const hue = 240 - value * 240; // bleu foncé → rouge vif
-      spectrogramCtx.fillStyle = `hsl(${hue}, 100%, ${brightness}%)`;
+
+      // Palette très belle : bleu → cyan → vert → jaune → rouge
+      const hue = 240 - value * 240;
+      const lightness = 20 + value * 70;
+      spectrogramCtx.fillStyle = `hsl(${hue}, 100%, ${lightness}%)`;
       spectrogramCtx.fillRect(x * barWidth, y, barWidth + 1, 2);
     }
   }

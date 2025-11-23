@@ -1794,6 +1794,8 @@ window.addEventListener('resize', resizeSpectrogramCanvas);
 
 // On remplace la boucle d'animation
 const oldAnimate = animate;
+resizeSpectrogramCanvas();
+
 animate = function () {
   try {
     drawSpectrum();

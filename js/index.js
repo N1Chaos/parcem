@@ -1801,14 +1801,34 @@ for (let x = 0; x < history.length; x++) {
   const col = history[x];
   for (let i = 0; i < col.length; i += 6) {   // ← (1) était 4 → maintenant 6 pour réduire le lag
     const v = col[i] / 255;
-    if (v > 0.03) {
+if (v > 0.03) {
 
-      const y = spectroCanvas.height * 0.98 - (i / col.length) * spectroCanvas.height * 0.98;
-      // ↑ (2) correction bande noire → on utilise 98% de la hauteur
+    const y = spectroCanvas.height * 0.98 - (i / col.length) * spectroCanvas.height * 0.98;
 
-      const hue = 240 - v * 240;
-      spectroCtx.fillStyle = `hsl(${hue}, 100%, ${50 + v * 40}%)`;
-      spectroCtx.fillRect(x * barW, y, barW + 1, 3);
+    // ===== palette violet → bleu → jaune (Audacity style) =====
+    let r, g, b;
+
+    if (v < 0.33) {
+        // violet → bleu
+        r = 80 * (v / 0.33);
+        g = 0;
+        b = 120 + 135 * (v / 0.33);
+    } 
+    else if (v < 0.66) {
+        const t = (v - 0.33) / 0.33;
+        r = 80 + 70 * t;
+        g = 0 + 200 * t;
+        b = 255 - 155 * t;
+    } 
+    else {
+        const t = (v - 0.66) / 0.34;
+        r = 150 + 105 * t;
+        g = 200 + 55 * t;
+        b = 100 - 100 * t;
+    }
+
+    spectroCtx.fillStyle = `rgb(${r|0}, ${g|0}, ${b|0})`;
+    spectroCtx.fillRect(x * barW, y, barW + 1, 3);
     }
   }
 }

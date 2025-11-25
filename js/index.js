@@ -841,11 +841,9 @@ if (val >= 83 && val <= 88) {
         }
       }, { once: true });
 
-      player.addEventListener('error', (e) => {
-        console.error('Erreur lors du chargement de l\'audio:', e);
-        alert('Erreur lors du rechargement du fichier audio. Veuillez réimporter le fichier.');
-        fileNameDisplay.textContent = 'Erreur lors du chargement';
-      }, { once: true });
+      player.addEventListener('error', () => {
+  console.warn("Erreur de lecture audio ignorée (fichier supprimé ou corrompu)");
+});
     } catch (error) {
       console.error('Erreur lors de la configuration de l\'audio:', error);
       alert('Erreur lors du rechargement de l\'audio. Essayez de réimporter le fichier.');

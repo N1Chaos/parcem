@@ -606,7 +606,7 @@ async function setupAudioPlayer() {
   // Visualisation spectrale avec couleurs par plage de fréquences
   function drawSpectrum() {
   try {
-    // Fond blanc (on clear + on ne remplit pas de noir)
+    // Fond blanc (on clear seulement)
     spectrumCtx.clearRect(0, 0, spectrumCanvas.width, spectrumCanvas.height);
 
     analyserLeft.getByteFrequencyData(dataArrayLeft);
@@ -615,7 +615,7 @@ async function setupAudioPlayer() {
     const maxFreq = audioContext.sampleRate / 2;
     let x = 0;
 
-    // === DESSIN DES BARRES (couleurs égaliseur) ===
+    // === DESSIN DES BARRES (tes couleurs exactes) ===
     for (let i = 0; i < bufferLength; i++) {
       const freq = (i / bufferLength) * maxFreq;
       const value = dataArrayLeft[i];
@@ -623,11 +623,11 @@ async function setupAudioPlayer() {
 
       let color;
       if (freq <= 250) {
-        color = '#dc3545';      // Rouge → Basses (comme #eqLow)
+        color = '#ff4c4c';        // Rouge (basses) — ton choix
       } else if (freq <= 4000) {
-        color = '#ffc107';      // Jaune → Médiums (comme #eqMid)
+        color = '#ffeb3b';        // Jaune (médiums) — ton choix
       } else {
-        color = '#0d6efd';      // Bleu → Aigus (comme #eqHigh)
+        color = '#2196f3';        // Bleu (aigus) — ton choix
       }
 
       spectrumCtx.fillStyle = color;
@@ -641,23 +641,16 @@ async function setupAudioPlayer() {
       x += barWidth + 1;
     }
 
-    // === LABELS FRÉQUENCES RESPONSIFS (plus jamais de chevauchement) ===
+    // === LABELS FRÉQUENCES RESPONSIFS (exactement comme tu veux) ===
     const width = spectrumCanvas.width;
 
-    // On adapte les labels selon la largeur de l'écran
     let freqsToShow = [];
-    if (width < 480) {
-      // Mobile très petit
-      freqsToShow = [100, 1000, 5000, 10000];
-    } else if (width < 768) {
-      // Mobile / petite tablette
-      freqsToShow = [50, 500, 2000, 10000];
-    } else if (width < 1100) {
-      // Tablette / petit PC
-      freqsToShow = [50, 200, 1000, 5000, 10000];
+    if (width < 768) {
+      // Mobile → uniquement 1k, 5k, 10k, 15k, 20k
+      freqsToShow = [1000, 5000, 10000, 15000, 20000];
     } else {
-      // Grand écran → tout afficher
-      freqsToShow = [50, 100, 200, 500, 1000, 2000, 5000, 10000, 15000];
+      // Tablette + PC → 500, 1k, 5k, 10k, 15k, 20k
+      freqsToShow = [500, 1000, 5000, 10000, 15000, 20000];
     }
 
     spectrumCtx.fillStyle = '#333';
@@ -671,9 +664,9 @@ async function setupAudioPlayer() {
       // Label en haut
       spectrumCtx.fillText(label, xPos, 16);
 
-      // Petite ligne verticale discrète
+      // Ligne verticale discrète
       spectrumCtx.beginPath();
-      spectrumCtx.moveTo(xPos, spectrumCanvas.height - 8);
+      spectrumCtx.moveTo(xPos, spectrumCanvas.height - 10);
       spectrumCtx.lineTo(xPos, spectrumCanvas.height);
       spectrumCtx.strokeStyle = 'rgba(0,0,0,0.15)';
       spectrumCtx.lineWidth = 1;
@@ -681,7 +674,7 @@ async function setupAudioPlayer() {
     });
 
   } catch (error) {
-    console.error('Erreur lors du dessin du spectre:', error);
+    console.error('Erreur drawSpectrum:', error);
   }
 }
 

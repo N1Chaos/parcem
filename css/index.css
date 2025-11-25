@@ -819,3 +819,28 @@ textarea {
   border: 2px solid #333;
   box-shadow: 0 0 15px rgba(100, 200, 255, 0.15);
 }
+
+/* === GRADUATIONS SPECTRE & SPECTROGRAMME === */
+.freq-labels,
+.time-labels {
+  position: absolute;
+  pointer-events: none;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 11px;
+  color: rgba(255,255,255,0.7);
+  text-shadow: 0 0 4px black;
+}
+
+/* Labels fréquences (gauche du spectre + spectrogramme) */
+.freq-labels {
+  left: 8px;
+  top: 0;
+}
+
+/* Labels temps (sous le spectrogramme) */
+.time-labels {
+  bottom: -20px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+}

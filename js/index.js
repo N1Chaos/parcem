@@ -1833,6 +1833,51 @@ window.addEventListener('load', resizeSpectrogramCanvas);
 window.addEventListener('resize', resizeSpectrogramCanvas);
 
 
+// === AFFICHAGE PRO DU FICHIER CHARGÉ (nom + durée + taille + icône) ===
+const fileInput = document.getElementById('audioFile');
+const fileInfo = document.getElementById('audioFileInfo');
+const fileNameSpan = document.getElementById('audioFileName');
+const fileDetailsSpan = document.getElementById('audioFileDetails');
+const player = document.getElementById('audioPlayer');
+
+if (fileInput && fileInfo && fileNameSpan && fileDetailsSpan && player) {
+  function formatBytes(bytes) {
+    if (bytes === 0) return '0 o';
+    const k = 1024;
+    const sizes = ['o', 'Ko', 'Mo', 'Go'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+  }
+
+  function formatDuration(seconds) {
+    if (!seconds || isNaN(seconds)) return '—';
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  }
+
+  fileInput.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) {
+      fileInfo.style.display = 'none';
+      return;
+    }
+
+    // Affichage immédiat
+    fileNameSpan.textContent = file.name;
+    fileDetailsSpan.textContent = `${formatBytes(file.size)} · calcul de la durée...`;
+    fileInfo.style.display = 'flex';
+
+    // Chargement temporaire pour lire la durée
+    const tempUrl = URL.createObjectURL(file);
+    player.src = tempUrl;
+
+    player.addEventListener('loadedmetadata', () => {
+      fileDetailsSpan.textContent = `${formatDuration(player.duration)} · ${formatBytes(file.size)}`;
+      URL.revokeObjectURL(tempUrl); // nettoyage mémoire
+    }, { once: true });
+  });
+}
 
 
 

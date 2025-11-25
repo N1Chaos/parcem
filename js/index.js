@@ -1833,16 +1833,18 @@ window.addEventListener('load', resizeSpectrogramCanvas);
 window.addEventListener('resize', resizeSpectrogramCanvas);
 
 
-// === AFFICHAGE PRO DU FICHIER CHARGÉ (nom + durée + taille + icône) ===
+// === AFFICHAGE PRO + SUPPRESSION DU FICHIER CHARGÉ (VERSION FINALE) ===
 const fileInput = document.getElementById('audioFile');
 const fileInfo = document.getElementById('audioFileInfo');
 const fileNameSpan = document.getElementById('audioFileName');
 const fileDetailsSpan = document.getElementById('audioFileDetails');
+const clearBtn = document.getElementById('clearAudioFile');
 const player = document.getElementById('audioPlayer');
 
-if (fileInput && fileInfo && fileNameSpan && fileDetailsSpan && player) {
+if (fileInput && fileInfo && fileNameSpan && fileDetailsSpan && clearBtn && player) {
+
   function formatBytes(bytes) {
-    if (bytes === 0) return '0 o';
+    if (!bytes) return '0 o';
     const k = 1024;
     const sizes = ['o', 'Ko', 'Mo', 'Go'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
@@ -1856,28 +1858,44 @@ if (fileInput && fileInfo && fileNameSpan && fileDetailsSpan && player) {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   }
 
+  function showFileInfo() {
+    fileInfo.style.display = 'flex';
+    setTimeout(() => fileInfo.classList.remove('opacity-0'), 10);
+  }
+
+  function hideFileInfo() {
+    fileInfo.classList.add('opacity-0');
+    setTimeout(() => fileInfo.style.display = 'none', 400);
+  }
+
   fileInput.addEventListener('change', function(e) {
     const file = e.target.files[0];
-    if (!file) {
-      fileInfo.style.display = 'none';
-      return;
-    }
+    if (!file) return;
 
-    // Affichage immédiat
     fileNameSpan.textContent = file.name;
     fileDetailsSpan.textContent = `${formatBytes(file.size)} · calcul de la durée...`;
-    fileInfo.style.display = 'flex';
+    showFileInfo();
 
-    // Chargement temporaire pour lire la durée
     const tempUrl = URL.createObjectURL(file);
     player.src = tempUrl;
 
     player.addEventListener('loadedmetadata', () => {
       fileDetailsSpan.textContent = `${formatDuration(player.duration)} · ${formatBytes(file.size)}`;
-      URL.revokeObjectURL(tempUrl); // nettoyage mémoire
+      URL.revokeObjectURL(tempUrl);
     }, { once: true });
   });
-}
 
+  // Bouton de suppression
+  clearBtn.addEventListener('click', () => {
+    if (confirm("Supprimer le fichier audio chargé ?")) {
+      fileInput.value = '';
+      player.src = '';
+      player.load();
+      hideFileInfo();
+      fileNameSpan.textContent = 'Aucun fichier chargé';
+      fileDetailsSpan.textContent = '—';
+    }
+  });
+}
 
 

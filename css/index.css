@@ -794,3 +794,13 @@ textarea {
   border: 2px solid #333;
 }
 
+#audioFileInfo {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+#clearAudioFile:hover {
+  background-color: #dc3545 !important;
+  color: white !important;
+  transform: scale(1.1);
+}

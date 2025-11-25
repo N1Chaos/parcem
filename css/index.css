@@ -807,9 +807,9 @@ textarea {
 }
 
 #spectrumCanvas {
-  background: white !important;           /* Fond blanc pur */
-  border: 2px solid #ccc;                  /* Bordure sobre et pro */
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Ombre très légère (pas de glow bleu) */
+  background: white !important;
+  border: 2px solid #ddd;
+  box-shadow: none !important;           /* ← C'EST ÇA QUI TUE LE HALO */
   border-radius: var(--border-radius);
 }
 

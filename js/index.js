@@ -1812,52 +1812,50 @@ function drawSpectrogram() {
 
   analyserLeftGlobal.getByteFrequencyData(dataArrayLeftGlobal);
 
-  // Décalage vers la gauche (scroll continu)
+  // === SCROLL TRÈS LENT + FONDU ULTRA-DOUX ===
   spectroCtx.drawImage(spectroCtx.canvas, -1, 0);
 
-  // On dessine la nouvelle colonne à droite
-  const barWidth = 1;  // 1 pixel = vrai spectrogramme fluide
+  // Nouvelle colonne à droite
   const height = spectroCanvas.height;
   const width = spectroCanvas.width;
 
-  for (let i = 0; i < dataArrayLeftGlobal.length; i += 2) {  // 2 = fluidité max
+  for (let i = 0; i < dataArrayLeftGlobal.length; i += 2) {
     const value = dataArrayLeftGlobal[i] / 255;
-    if (value < 0.01) continue;  // on ignore le bruit
+    if (value < 0.02) continue;
 
-    // Fréquence → position verticale (basses en bas)
     const y = height - (i / dataArrayLeftGlobal.length) * height;
 
-    // === INTENSITÉ → BRIGHTNESS (noir → violet → bleu → vert → jaune → blanc) ===
+    // === COULEURS INTENSES ET DURABLES ===
     let r, g, b;
     if (value < 0.2) {
       r = 0;
       g = 0;
-      b = Math.round(100 + 155 * (value / 0.2));
+      b = Math.round(120 + 135 * (value / 0.2));
     } else if (value < 0.4) {
-      r = Math.round(150 * ((value - 0.2) / 0.2));
+      r = Math.round(180 * ((value - 0.2) / 0.2));
       g = 0;
       b = 255;
     } else if (value < 0.6) {
-      r = Math.round(150 + 105 * ((value - 0.4) / 0.2));
-      g = Math.round(200 * ((value - 0.4) / 0.2));
+      r = 255;
+      g = Math.round(180 * ((value - 0.4) / 0.2));
       b = 255;
     } else if (value < 0.8) {
       r = 255;
       g = 255;
-      b = Math.round(255 - 255 * ((value - 0.6) / 0.2));
+      b = Math.round(255 - 200 * ((value - 0.6) / 0.2));
     } else {
       r = 255;
-      g = Math.round(255 - 255 * ((value - 0.8) / 0.2));
+      g = Math.round(255 - 100 * ((value - 0.8) / 0.2));
       b = Math.round(255 - 255 * ((value - 0.8) / 0.2));
     }
 
     spectroCtx.fillStyle = `rgb(${r}, ${g}, ${b})`;
-    spectroCtx.fillRect(width - 1, y, barWidth, 2);  // 1 pixel de large, 2px de haut pour lissage
+    spectroCtx.fillRect(width - 1, y, 2, 3); // 2px de large pour plus de lumière
   }
 
-  // Optionnel : léger fondu à gauche pour effet "scroll infini"
-  spectroCtx.fillStyle = 'rgba(0,0,0,0.02)';
-  spectroCtx.fillRect(0, 0, width - 1, height);
+  // === FONDU TRÈS LENT (le secret !) ===
+  spectroCtx.fillStyle = 'rgba(0, 0, 0, 0.008)';  // 0.008 = très très lent
+  spectroCtx.fillRect(0, 0, width - 2, height);
 }
 
 

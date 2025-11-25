@@ -1825,53 +1825,61 @@ function drawSpectrogram() {
 
   analyserLeftGlobal.getByteFrequencyData(dataArrayLeftGlobal);
 
-  // On ajoute la nouvelle colonne
+  // On ajoute la nouvelle colonne d'analyse
   history.push(new Uint8Array(dataArrayLeftGlobal));
   if (history.length > spectroCanvas.width) history.shift();
 
-  // Fond noir
+  // Fond noir parfait
   spectroCtx.fillStyle = 'black';
   spectroCtx.fillRect(0, 0, spectroCanvas.width, spectroCanvas.height);
 
-  const barW = spectroCanvas.width / history.length;
+  const barWidth = spectroCanvas.width / history.length;
 
   for (let x = 0; x < history.length; x++) {
-    const col = history[x];
-    for (let i = 0; i < col.length; i += 3) {  // 3 = plus de détail + plus rapide
-      const v = col[i] / 255;  // 0 à 1
+    const column = history[x];
 
-      if (v > 0.01) {  // seuil très bas pour voir même les signaux faibles
-        const y = spectroCanvas.height - (i / col.length) * spectroCanvas.height;
+    for (let i = 0; i < column.length; i += 4) {  // 4 = bon compromis détail/vitesse
+      const amplitude = column[i] / 255;  // 0 à 1
 
-        // Palette Audacity / iZotope — violet → bleu → vert → jaune → rouge
+      if (amplitude > 0.02) {  // seuil pour éliminer le bruit de fond
+        // Position verticale (basses en bas)
+        const y = spectroCanvas.height - (i / column.length) * spectroCanvas.height;
+
+        // === PALETTE COULEURS DÉGRADÉES MAGNIFIQUES (violet → bleu → vert → jaune → rouge) ===
         let r, g, b;
-        if (v < 0.25) {
+        if (amplitude < 0.3) {
           // Violet → bleu
-          r = Math.round(100 + 155 * (v / 0.25));
+          r = Math.round(120 + 135 * (amplitude / 0.3));
           g = 0;
-          b = Math.round(180 + 75 * (v / 0.25));
-        } else if (v < 0.5) {
+          b = Math.round(200 + 55 * (amplitude / 0.3));
+        } else if (amplitude < 0.5) {
           // Bleu → cyan
-          const t = (v - 0.25) / 0.25;
-          r = Math.round(255 - 155 * t);
-          g = Math.round(100 + 155 * t);
+          const t = (amplitude - 0.3) / 0.2;
+          r = Math.round(255 - 135 * t);
+          g = Math.round(150 * t);
           b = 255;
-        } else if (v < 0.75) {
-          // Cyan → jaune
-          const t = (v - 0.5) / 0.25;
-          r = 255;
+        } else if (amplitude < 0.7) {
+          // Cyan → vert → jaune
+          const t = (amplitude - 0.5) / 0.2;
+          r = Math.round(255 - 100 * t);
           g = 255;
           b = Math.round(255 - 255 * t);
         } else {
-          // Jaune → rouge
-          const t = (v - 0.75) / 0.25;
+          // Jaune → rouge → blanc (pour les pics)
+          const t = (amplitude - 0.7) / 0.3;
           r = 255;
           g = Math.round(255 - 255 * t);
-          b = 0;
+          b = Math.round(100 * t);
         }
 
         spectroCtx.fillStyle = `rgb(${r}, ${g}, ${b})`;
-        spectroCtx.fillRect(x * barW, y, barW + 1, spectroCanvas.height - y);
+        // ON REMPLIT JUSQU'EN BAS → c'est ÇA qui fait le vrai dégradé
+        spectroCtx.fillRect(
+          x * barWidth,
+          y,
+          barWidth + 1,
+          spectroCanvas.height - y
+        );
       }
     }
   }

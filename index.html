@@ -42,6 +42,10 @@
       <canvas id="spectrogramCanvas" class="visualization-canvas mt-2" style="width:100%; height:250px;"></canvas>
       <audio id="audioPlayer" class="w-100 audio-player" controls></audio>
       <!-- BARRE DE PROGRESSION - AJOUTER CET ÉLÉMENT -->
+       <div class="d-flex justify-content-between align-items-center mt-3 mb-2 text-muted small fw-medium">
+  <span id="currentTime">0:00</span>
+  <span id="duration">0:00</span>
+</div>
 <div class="progress mt-2" style="height: 6px; cursor: pointer;">
   <div id="progressBar" class="progress-bar" 
        style="width: 0%; background-color: #007bff; transition: width 0.1s;">

@@ -782,27 +782,6 @@ textarea {
   font-size: 0.85rem;
 }
 
-/* Hauteur uniforme et propre pour les deux visualisations principales */
-#spectrumCanvas,
-#spectrogramCanvas {
-  width: 100% !important;
-  height: 180px !important;
-  border-radius: var(--border-radius);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  background: #111 !important;
-  margin-bottom: 1rem;
-  image-rendering: pixelated;
-}
-
-/* Petit bonus : le spectre un peu plus lumineux */
-#spectrumCanvas {
-  background: linear-gradient(to bottom, #1a1a2e, #16213e) !important;
-}
-
-#spectrumCanvas {
-  border: 2px solid #4a90e2;
-  box-shadow: 0 0 15px rgba(74, 144, 226, 0.4);
-}
 
 #audioFileInfo {
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
@@ -813,4 +792,30 @@ textarea {
   background-color: #dc3545 !important;
   color: white !important;
   transform: scale(1.1);
+}
+
+/* === VISUALISATIONS PRINCIPALES — VERSION FINALE PRO === */
+#spectrumCanvas,
+#spectrogramCanvas {
+  width: 100% !important;
+  height: 180px !important;
+  border-radius: var(--border-radius);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+  margin-bottom: 1rem;
+  image-rendering: pixelated;
+  display: block;
+}
+
+/* Spectre de fréquences → beau dégradé bleu nuit */
+#spectrumCanvas {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%) !important;
+  border: 2px solid #4a90e2;
+  box-shadow: 0 0 20px rgba(74, 144, 226, 0.5);
+}
+
+/* Spectrogramme → FOND 100% NOIR OBLIGATOIRE pour remplissage total */
+#spectrogramCanvas {
+  background: black !important;
+  border: 2px solid #333;
+  box-shadow: 0 0 15px rgba(100, 200, 255, 0.15);
 }

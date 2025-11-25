@@ -50,8 +50,11 @@
     <i class="bi bi-x-lg"></i>
   </button>
 </div>
-      <canvas id="spectrumCanvas" class="visualization-canvas spectrum"></canvas>
-      <canvas id="spectrogramCanvas" class="visualization-canvas mt-2" style="width:100%; height:250px;"></canvas>
+      <!-- Spectre de fréquences (plus haut) -->
+<canvas id="spectrumCanvas" class="visualization-canvas spectrum" style="height: 180px;"></canvas>
+
+<!-- Spectrogramme (moins haut mais même hauteur que le spectre) -->
+<canvas id="spectrogramCanvas" class="visualization-canvas mt-3" style="height: 180px; background: black;"></canvas>
       <audio id="audioPlayer" class="w-100 audio-player" controls></audio>
       <button id="toggleControls" class="btn btn-primary mt-3">Contrôles</button>
       <div id="audioControls" class="audio-controls mt-3">

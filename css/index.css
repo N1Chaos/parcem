@@ -773,10 +773,6 @@ textarea {
   height: 125px; /* Ensure CSS height matches or allows canvas height */
 }
 
-#spectrumCanvas {
-  width: 100%;
-  height: 100px;
-}
 
 #globalSelectedWords {
   border: 2px solid var(--highlight-color);
@@ -786,12 +782,25 @@ textarea {
   font-size: 0.85rem;
 }
 
+/* Hauteur uniforme et propre pour les deux visualisations principales */
+#spectrumCanvas,
 #spectrogramCanvas {
-  height: 250px !important;
-  display: block !important;
-  background: black !important;
   width: 100% !important;
-  border: 2px solid #333;
+  height: 180px !important;
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  background: #111 !important;
+  margin-bottom: 1rem;
+}
+
+/* Petit bonus : le spectre un peu plus lumineux */
+#spectrumCanvas {
+  background: linear-gradient(to bottom, #1a1a2e, #16213e) !important;
+}
+
+#spectrumCanvas {
+  border: 2px solid #4a90e2;
+  box-shadow: 0 0 15px rgba(74, 144, 226, 0.4);
 }
 
 #audioFileInfo {

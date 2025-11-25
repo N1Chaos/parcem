@@ -37,7 +37,7 @@
     <div class="card-body">
       <h3 class="card-title">Lecteur audio</h3>
       <input type="file" id="audioFile" class="form-control mb-3" accept="audio/*" />
-      <div id="audioFileInfo" class="mt-3 p-3 bg-light border rounded position-relative d-flex align-items-center gap-3 opacity-0"
+      <div id="audioFileInfo" class="mt-3 mb-5 p-3 bg-light border rounded position-relative d-flex align-items-center gap-3 opacity-0"
      style="transition: all 0.4s ease; display: none;">
   <i class="bi bi-file-earmark-music-fill text-primary" style="font-size: 2.2rem;"></i>
   <div class="flex-grow-1">
@@ -51,10 +51,10 @@
   </button>
 </div>
       <!-- Spectre de fréquences (plus haut) -->
-<canvas id="spectrumCanvas" class="visualization-canvas spectrum" style="height: 180px;"></canvas>
+<canvas id="spectrumCanvas" class="visualization-canvas spectrum mb-2" style="height: 180px;"></canvas>
 
 <!-- Spectrogramme (moins haut mais même hauteur que le spectre) -->
-<canvas id="spectrogramCanvas" class="visualization-canvas mt-3" style="height: 180px; background: black;"></canvas>
+<canvas id="spectrogramCanvas" class="visualization-canvas" style="height: 180px; background: black;"></canvas>
       <audio id="audioPlayer" class="w-100 audio-player" controls></audio>
       <button id="toggleControls" class="btn btn-primary mt-3">Contrôles</button>
       <div id="audioControls" class="audio-controls mt-3">

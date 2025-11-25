@@ -609,16 +609,20 @@ async function setupAudioPlayer() {
     // Fond blanc + nettoyage
     spectrumCtx.clearRect(0, 0, spectrumCanvas.width, spectrumCanvas.height);
 
+    // === MAXFREQ FIXE POUR TOUT (barres + repères) ===
+    const MAX_FREQ = 22050;  // ← la clé magique
+
     // === SI AUDIO CHARGÉ → on dessine les barres ===
-    if (analyserLeftGlobal && dataArrayLeftGlobal) {
-      analyserLeft.getByteFrequencyData(dataArrayLeftGlobal);
+    if (analyserLeft && dataArrayLeft) {  // ← tes vraies variables
+      analyserLeft.getByteFrequencyData(dataArrayLeft);
 
       const barWidth = (spectrumCanvas.width / bufferLength) * 2.5;
       let x = 0;
 
       for (let i = 0; i < bufferLength; i++) {
-        const freq = (i / bufferLength) * (audioContext.sampleRate / 2);
-        const value = dataArrayLeftGlobal[i];
+        // ON UTILISE MAX_FREQ ICI AUSSI → cohérence totale
+        const freq = (i / bufferLength) * MAX_FREQ;
+        const value = dataArrayLeft[i];
         const barHeight = (value / 255) * spectrumCanvas.height * 0.9;
 
         let color;
@@ -632,9 +636,8 @@ async function setupAudioPlayer() {
       }
     }
 
-    // === REPÈRES DE FRÉQUENCES — TOUJOURS VISIBLES (même sans audio) ===
+    // === REPÈRES DE FRÉQUENCES — TOUJOURS VISIBLES ===
     const width = spectrumCanvas.width;
-    const maxFreq = 22050; // standard
 
     let freqsToShow = [];
     if (width < 768) {
@@ -643,17 +646,16 @@ async function setupAudioPlayer() {
       freqsToShow = [500, 1000, 5000, 10000, 15000, 20000];
     }
 
-    spectrumCtx.fillStyle = '#999';           // gris discret quand pas de son
+    spectrumCtx.fillStyle = '#999';
     spectrumCtx.font = '11px Consolas, monospace';
     spectrumCtx.textAlign = 'center';
 
     freqsToShow.forEach(freq => {
-      const xPos = (freq / maxFreq) * spectrumCanvas.width;
+      const xPos = (freq / MAX_FREQ) * spectrumCanvas.width;
       const label = freq === 1000 ? '1kHz' : freq === 20000 ? '20kHz' : freq < 1000 ? `${freq}` : `${freq / 1000}k`;
 
       spectrumCtx.fillText(label, xPos, 16);
 
-      // Ligne verticale très discrète
       spectrumCtx.beginPath();
       spectrumCtx.moveTo(xPos, spectrumCanvas.height - 10);
       spectrumCtx.lineTo(xPos, spectrumCanvas.height);

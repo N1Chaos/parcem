@@ -150,17 +150,22 @@ async function openDB() {
   });
 }
 
-async function saveAudioToDB(blob, time, fileName) {
+async function saveAudioToDB(blob, time, fileName, duration = 0) {
   try {
     const db = await openDB();
     const transaction = db.transaction(['audioStore'], 'readwrite');
     const store = transaction.objectStore('audioStore');
-    const audioData = { id: 'userAudio', blob, time, fileName };
+    const audioData = { 
+      id: 'userAudio', 
+      blob, 
+      time, 
+      fileName,
+      duration  // ← nouvelle info sauvegardée
+    };
     await store.put(audioData);
-    console.log('Sauvegarde dans IndexedDB:', audioData); // Log pour vérifier
+    console.log('Fichier sauvegardé avec durée:', audioData);
   } catch (error) {
-    console.error('Erreur lors de la sauvegarde dans IndexedDB:', error);
-    alert('Erreur lors de la sauvegarde du fichier audio.');
+    console.error('Erreur sauvegarde IndexedDB:', error);
   }
 }
 
@@ -920,7 +925,7 @@ if (val >= 83 && val <= 88) {
         lowFilter.gain.value = -6;  // applique immédiatement -6 dB sur les basses
 
         player.load();
-        await saveAudioToDB(file, 0, file.name);
+        await saveAudioToDB(file, player.currentTime || 0, file.name, player.duration || 0);
         console.log('Nouveau fichier audio sauvegardé dans IndexedDB');
         player.addEventListener('canplaythrough', async () => {
           player.currentTime = 0;
@@ -1898,5 +1903,42 @@ if (fileInput && fileInfo && fileNameSpan && fileDetailsSpan && clearBtn && play
   });
 }
 
+// === RESTAURATION DE L'AFFICHAGE DU FICHIER AU CHARGEMENT DE LA PAGE ===
+async function restoreFileDisplay() {
+  try {
+    const savedAudioData = await loadAudioFromDB(); // ta fonction existante
+    if (!savedAudioData || !savedAudioData.fileName) return;
 
+    // On a un fichier sauvegardé → on restaure l'affichage
+    const fileInfo = document.getElementById('audioFileInfo');
+    const fileNameSpan = document.getElementById('audioFileName');
+    const fileDetailsSpan = document.getElementById('audioFileDetails');
 
+    if (fileInfo && fileNameSpan && fileDetailsSpan) {
+      fileNameSpan.textContent = savedAudioData.fileName;
+
+      // Si on a aussi sauvegardé la durée (recommandé !), on l'affiche
+      if (savedAudioData.duration) {
+        const formattedDuration = formatDuration(savedAudioData.duration);
+        const formattedSize = formatBytes(savedAudioData.blob?.size || 0);
+        fileDetailsSpan.textContent = `${formattedDuration} · ${formattedSize}`;
+      } else {
+        fileDetailsSpan.textContent = `${formatBytes(savedAudioData.blob?.size || 0)}`;
+      }
+
+      // On affiche le bloc avec animation
+      fileInfo.style.display = 'flex';
+      setTimeout(() => fileInfo.classList.remove('opacity-0'), 50);
+    }
+  } catch (err) {
+    console.warn("Impossible de restaurer l'affichage du fichier", err);
+  }
+}
+
+// On appelle cette fonction au chargement de la page principale
+document.addEventListener('DOMContentLoaded', () => {
+  const currentPage = getPageName();
+  if (currentPage === '' || currentPage === 'index') {
+    restoreFileDisplay();
+  }
+});

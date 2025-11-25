@@ -55,27 +55,40 @@
 
 <!-- Spectrogramme (moins haut mais même hauteur que le spectre) -->
 <canvas id="spectrogramCanvas" class="visualization-canvas" style="height: 180px; background: black;"></canvas>
-<!-- Juste après ton #spectrogramCanvas -->
-<div style="position: relative; margin-top: -180px; pointer-events: none;">
-  <!-- Fréquences à gauche (logarithmique, comme dans Audacity) -->
-  <div style="position: absolute; left: 8px; top: 0; height: 180px; width: 50px; font-size: 11px; color: rgba(255,255,255,0.8); text-shadow: 0 0 4px black;">
-    <div style="position: absolute; top: 0%;">20 kHz</div>
-    <div style="position: absolute; top: 12%;">10 k</div>
-    <div style="position: absolute; top: 28%;">5 k</div>
-    <div style="position: absolute; top: 48%;">2 k</div>
-    <div style="position: absolute; top: 70%;">500</div>
-    <div style="position: absolute; top: 92%;">20 Hz</div>
-  </div>
+<!-- Conteneur relatif pour les deux canvas + labels -->
+<div class="position-relative">
 
-  <!-- Temps en bas -->
-  <div style="position: absolute; bottom: -22px; left: 0; right: 0; text-align: center; font-size: 11px; color: rgba(255,255,255,0.7);">
-    <span style="position: absolute; left: 0%;">0s</span>
-    <span style="position: absolute; left: 25%;">15s</span>
-    <span style="position: absolute; left: 50%;">30s</span>
-    <span style="position: absolute; left: 75%;">45s</span>
-    <span style="position: absolute; right: 0%;">1:00</span>
+  <!-- Spectre de fréquences -->
+  <canvas id="spectrumCanvas" class="visualization-canvas spectrum mb-2" style="height: 180px;"></canvas>
+
+  <!-- Spectrogramme + ses labels (fréquences + temps) -->
+  <div class="position-relative">
+    <canvas id="spectrogramCanvas" class="visualization-canvas" style="height: 180px; background: black; display: block;"></canvas>
+
+    <!-- Labels fréquences (gauche) + temps (bas) — uniquement sur le spectrogramme -->
+    <div style="position: absolute; inset: 0; pointer-events: none;">
+      <!-- Fréquences à gauche (logarithmique) -->
+      <div style="position: absolute; left: 8px; top: 0; bottom: 0; width: 50px; font-size: 11px; color: rgba(255,255,255,0.85); text-shadow: 0 0 4px black; display: flex; flex-direction: column; justify-content: space-between; padding: 4px 0;">
+        <span>20 kHz</span>
+        <span>10 k</span>
+        <span>5 k</span>
+        <span>2 k</span>
+        <span>500</span>
+        <span>20 Hz</span>
+      </div>
+
+      <!-- Temps en bas -->
+      <div style="position: absolute; bottom: -24px; left: 0; right: 0; text-align: center; font-size: 11px; color: rgba(255,255,255,0.7);">
+        <span style="position: absolute; left: 0%;">0s</span>
+        <span style="position: absolute; left: 25%;">15s</span>
+        <span style="position: absolute; left: 50%;">30s</span>
+        <span style="position: absolute; left: 75%;">45s</span>
+        <span style="position: absolute; right: 0%;">1:00</span>
+      </div>
+    </div>
   </div>
-</div>      
+</div>
+
 <audio id="audioPlayer" class="w-100 audio-player" controls></audio>
       <button id="toggleControls" class="btn btn-primary mt-3">Contrôles</button>
       <div id="audioControls" class="audio-controls mt-3">

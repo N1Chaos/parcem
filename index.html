@@ -55,7 +55,28 @@
 
 <!-- Spectrogramme (moins haut mais même hauteur que le spectre) -->
 <canvas id="spectrogramCanvas" class="visualization-canvas" style="height: 180px; background: black;"></canvas>
-      <audio id="audioPlayer" class="w-100 audio-player" controls></audio>
+<!-- Juste après ton #spectrogramCanvas -->
+<div style="position: relative; margin-top: -180px; pointer-events: none;">
+  <!-- Fréquences à gauche (logarithmique, comme dans Audacity) -->
+  <div style="position: absolute; left: 8px; top: 0; height: 180px; width: 50px; font-size: 11px; color: rgba(255,255,255,0.8); text-shadow: 0 0 4px black;">
+    <div style="position: absolute; top: 0%;">20 kHz</div>
+    <div style="position: absolute; top: 12%;">10 k</div>
+    <div style="position: absolute; top: 28%;">5 k</div>
+    <div style="position: absolute; top: 48%;">2 k</div>
+    <div style="position: absolute; top: 70%;">500</div>
+    <div style="position: absolute; top: 92%;">20 Hz</div>
+  </div>
+
+  <!-- Temps en bas -->
+  <div style="position: absolute; bottom: -22px; left: 0; right: 0; text-align: center; font-size: 11px; color: rgba(255,255,255,0.7);">
+    <span style="position: absolute; left: 0%;">0s</span>
+    <span style="position: absolute; left: 25%;">15s</span>
+    <span style="position: absolute; left: 50%;">30s</span>
+    <span style="position: absolute; left: 75%;">45s</span>
+    <span style="position: absolute; right: 0%;">1:00</span>
+  </div>
+</div>      
+<audio id="audioPlayer" class="w-100 audio-player" controls></audio>
       <button id="toggleControls" class="btn btn-primary mt-3">Contrôles</button>
       <div id="audioControls" class="audio-controls mt-3">
         <div class="control-group">

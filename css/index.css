@@ -844,3 +844,9 @@ textarea {
   width: 100%;
   text-align: center;
 }
+
+/* Pour que ça ne gêne pas le clic */
+#spectrumCanvas ~ div,
+#spectrogramCanvas ~ div {
+  pointer-events: none;
+}

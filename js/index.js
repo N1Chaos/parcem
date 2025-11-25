@@ -1785,7 +1785,7 @@ function drawSpectrogram() {
 
   analyserLeftGlobal.getByteFrequencyData(dataArrayLeftGlobal);
 
-  // On pousse la nouvelle colonne
+  // On ajoute la nouvelle colonne
   history.push(new Uint8Array(dataArrayLeftGlobal));
   if (history.length > spectroCanvas.width) history.shift();
 
@@ -1797,33 +1797,41 @@ function drawSpectrogram() {
 
   for (let x = 0; x < history.length; x++) {
     const col = history[x];
-    for (let i = 0; i < col.length; i += 4) {  // 4 au lieu de 6 = plus de détail
-      const v = col[i] / 255;
+    for (let i = 0; i < col.length; i += 3) {  // 3 = plus de détail + plus rapide
+      const v = col[i] / 255;  // 0 à 1
 
-      if (v > 0.02) {
-        // ← ON INVERSE L'AXE Y POUR QUE LES BASSES SOIENT EN BAS
+      if (v > 0.01) {  // seuil très bas pour voir même les signaux faibles
         const y = spectroCanvas.height - (i / col.length) * spectroCanvas.height;
 
-        // Palette Audacity (violet → bleu → vert → jaune → rouge)
+        // Palette Audacity / iZotope — violet → bleu → vert → jaune → rouge
         let r, g, b;
-        if (v < 0.3) {
-          r = Math.round(80 + 175 * (v / 0.3));
+        if (v < 0.25) {
+          // Violet → bleu
+          r = Math.round(100 + 155 * (v / 0.25));
           g = 0;
-          b = Math.round(120 + 135 * (v / 0.3));
-        } else if (v < 0.6) {
-          const t = (v - 0.3) / 0.3;
-          r = 255;
+          b = Math.round(180 + 75 * (v / 0.25));
+        } else if (v < 0.5) {
+          // Bleu → cyan
+          const t = (v - 0.25) / 0.25;
+          r = Math.round(255 - 155 * t);
           g = Math.round(100 + 155 * t);
+          b = 255;
+        } else if (v < 0.75) {
+          // Cyan → jaune
+          const t = (v - 0.5) / 0.25;
+          r = 255;
+          g = 255;
           b = Math.round(255 - 255 * t);
         } else {
-          const t = (v - 0.6) / 0.4;
+          // Jaune → rouge
+          const t = (v - 0.75) / 0.25;
           r = 255;
-          g = Math.round(255 - 155 * t);
+          g = Math.round(255 - 255 * t);
           b = 0;
         }
 
         spectroCtx.fillStyle = `rgb(${r}, ${g}, ${b})`;
-        spectroCtx.fillRect(x * barW, y, barW + 1, spectroCanvas.height - y); // ← REMPLIT JUSQU'EN BAS
+        spectroCtx.fillRect(x * barW, y, barW + 1, spectroCanvas.height - y);
       }
     }
   }

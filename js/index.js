@@ -1891,16 +1891,38 @@ if (fileInput && fileInfo && fileNameSpan && fileDetailsSpan && clearBtn && play
   });
 
   // Bouton de suppression
-  clearBtn.addEventListener('click', () => {
-    if (confirm("Supprimer le fichier audio chargé ?")) {
-      fileInput.value = '';
-      player.src = '';
-      player.load();
-      hideFileInfo();
+clearBtn.addEventListener('click', async () => {
+  if (!confirm("Supprimer le fichier audio chargé ?")) return;
+
+  try {
+    // 1. On supprime physiquement de IndexedDB
+    const db = await openDB();
+    const transaction = db.transaction(['audioStore'], 'readwrite');
+    const store = transaction.objectStore('audioStore');
+    await store.delete('userAudio');  // clé magique qui efface tout
+    await store.delete('audioState'); // au cas où tu sauvegardes aussi l'état
+    console.log('Fichier supprimé d\'IndexedDB');
+
+    // 2. On vide le lecteur
+    player.src = '';
+    player.load();
+
+    // 3. On vide l'input fichier
+    fileInput.value = '';
+
+    // 4. On cache l'affichage avec animation
+    fileInfo.classList.add('opacity-0');
+    setTimeout(() => {
+      fileInfo.style.display = 'none';
       fileNameSpan.textContent = 'Aucun fichier chargé';
       fileDetailsSpan.textContent = '—';
-    }
-  });
+    }, 400);
+
+  } catch (err) {
+    console.error("Erreur lors de la suppression du fichier", err);
+    alert("Erreur lors de la suppression. Réessayez.");
+  }
+});
 }
 
 // === RESTAURATION DE L'AFFICHAGE DU FICHIER AU CHARGEMENT DE LA PAGE ===

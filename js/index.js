@@ -605,45 +605,85 @@ async function setupAudioPlayer() {
 
   // Visualisation spectrale avec couleurs par plage de fréquences
   function drawSpectrum() {
-    try {
-      analyserLeft.getByteFrequencyData(dataArrayLeft);
-      spectrumCtx.clearRect(0, 0, spectrumCanvas.width, spectrumCanvas.height);
-      const barWidth = (spectrumCanvas.width / bufferLength) * 2.5;
-      const maxFreq = audioContext.sampleRate / 2;
-      const lowFreqLimit = 200;
-      const midFreqLimit = 4000;
-      let x = 0;
-      for (let i = 0; i < bufferLength; i++) {
-        const freq = (i / bufferLength) * maxFreq;
-        let color;
-        if (freq <= lowFreqLimit) {
-          color = '#ff4c4c';
-        } else if (freq <= midFreqLimit) {
-          color = '#ffeb3b';
-        } else {
-          color = '#2196f3';
-        }
-        spectrumCtx.fillStyle = color;
-        const barHeight = dataArrayLeft[i];
-        spectrumCtx.fillRect(x, spectrumCanvas.height - barHeight / 2, barWidth, barHeight / 2);
-        x += barWidth + 1;
+  try {
+    // Fond blanc (on clear + on ne remplit pas de noir)
+    spectrumCtx.clearRect(0, 0, spectrumCanvas.width, spectrumCanvas.height);
+
+    analyserLeft.getByteFrequencyData(dataArrayLeft);
+
+    const barWidth = (spectrumCanvas.width / bufferLength) * 2.5;
+    const maxFreq = audioContext.sampleRate / 2;
+    let x = 0;
+
+    // === DESSIN DES BARRES (couleurs égaliseur) ===
+    for (let i = 0; i < bufferLength; i++) {
+      const freq = (i / bufferLength) * maxFreq;
+      const value = dataArrayLeft[i];
+      const barHeight = (value / 255) * spectrumCanvas.height * 0.9;
+
+      let color;
+      if (freq <= 250) {
+        color = '#dc3545';      // Rouge → Basses (comme #eqLow)
+      } else if (freq <= 4000) {
+        color = '#ffc107';      // Jaune → Médiums (comme #eqMid)
+      } else {
+        color = '#0d6efd';      // Bleu → Aigus (comme #eqHigh)
       }
-      spectrumCtx.fillStyle = 'var(--font-color)';
-      spectrumCtx.font = '10px var(--body-font)';
-      const freqs = [50, 100, 200, 500, 1000, 2000, 5000, 10000, 15000];
-      freqs.forEach(freq => {
-        const xPos = (freq / maxFreq) * spectrumCanvas.width;
-        spectrumCtx.fillText(`${freq < 1000 ? freq : freq / 1000 + 'k'}Hz`, xPos, 15);
-        spectrumCtx.beginPath();
-        spectrumCtx.moveTo(xPos, 0);
-        spectrumCtx.lineTo(xPos, spectrumCanvas.height);
-        spectrumCtx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
-        spectrumCtx.stroke();
-      });
-    } catch (error) {
-      console.error('Erreur lors du dessin du spectre:', error);
+
+      spectrumCtx.fillStyle = color;
+      spectrumCtx.fillRect(
+        x,
+        spectrumCanvas.height - barHeight,
+        barWidth,
+        barHeight
+      );
+
+      x += barWidth + 1;
     }
+
+    // === LABELS FRÉQUENCES RESPONSIFS (plus jamais de chevauchement) ===
+    const width = spectrumCanvas.width;
+
+    // On adapte les labels selon la largeur de l'écran
+    let freqsToShow = [];
+    if (width < 480) {
+      // Mobile très petit
+      freqsToShow = [100, 1000, 5000, 10000];
+    } else if (width < 768) {
+      // Mobile / petite tablette
+      freqsToShow = [50, 500, 2000, 10000];
+    } else if (width < 1100) {
+      // Tablette / petit PC
+      freqsToShow = [50, 200, 1000, 5000, 10000];
+    } else {
+      // Grand écran → tout afficher
+      freqsToShow = [50, 100, 200, 500, 1000, 2000, 5000, 10000, 15000];
+    }
+
+    spectrumCtx.fillStyle = '#333';
+    spectrumCtx.font = '11px Consolas, monospace';
+    spectrumCtx.textAlign = 'center';
+
+    freqsToShow.forEach(freq => {
+      const xPos = (freq / maxFreq) * spectrumCanvas.width;
+      const label = freq < 1000 ? `${freq}` : `${freq / 1000}k`;
+
+      // Label en haut
+      spectrumCtx.fillText(label, xPos, 16);
+
+      // Petite ligne verticale discrète
+      spectrumCtx.beginPath();
+      spectrumCtx.moveTo(xPos, spectrumCanvas.height - 8);
+      spectrumCtx.lineTo(xPos, spectrumCanvas.height);
+      spectrumCtx.strokeStyle = 'rgba(0,0,0,0.15)';
+      spectrumCtx.lineWidth = 1;
+      spectrumCtx.stroke();
+    });
+
+  } catch (error) {
+    console.error('Erreur lors du dessin du spectre:', error);
   }
+}
 
   // Gestion de l'animation avec annulation
   let animationId = null;

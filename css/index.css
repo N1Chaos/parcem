@@ -791,6 +791,7 @@ textarea {
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   background: #111 !important;
   margin-bottom: 1rem;
+  image-rendering: pixelated;
 }
 
 /* Petit bonus : le spectre un peu plus lumineux */

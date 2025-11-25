@@ -1812,58 +1812,50 @@ function drawSpectrogram() {
 
   analyserLeftGlobal.getByteFrequencyData(dataArrayLeftGlobal);
 
-  // Ajouter la nouvelle colonne
-  history.push([...dataArrayLeftGlobal]); // copie propre
-  if (history.length > spectroCanvas.width + 100) history.shift(); // buffer
+  // On ajoute la nouvelle colonne
+  history.push(new Uint8Array(dataArrayLeftGlobal));
+  if (history.length > spectroCanvas.width) history.shift();
 
   // Fond noir
   spectroCtx.fillStyle = 'black';
   spectroCtx.fillRect(0, 0, spectroCanvas.width, spectroCanvas.height);
 
-  const binCount = dataArrayLeftGlobal.length;
-  const barWidth = spectroCanvas.width / history.length;
+  const barW = spectroCanvas.width / history.length;
 
   for (let x = 0; x < history.length; x++) {
-    const column = history[x];
+    const col = history[x];
 
-    for (let i = 0; i < binCount; i += 3) {  // 3 = détail + vitesse
-      const value = column[i] / 255;
+    for (let i = 0; i < col.length; i += 4) {  // 4 = ton réglage original, parfait
+      const v = col[i] / 255;
 
-      if (value > 0.02) {
-        const freqIndex = i / binCount;
-        const y = spectroCanvas.height * (1 - freqIndex); // basses en bas
+      if (v > 0.03) {
+        // Inverser l'axe Y → basses en bas (comme toi)
+        const y = spectroCanvas.height * 0.98 - (i / col.length) * spectroCanvas.height * 0.98;
 
-        // === DÉGRADÉ COMPLET : violet → bleu → cyan → vert → jaune → rouge → blanc ===
+        // === TA PALETTE ORIGINALE, MAIS CORRIGÉE ET BOOSTÉE ===
         let r, g, b;
-        if (value < 0.2) {
-          r = 128 + (127 * (value / 0.2));
+
+        if (v < 0.33) {
+          // Violet → bleu
+          r = 80 * (v / 0.33);
           g = 0;
-          b = 200 + (55 * (value / 0.2));
-        } else if (value < 0.4) {
-          r = 255;
-          g = 0 + (200 * ((value - 0.2) / 0.2));
-          b = 255;
-        } else if (value < 0.6) {
-          r = 255 - (100 * ((value - 0.4) / 0.2));
-          g = 255;
-          b = 255 - (255 * ((value - 0.4) / 0.2));
-        } else if (value < 0.8) {
-          r = 255;
-          g = 255;
-          b = 0 + (200 * ((value - 0.6) / 0.2));
+          b = 120 + 135 * (v / 0.33);
+        } else if (v < 0.66) {
+          const t = (v - 0.33) / 0.33;
+          r = 80 + 70 * t;
+          g = 0 + 200 * t;
+          b = 255 - 155 * t;
         } else {
-          r = 255;
-          g = 255 - (255 * ((value - 0.8) / 0.2));
-          b = 200 + (55 * ((value - 0.8) / 0.2));
+          const t = (v - 0.66) / 0.34;
+          r = 150 + 105 * t;
+          g = 200 + 55 * t;
+          b = 100 - 100 * t;
         }
 
-        spectroCtx.fillStyle = `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
-        spectroCtx.fillRect(
-          x * barWidth,
-          y,
-          barWidth + 1,
-          spectroCanvas.height - y  // ← REMPLISSAGE TOTAL JUSQU'EN BAS
-        );
+        spectroCtx.fillStyle = `rgb(${r|0}, ${g|0}, ${b|0})`;
+        
+        // LE POINT CLÉ QUE J'AVAIS OUBLIÉ : REMPLIR JUSQU'EN BAS !
+        spectroCtx.fillRect(x * barW, y, barW + 1, spectroCanvas.height - y);
       }
     }
   }

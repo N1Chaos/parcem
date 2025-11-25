@@ -1812,53 +1812,52 @@ function drawSpectrogram() {
 
   analyserLeftGlobal.getByteFrequencyData(dataArrayLeftGlobal);
 
-  // On ajoute la nouvelle colonne
-  history.push(new Uint8Array(dataArrayLeftGlobal));
-  if (history.length > spectroCanvas.width) history.shift();
+  // Décalage vers la gauche (scroll continu)
+  spectroCtx.drawImage(spectroCtx.canvas, -1, 0);
 
-  // Fond noir
-  spectroCtx.fillStyle = 'black';
-  spectroCtx.fillRect(0, 0, spectroCanvas.width, spectroCanvas.height);
+  // On dessine la nouvelle colonne à droite
+  const barWidth = 1;  // 1 pixel = vrai spectrogramme fluide
+  const height = spectroCanvas.height;
+  const width = spectroCanvas.width;
 
-  const barW = spectroCanvas.width / history.length;
+  for (let i = 0; i < dataArrayLeftGlobal.length; i += 2) {  // 2 = fluidité max
+    const value = dataArrayLeftGlobal[i] / 255;
+    if (value < 0.01) continue;  // on ignore le bruit
 
-  for (let x = 0; x < history.length; x++) {
-    const col = history[x];
+    // Fréquence → position verticale (basses en bas)
+    const y = height - (i / dataArrayLeftGlobal.length) * height;
 
-    for (let i = 0; i < col.length; i += 4) {  // 4 = ton réglage original, parfait
-      const v = col[i] / 255;
-
-      if (v > 0.03) {
-        // Inverser l'axe Y → basses en bas (comme toi)
-        const y = spectroCanvas.height * 0.98 - (i / col.length) * spectroCanvas.height * 0.98;
-
-        // === TA PALETTE ORIGINALE, MAIS CORRIGÉE ET BOOSTÉE ===
-        let r, g, b;
-
-        if (v < 0.33) {
-          // Violet → bleu
-          r = 80 * (v / 0.33);
-          g = 0;
-          b = 120 + 135 * (v / 0.33);
-        } else if (v < 0.66) {
-          const t = (v - 0.33) / 0.33;
-          r = 80 + 70 * t;
-          g = 0 + 200 * t;
-          b = 255 - 155 * t;
-        } else {
-          const t = (v - 0.66) / 0.34;
-          r = 150 + 105 * t;
-          g = 200 + 55 * t;
-          b = 100 - 100 * t;
-        }
-
-        spectroCtx.fillStyle = `rgb(${r|0}, ${g|0}, ${b|0})`;
-        
-        // LE POINT CLÉ QUE J'AVAIS OUBLIÉ : REMPLIR JUSQU'EN BAS !
-        spectroCtx.fillRect(x * barW, y, barW + 1, spectroCanvas.height - y);
-      }
+    // === INTENSITÉ → BRIGHTNESS (noir → violet → bleu → vert → jaune → blanc) ===
+    let r, g, b;
+    if (value < 0.2) {
+      r = 0;
+      g = 0;
+      b = Math.round(100 + 155 * (value / 0.2));
+    } else if (value < 0.4) {
+      r = Math.round(150 * ((value - 0.2) / 0.2));
+      g = 0;
+      b = 255;
+    } else if (value < 0.6) {
+      r = Math.round(150 + 105 * ((value - 0.4) / 0.2));
+      g = Math.round(200 * ((value - 0.4) / 0.2));
+      b = 255;
+    } else if (value < 0.8) {
+      r = 255;
+      g = 255;
+      b = Math.round(255 - 255 * ((value - 0.6) / 0.2));
+    } else {
+      r = 255;
+      g = Math.round(255 - 255 * ((value - 0.8) / 0.2));
+      b = Math.round(255 - 255 * ((value - 0.8) / 0.2));
     }
+
+    spectroCtx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+    spectroCtx.fillRect(width - 1, y, barWidth, 2);  // 1 pixel de large, 2px de haut pour lissage
   }
+
+  // Optionnel : léger fondu à gauche pour effet "scroll infini"
+  spectroCtx.fillStyle = 'rgba(0,0,0,0.02)';
+  spectroCtx.fillRect(0, 0, width - 1, height);
 }
 
 

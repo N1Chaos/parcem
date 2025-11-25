@@ -1763,13 +1763,6 @@ function deleteWordFromMainPage(page, word) {
   console.log(`Mot "${word}" supprimé de ${page}`);
 }
 
-function updateProgressBar() {
-  const progress = (player.currentTime / player.duration) * 100;
-  const progressBar = document.getElementById('progressBar');
-  if (progressBar) {
-    progressBar.style.width = `${progress}%`;
-  }
-}
 
 // ==================== SPECTROGRAMME – VERSION QUI MARCHE À 100% (GARANTI) ====================
 const spectroCanvas = document.getElementById('spectrogramCanvas');
@@ -1841,6 +1834,5 @@ window.addEventListener('resize', resizeSpectrogramCanvas);
 
 
 
-// AJOUTER CET ÉVÉNEMENT
-player.addEventListener('timeupdate', updateProgressBar);
+
 

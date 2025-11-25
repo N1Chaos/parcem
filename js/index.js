@@ -606,7 +606,7 @@ async function setupAudioPlayer() {
   // Visualisation spectrale avec couleurs par plage de fréquences
   function drawSpectrum() {
   try {
-    // Fond blanc (on clear seulement)
+    // Fond blanc
     spectrumCtx.clearRect(0, 0, spectrumCanvas.width, spectrumCanvas.height);
 
     analyserLeft.getByteFrequencyData(dataArrayLeft);
@@ -615,7 +615,7 @@ async function setupAudioPlayer() {
     const maxFreq = audioContext.sampleRate / 2;
     let x = 0;
 
-    // === DESSIN DES BARRES (tes couleurs exactes) ===
+    // === BARRES avec TES couleurs ===
     for (let i = 0; i < bufferLength; i++) {
       const freq = (i / bufferLength) * maxFreq;
       const value = dataArrayLeft[i];
@@ -623,45 +623,39 @@ async function setupAudioPlayer() {
 
       let color;
       if (freq <= 250) {
-        color = '#ff4c4c';        // Rouge (basses) — ton choix
+        color = '#ff4c4c';      // Rouge → basses
       } else if (freq <= 4000) {
-        color = '#ffeb3b';        // Jaune (médiums) — ton choix
+        color = '#ffeb3b';      // Jaune → médiums
       } else {
-        color = '#2196f3';        // Bleu (aigus) — ton choix
+        color = '#2196f3';      // Bleu → aigus
       }
 
       spectrumCtx.fillStyle = color;
-      spectrumCtx.fillRect(
-        x,
-        spectrumCanvas.height - barHeight,
-        barWidth,
-        barHeight
-      );
-
+      spectrumCtx.fillRect(x, spectrumCanvas.height - barHeight, barWidth, barHeight);
       x += barWidth + 1;
     }
 
-    // === LABELS FRÉQUENCES RESPONSIFS (exactement comme tu veux) ===
+    // === LABELS FRÉQUENCES — 1k et 20k TOUJOURS VISIBLES ===
     const width = spectrumCanvas.width;
 
     let freqsToShow = [];
     if (width < 768) {
-      // Mobile → uniquement 1k, 5k, 10k, 15k, 20k
+      // Mobile → 1k et 20k toujours là
       freqsToShow = [1000, 5000, 10000, 15000, 20000];
     } else {
-      // Tablette + PC → 500, 1k, 5k, 10k, 15k, 20k
+      // PC → 1k et 20k toujours là + 500 en plus
       freqsToShow = [500, 1000, 5000, 10000, 15000, 20000];
     }
 
+    // Dessin des labels
     spectrumCtx.fillStyle = '#333';
     spectrumCtx.font = '11px Consolas, monospace';
     spectrumCtx.textAlign = 'center';
 
     freqsToShow.forEach(freq => {
       const xPos = (freq / maxFreq) * spectrumCanvas.width;
-      const label = freq < 1000 ? `${freq}` : `${freq / 1000}k`;
+      const label = freq === 1000 ? '1kHz' : freq === 20000 ? '20kHz' : freq < 1000 ? `${freq}` : `${freq / 1000}k`;
 
-      // Label en haut
       spectrumCtx.fillText(label, xPos, 16);
 
       // Ligne verticale discrète

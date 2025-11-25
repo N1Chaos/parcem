@@ -1844,35 +1844,3 @@ window.addEventListener('resize', resizeSpectrogramCanvas);
 // AJOUTER CET ÉVÉNEMENT
 player.addEventListener('timeupdate', updateProgressBar);
 
-// === AFFICHAGE TEMPS ÉCOULÉ / DURÉE TOTALE + TEMPS RESTANT (TRÈS PRO) ===
-const currentTimeSpan = document.getElementById('currentTime');
-const durationSpan = document.getElementById('duration');
-const player = document.getElementById('audioPlayer');
-
-if (currentTimeSpan && durationSpan && player) {
-  const formatTime = (seconds) => {
-    if (isNaN(seconds)) return '0:00';
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  player.addEventListener('loadedmetadata', () => {
-    durationSpan.textContent = formatTime(player.duration);
-  });
-
-  player.addEventListener('timeupdate', () => {
-    currentTimeSpan.textContent = formatTime(player.currentTime);
-
-    // Bonus : temps restant au survol
-    if (player.duration) {
-      const remaining = player.duration - player.currentTime;
-      currentTimeSpan.title = remaining > 0 ? `-${formatTime(remaining)} restant` : '';
-    }
-  });
-
-  // Au chargement d’un nouveau fichier ou restauration
-  player.addEventListener('canplay', () => {
-    durationSpan.textContent = formatTime(player.duration);
-  });
-}

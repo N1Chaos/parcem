@@ -806,11 +806,11 @@ textarea {
   display: block;
 }
 
-/* Spectre de fréquences → beau dégradé bleu nuit */
 #spectrumCanvas {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%) !important;
-  border: 2px solid #4a90e2;
-  box-shadow: 0 0 20px rgba(74, 144, 226, 0.5);
+  background: white !important;           /* Fond blanc pur */
+  border: 2px solid #ccc;                  /* Bordure sobre et pro */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Ombre très légère (pas de glow bleu) */
+  border-radius: var(--border-radius);
 }
 
 /* Spectrogramme → FOND 100% NOIR OBLIGATOIRE pour remplissage total */

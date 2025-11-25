@@ -606,49 +606,44 @@ async function setupAudioPlayer() {
   // Visualisation spectrale avec couleurs par plage de fréquences
   function drawSpectrum() {
   try {
-    // Fond blanc
+    // Fond blanc + nettoyage
     spectrumCtx.clearRect(0, 0, spectrumCanvas.width, spectrumCanvas.height);
 
-    analyserLeft.getByteFrequencyData(dataArrayLeft);
+    // === SI AUDIO CHARGÉ → on dessine les barres ===
+    if (analyserLeftGlobal && dataArrayLeftGlobal) {
+      analyserLeft.getByteFrequencyData(dataArrayLeftGlobal);
 
-    const barWidth = (spectrumCanvas.width / bufferLength) * 2.5;
-    const maxFreq = audioContext.sampleRate / 2;
-    let x = 0;
+      const barWidth = (spectrumCanvas.width / bufferLength) * 2.5;
+      let x = 0;
 
-    // === BARRES avec TES couleurs ===
-    for (let i = 0; i < bufferLength; i++) {
-      const freq = (i / bufferLength) * maxFreq;
-      const value = dataArrayLeft[i];
-      const barHeight = (value / 255) * spectrumCanvas.height * 0.9;
+      for (let i = 0; i < bufferLength; i++) {
+        const freq = (i / bufferLength) * (audioContext.sampleRate / 2);
+        const value = dataArrayLeftGlobal[i];
+        const barHeight = (value / 255) * spectrumCanvas.height * 0.9;
 
-      let color;
-      if (freq <= 250) {
-        color = '#ff4c4c';      // Rouge → basses
-      } else if (freq <= 4000) {
-        color = '#ffeb3b';      // Jaune → médiums
-      } else {
-        color = '#2196f3';      // Bleu → aigus
+        let color;
+        if (freq <= 250) color = '#ff4c4c';
+        else if (freq <= 4000) color = '#ffeb3b';
+        else color = '#2196f3';
+
+        spectrumCtx.fillStyle = color;
+        spectrumCtx.fillRect(x, spectrumCanvas.height - barHeight, barWidth, barHeight);
+        x += barWidth + 1;
       }
-
-      spectrumCtx.fillStyle = color;
-      spectrumCtx.fillRect(x, spectrumCanvas.height - barHeight, barWidth, barHeight);
-      x += barWidth + 1;
     }
 
-    // === LABELS FRÉQUENCES — 1k et 20k TOUJOURS VISIBLES ===
+    // === REPÈRES DE FRÉQUENCES — TOUJOURS VISIBLES (même sans audio) ===
     const width = spectrumCanvas.width;
+    const maxFreq = 22050; // standard
 
     let freqsToShow = [];
     if (width < 768) {
-      // Mobile → 1k et 20k toujours là
       freqsToShow = [1000, 5000, 10000, 15000, 20000];
     } else {
-      // PC → 1k et 20k toujours là + 500 en plus
       freqsToShow = [500, 1000, 5000, 10000, 15000, 20000];
     }
 
-    // Dessin des labels
-    spectrumCtx.fillStyle = '#333';
+    spectrumCtx.fillStyle = '#999';           // gris discret quand pas de son
     spectrumCtx.font = '11px Consolas, monospace';
     spectrumCtx.textAlign = 'center';
 
@@ -658,11 +653,11 @@ async function setupAudioPlayer() {
 
       spectrumCtx.fillText(label, xPos, 16);
 
-      // Ligne verticale discrète
+      // Ligne verticale très discrète
       spectrumCtx.beginPath();
       spectrumCtx.moveTo(xPos, spectrumCanvas.height - 10);
       spectrumCtx.lineTo(xPos, spectrumCanvas.height);
-      spectrumCtx.strokeStyle = 'rgba(0,0,0,0.15)';
+      spectrumCtx.strokeStyle = 'rgba(0,0,0,0.1)';
       spectrumCtx.lineWidth = 1;
       spectrumCtx.stroke();
     });

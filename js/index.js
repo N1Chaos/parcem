@@ -1067,6 +1067,9 @@
 
   // ==================== INITIALISATION ====================
   document.addEventListener("DOMContentLoaded", async () => {
+
+    setTimeout(() => { if (!animationId) animate(); }, 100);
+
     const currentPage = getPageName();
     console.log('Page actuelle:', currentPage);
     if (currentPage === '' || currentPage === 'index') {
@@ -1874,7 +1877,7 @@
       }
 
       spectroCtx.fillStyle = `rgb(${r}, ${g}, ${b})`;
-      spectroCtx.fillRect(width - 1, y, 2, 3); // 2px de large pour plus de lumière
+      spectroCtx.fillRect(width - 1, y, 2, 6); // 2px de large pour plus de lumière
     }
 
     // === FONDU TRÈS LENT (le secret !) ===

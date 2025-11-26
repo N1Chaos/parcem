@@ -1877,7 +1877,7 @@
       }
 
       spectroCtx.fillStyle = `rgb(${r}, ${g}, ${b})`;
-      spectroCtx.fillRect(width - 1, y, 2, 6); // 2px de large pour plus de lumière
+      spectroCtx.fillRect(width - 1, y, 2, 8); // 2px de large pour plus de lumière
     }
 
     // === FONDU TRÈS LENT (le secret !) ===

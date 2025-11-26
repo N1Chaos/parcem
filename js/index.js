@@ -1068,7 +1068,12 @@
   // ==================== INITIALISATION ====================
   document.addEventListener("DOMContentLoaded", async () => {
 
-    setTimeout(() => { if (!animationId) animate(); }, 100);
+    setTimeout(() => {
+    if (!animationId) {
+      animate();
+      console.log('Animation démarrée au chargement');
+    }
+  }, 100);
 
     const currentPage = getPageName();
     console.log('Page actuelle:', currentPage);

@@ -606,62 +606,63 @@ async function setupAudioPlayer() {
   // Visualisation spectrale avec couleurs par plage de fréquences
   function drawSpectrum() {
   try {
+    // Fond blanc
     spectrumCtx.clearRect(0, 0, spectrumCanvas.width, spectrumCanvas.height);
 
-    const REAL_MAX_FREQ = audioContext.sampleRate / 2;  // vrai sampleRate (ex: 24000 sur mobile)
-    const DISPLAY_MAX_FREQ = 22050;                     // échelle VISUELLE forcée
+    analyserLeft.getByteFrequencyData(dataArrayLeft);
 
-    // === BARRES : on utilise le vrai sampleRate pour les données ===
-    if (analyserLeft && dataArrayLeft) {
-      analyserLeft.getByteFrequencyData(dataArrayLeft);
+    const barWidth = (spectrumCanvas.width / bufferLength) * 2.5;
+    const maxFreq = audioContext.sampleRate / 2;
+    let x = 0;
 
-      const barWidth = (spectrumCanvas.width / bufferLength) * 2.5;
-      let x = 0;
+    // === BARRES avec TES couleurs ===
+    for (let i = 0; i < bufferLength; i++) {
+      const freq = (i / bufferLength) * maxFreq;
+      const value = dataArrayLeft[i];
+      const barHeight = (value / 255) * spectrumCanvas.height * 0.9;
 
-      for (let i = 0; i < bufferLength; i++) {
-        // Fréquence réelle (pour les données)
-        const realFreq = (i / bufferLength) * REAL_MAX_FREQ;
-        // Mais on la "projette" sur 22 050 Hz pour les couleurs
-        const displayFreq = (i / bufferLength) * DISPLAY_MAX_FREQ;
-
-        const value = dataArrayLeft[i];
-        const barHeight = (value / 255) * spectrumCanvas.height * 0.9;
-
-        let color;
-        if (displayFreq <= 250) color = '#ff4c4c';
-        else if (displayFreq <= 4000) color = '#ffeb3b';
-        else color = '#2196f3';
-
-        spectrumCtx.fillStyle = color;
-        spectrumCtx.fillRect(x, spectrumCanvas.height - barHeight, barWidth, barHeight);
-        x += barWidth + 1;
+      let color;
+      if (freq <= 250) {
+        color = '#ff4c4c';      // Rouge → basses
+      } else if (freq <= 4000) {
+        color = '#ffeb3b';      // Jaune → médiums
+      } else {
+        color = '#2196f3';      // Bleu → aigus
       }
+
+      spectrumCtx.fillStyle = color;
+      spectrumCtx.fillRect(x, spectrumCanvas.height - barHeight, barWidth, barHeight);
+      x += barWidth + 1;
     }
 
-    // === REPÈRES : on utilise l'échelle visuelle 22 050 Hz ===
+    // === LABELS FRÉQUENCES — 1k et 20k TOUJOURS VISIBLES ===
     const width = spectrumCanvas.width;
 
     let freqsToShow = [];
     if (width < 768) {
+      // Mobile → 1k et 20k toujours là
       freqsToShow = [1000, 5000, 10000, 15000, 20000];
     } else {
+      // PC → 1k et 20k toujours là + 500 en plus
       freqsToShow = [500, 1000, 5000, 10000, 15000, 20000];
     }
 
-    spectrumCtx.fillStyle = '#999';
+    // Dessin des labels
+    spectrumCtx.fillStyle = '#333';
     spectrumCtx.font = '11px Consolas, monospace';
     spectrumCtx.textAlign = 'center';
 
     freqsToShow.forEach(freq => {
-      const xPos = (freq / DISPLAY_MAX_FREQ) * spectrumCanvas.width;
+      const xPos = (freq / maxFreq) * spectrumCanvas.width;
       const label = freq === 1000 ? '1kHz' : freq === 20000 ? '20kHz' : freq < 1000 ? `${freq}` : `${freq / 1000}k`;
 
       spectrumCtx.fillText(label, xPos, 16);
 
+      // Ligne verticale discrète
       spectrumCtx.beginPath();
       spectrumCtx.moveTo(xPos, spectrumCanvas.height - 10);
       spectrumCtx.lineTo(xPos, spectrumCanvas.height);
-      spectrumCtx.strokeStyle = 'rgba(0,0,0,0.1)';
+      spectrumCtx.strokeStyle = 'rgba(0,0,0,0.15)';
       spectrumCtx.lineWidth = 1;
       spectrumCtx.stroke();
     });

@@ -852,6 +852,6 @@ textarea {
 }
 
 #spectrogramCanvas {
-  height: 360px !important;
-  min-height: 360px !important;
+  height: 180px !important;
+  min-height: 180px !important;
 }

@@ -1828,7 +1828,7 @@ let history = [];
 function resizeSpectrogramCanvas() {
   if (!spectroCanvas) return;
   spectroCanvas.width = spectroCanvas.offsetWidth;
-  spectroCanvas.height = 250;
+  spectroCanvas.height = 360;
   history = []; // on vide l'historique pour repartir propre
 }
 

@@ -699,20 +699,22 @@ async function setupAudioPlayer() {
   let animationId = null;
   function animate() {
   try {
-    drawSpectrum();
-    // nouveau : dessiner le spectrogramme ici, avec accès aux variables locales
-    if (frameCount++ % 2 === 0) drawSpectrogram();
-    if (visualizations.classList.contains('active')) {
+    drawSpectrum(); // TOUJOURS dessiner le spectre
+    
+    // Le reste seulement si l'audio est prêt
+    if (analyserLeftGlobal && frameCount++ % 2 === 0) {
+      drawSpectrogram();
+    }
+    
+    if (visualizations && visualizations.classList.contains('active')) {
       drawVUMeters();
       drawWaveform();
     }
+    
     animationId = requestAnimationFrame(animate);
   } catch (error) {
-    console.error('Erreur dans la boucle d\'animation:', error);
-    if (animationId) {
-      cancelAnimationFrame(animationId);
-      animationId = null;
-    }
+    console.error('Erreur dans animate:', error);
+    animationId = requestAnimationFrame(animate); // RELANCER même en cas d'erreur
   }
 }
 

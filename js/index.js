@@ -609,17 +609,30 @@ async function setupAudioPlayer() {
     // Fond blanc
     spectrumCtx.clearRect(0, 0, spectrumCanvas.width, spectrumCanvas.height);
 
-    analyserLeft.getByteFrequencyData(dataArrayLeft);
+    // Vérifier si on a des données audio réelles
+    let hasAudioData = false;
+    let dataArray = new Uint8Array(bufferLength);
+    
+    if (analyserLeftGlobal && dataArrayLeftGlobal) {
+      analyserLeftGlobal.getByteFrequencyData(dataArrayLeftGlobal);
+      dataArray = dataArrayLeftGlobal;
+      
+      // Vérifier si les données ne sont pas silencieuses (pas seulement des zéros)
+      const sum = dataArray.reduce((a, b) => a + b, 0);
+      hasAudioData = sum > 100; // Seuil minimal pour considérer qu'il y a de l'audio
+    }
 
     const barWidth = (spectrumCanvas.width / bufferLength) * 2.5;
-    const maxFreq = audioContext.sampleRate / 2;
+    const maxFreq = audioContext ? audioContext.sampleRate / 2 : 22050; // Valeur par défaut
     let x = 0;
 
     // === BARRES avec TES couleurs ===
     for (let i = 0; i < bufferLength; i++) {
       const freq = (i / bufferLength) * maxFreq;
-      const value = dataArrayLeft[i];
-      const barHeight = (value / 255) * spectrumCanvas.height * 0.9;
+      
+      // Si pas de données audio, afficher des barres très basses (bruit de fond)
+      const value = hasAudioData ? dataArray[i] : Math.random() * 5 + 2;
+      const barHeight = (value / 255) * spectrumCanvas.height * (hasAudioData ? 0.9 : 0.05);
 
       let color;
       if (freq <= 250) {
@@ -630,25 +643,35 @@ async function setupAudioPlayer() {
         color = '#2196f3';      // Bleu → aigus
       }
 
+      // Réduire l'opacité si pas de fichier chargé
+      if (!hasAudioData) {
+        spectrumCtx.globalAlpha = 0.3;
+      } else {
+        spectrumCtx.globalAlpha = 1.0;
+      }
+
       spectrumCtx.fillStyle = color;
       spectrumCtx.fillRect(x, spectrumCanvas.height - barHeight, barWidth, barHeight);
       x += barWidth + 1;
     }
 
-    // === LABELS FRÉQUENCES — 1k et 20k TOUJOURS VISIBLES ===
+    // Réinitialiser l'opacité
+    spectrumCtx.globalAlpha = 1.0;
+
+    // === LABELS FRÉQUENCES — TOUJOURS VISIBLES ===
     const width = spectrumCanvas.width;
 
     let freqsToShow = [];
     if (width < 768) {
-      // Mobile → 1k et 20k toujours là
+      // Mobile → fréquences principales
       freqsToShow = [1000, 5000, 10000, 15000, 20000];
     } else {
-      // PC → 1k et 20k toujours là + 500 en plus
+      // PC → plus de détails
       freqsToShow = [500, 1000, 5000, 10000, 15000, 20000];
     }
 
-    // Dessin des labels
-    spectrumCtx.fillStyle = '#333';
+    // Dessin des labels (toujours visibles)
+    spectrumCtx.fillStyle = hasAudioData ? '#333' : '#666';
     spectrumCtx.font = '11px Consolas, monospace';
     spectrumCtx.textAlign = 'center';
 
@@ -662,7 +685,7 @@ async function setupAudioPlayer() {
       spectrumCtx.beginPath();
       spectrumCtx.moveTo(xPos, spectrumCanvas.height - 10);
       spectrumCtx.lineTo(xPos, spectrumCanvas.height);
-      spectrumCtx.strokeStyle = 'rgba(0,0,0,0.15)';
+      spectrumCtx.strokeStyle = hasAudioData ? 'rgba(0,0,0,0.15)' : 'rgba(0,0,0,0.08)';
       spectrumCtx.lineWidth = 1;
       spectrumCtx.stroke();
     });

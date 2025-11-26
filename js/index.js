@@ -606,60 +606,63 @@ async function setupAudioPlayer() {
   // Visualisation spectrale avec couleurs par plage de fréquences
   function drawSpectrum() {
   try {
-    // Fond blanc + nettoyage
+    // Fond blanc
     spectrumCtx.clearRect(0, 0, spectrumCanvas.width, spectrumCanvas.height);
 
-    // === MAXFREQ FIXE POUR TOUT (barres + repères) ===
-    const MAX_FREQ = 22050;  // ← la clé magique
+    analyserLeft.getByteFrequencyData(dataArrayLeft);
 
-    // === SI AUDIO CHARGÉ → on dessine les barres ===
-    if (analyserLeft && dataArrayLeft) {  // ← tes vraies variables
-      analyserLeft.getByteFrequencyData(dataArrayLeft);
+    const barWidth = (spectrumCanvas.width / bufferLength) * 2.5;
+    const maxFreq = audioContext.sampleRate / 2;
+    let x = 0;
 
-      const barWidth = (spectrumCanvas.width / bufferLength) * 2.5;
-      let x = 0;
+    // === BARRES avec TES couleurs ===
+    for (let i = 0; i < bufferLength; i++) {
+      const freq = (i / bufferLength) * maxFreq;
+      const value = dataArrayLeft[i];
+      const barHeight = (value / 255) * spectrumCanvas.height * 0.9;
 
-      for (let i = 0; i < bufferLength; i++) {
-        // ON UTILISE MAX_FREQ ICI AUSSI → cohérence totale
-        const freq = (i / bufferLength) * MAX_FREQ;
-        const value = dataArrayLeft[i];
-        const barHeight = (value / 255) * spectrumCanvas.height * 0.9;
-
-        let color;
-        if (freq <= 250) color = '#ff4c4c';
-        else if (freq <= 4000) color = '#ffeb3b';
-        else color = '#2196f3';
-
-        spectrumCtx.fillStyle = color;
-        spectrumCtx.fillRect(x, spectrumCanvas.height - barHeight, barWidth, barHeight);
-        x += barWidth + 1;
+      let color;
+      if (freq <= 250) {
+        color = '#ff4c4c';      // Rouge → basses
+      } else if (freq <= 4000) {
+        color = '#ffeb3b';      // Jaune → médiums
+      } else {
+        color = '#2196f3';      // Bleu → aigus
       }
+
+      spectrumCtx.fillStyle = color;
+      spectrumCtx.fillRect(x, spectrumCanvas.height - barHeight, barWidth, barHeight);
+      x += barWidth + 1;
     }
 
-    // === REPÈRES DE FRÉQUENCES — TOUJOURS VISIBLES ===
+    // === LABELS FRÉQUENCES — 1k et 20k TOUJOURS VISIBLES ===
     const width = spectrumCanvas.width;
 
     let freqsToShow = [];
     if (width < 768) {
+      // Mobile → 1k et 20k toujours là
       freqsToShow = [1000, 5000, 10000, 15000, 20000];
     } else {
+      // PC → 1k et 20k toujours là + 500 en plus
       freqsToShow = [500, 1000, 5000, 10000, 15000, 20000];
     }
 
-    spectrumCtx.fillStyle = '#999';
+    // Dessin des labels
+    spectrumCtx.fillStyle = '#333';
     spectrumCtx.font = '11px Consolas, monospace';
     spectrumCtx.textAlign = 'center';
 
     freqsToShow.forEach(freq => {
-      const xPos = (freq / MAX_FREQ) * spectrumCanvas.width;
+      const xPos = (freq / maxFreq) * spectrumCanvas.width;
       const label = freq === 1000 ? '1kHz' : freq === 20000 ? '20kHz' : freq < 1000 ? `${freq}` : `${freq / 1000}k`;
 
       spectrumCtx.fillText(label, xPos, 16);
 
+      // Ligne verticale discrète
       spectrumCtx.beginPath();
       spectrumCtx.moveTo(xPos, spectrumCanvas.height - 10);
       spectrumCtx.lineTo(xPos, spectrumCanvas.height);
-      spectrumCtx.strokeStyle = 'rgba(0,0,0,0.1)';
+      spectrumCtx.strokeStyle = 'rgba(0,0,0,0.15)';
       spectrumCtx.lineWidth = 1;
       spectrumCtx.stroke();
     });

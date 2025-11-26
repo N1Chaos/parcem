@@ -850,3 +850,8 @@ textarea {
 #spectrogramCanvas ~ div {
   pointer-events: none;
 }
+
+#spectrogramCanvas {
+  height: 360px !important;
+  min-height: 360px !important;
+}

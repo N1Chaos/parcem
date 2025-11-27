@@ -857,14 +857,15 @@ textarea {
 }
 
 /* Masque le curseur volume sur TOUS les navigateurs – 100% fiable */
+#audioPlayer::-webkit-media-controls-volume-slider-container,
 #audioPlayer::-webkit-media-controls-volume-slider,
-#audioPlayer::-webkit-media-controls-volume-control-container,
 #audioPlayer::-webkit-media-controls-mute-button,
 #audioPlayer::-moz-range-track,
 #audioPlayer::-ms-volume-slider {
   display: none !important;
   width: 0 !important;
   height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
   opacity: 0 !important;
-  pointer-events: none !important;
 }

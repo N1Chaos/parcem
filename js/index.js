@@ -269,7 +269,7 @@
     analyserLeft.fftSize = 2048;
     analyserRight.fftSize = 2048;
     const gainNode = audioContext.createGain();
-    gainNode.gain.value = 1;
+    gainNode.gain.setValueAtTime(1, audioContext.currentTime);
     const pannerNode = audioContext.createStereoPanner();
     const lowFilter = audioContext.createBiquadFilter();
     lowFilter.type = 'lowshelf';

@@ -221,7 +221,6 @@
     const fileInput = document.getElementById('audioFile');
     const fileNameDisplay = document.getElementById('audioFileName');
     const playbackSpeed = document.getElementById('playbackSpeed');
-    const volumeControl = document.getElementById('volumeControl');
     const balanceControl = document.getElementById('balanceControl');
     const eqLow = document.getElementById('eqLow');
     const eqMid = document.getElementById('eqMid');
@@ -787,13 +786,6 @@
       updateAudioState();
     });
 
-    // Contrôle du volume
-    volumeControl.addEventListener('input', () => {
-      gainNode.gain.value = parseFloat(volumeControl.value);
-      console.log('Volume ajusté:', gainNode.gain.value);
-      updateAudioState();
-    });
-
     // Contrôles de l'égaliseur
     eqLow.addEventListener('input', () => {
       lowFilter.gain.value = parseFloat(eqLow.value);
@@ -817,7 +809,6 @@
         isPlaying: !player.paused,
         duration: player.duration || 0,
         playbackRate: player.playbackRate,
-        volume: gainNode.gain.value,
         balance: pannerNode.pan.value,
         eqLow: lowFilter.gain.value,
         eqMid: midFilter.gain.value,
@@ -848,21 +839,21 @@
         const savedTime = savedAudioState?.time || parseFloat(savedAudioData.time || 0);
         const isPlaying = savedAudioState?.isPlaying || false;
         const savedPlaybackRate = savedAudioState?.playbackRate || 1;
-        const savedVolume = savedAudioState?.volume ?? 0.4;
+       
         const savedBalance = savedAudioState?.balance || 0;
         const savedEqLow = savedAudioState?.eqLow || 0;
         const savedEqMid = savedAudioState?.eqMid || 0;
         const savedEqHigh = savedAudioState?.eqHigh || 0;
 
         player.playbackRate = savedPlaybackRate;
-        gainNode.gain.value = savedVolume;
+       
         pannerNode.pan.value = savedBalance;
         lowFilter.gain.value = savedEqLow;
         midFilter.gain.value = savedEqMid;
         highFilter.gain.value = savedEqHigh;
 
         playbackSpeed.value = savedPlaybackRate;
-        volumeControl.value = savedVolume;
+
         balanceControl.value = savedBalance;
         eqLow.value = savedEqLow;
         eqMid.value = savedEqMid;
@@ -939,8 +930,7 @@
         time: 0, 
         isPlaying: false, 
         duration: player.duration || 0, 
-        playbackRate: player.playbackRate, 
-        volume: gainNode.gain.value, 
+        playbackRate: player.playbackRate,
         balance: pannerNode.pan.value,
         eqLow: lowFilter.gain.value,
         eqMid: midFilter.gain.value,

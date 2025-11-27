@@ -1,8 +1,6 @@
   let frameCount = 0;
   let analyserLeftGlobal;
   let dataArrayLeftGlobal;
-
-
   // ==================== CONSTANTES ====================
   const PAGES = {
     page1: "Styles",
@@ -21,25 +19,20 @@
     page14: "Adjectifs",
     'langues-classification': "Classification"
   };
-
   // ==================== FONCTIONS UTILITAIRES ====================
   function getPageName() {
     return window.location.pathname.split('/').pop().replace('.html', '');
   }
-
   function saveToLocalStorage(key, value) {
     localStorage.setItem(key, JSON.stringify(value));
   }
-
   function loadFromLocalStorage(key) {
     return JSON.parse(localStorage.getItem(key)) || [];
   }
-
   // ==================== GESTION DES MOTS SÉLECTIONNÉS ====================
   function displayWordsForPage(page) {
     const container = document.querySelector(`.selected-words-container[data-page="${page}"]`);
     if (!container) return;
-
     // Si c'est la page Langues, fusionner page13 + langues-classification
     let words = [];
     if (page === 'page13') {
@@ -49,8 +42,6 @@
     } else {
       words = loadFromLocalStorage(`selectedWords_${page}`) || [];
     }
-
-
     if (words.length === 0) {
       container.innerHTML = "<span class='empty'>Aucun mot sélectionné</span>";
     } else {
@@ -64,18 +55,14 @@
         `;
       }).join(' ');
     }
-
     // Réactiver les tooltips
     container.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
       const t = bootstrap.Tooltip.getInstance(el);
       if (t) t.dispose();
       new bootstrap.Tooltip(el, { trigger: 'hover' });
     });
-
     console.log(`Mots affichés pour ${page}:`, words);
   }
-
-
   // Mettre à jour les mots affichés lorsqu’un changement est détecté dans localStorage
   function updateWordsOnStorageChange() {
     const pages = ['page1', 'page2', 'page3', 'page4', 'page5', 'page6', 'page7', 'page8', 'page9', 'page10', 'page11', 'page12', 'page13', 'page14'];
@@ -83,7 +70,6 @@
       displayWordsForPage(pageName);
     });
   }
-
   // Écouter les changements dans localStorage
   window.addEventListener('storage', (event) => {
     if (event.key && (event.key === 'selectedWords' || event.key.startsWith('selectedWords_') || event.key === 'clearSelectionEvent')) {
@@ -91,29 +77,24 @@
       updateWordsOnStorageChange();
     }
   });
-
   // ==================== LECTEUR YOUTUBE ====================
   function extractVideoID(url) {
     const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
     return url.match(regex)?.[1];
   }
-
   function loadVideo() {
     const videoID = extractVideoID(document.getElementById('videoUrl').value);
     if (!videoID) return alert('URL YouTube invalide');
-
     const player = document.getElementById('youtubePlayer');
     player.src = `https://www.youtube.com/embed/${videoID}`;
     localStorage.setItem('youtubeVideoID', videoID);
   }
-
   // ==================== ENREGISTREMENT AUDIO ====================
   async function setupAudioRecorder() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       let audioChunks = [];
       const recorder = new MediaRecorder(stream);
-
       recorder.ondataavailable = e => audioChunks.push(e.data);
       recorder.onstop = () => {
         const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
@@ -121,7 +102,6 @@
         document.getElementById('audioPlayback').src = audioUrl;
         window.audioBlob = audioBlob;
       };
-
       document.getElementById('recordButton').onclick = () => {
         if (recorder.state === 'inactive') {
           audioChunks = [];
@@ -136,7 +116,6 @@
       console.error("Erreur microphone:", error);
     }
   }
-
   // ==================== FONCTIONS IndexedDB ====================
   async function openDB() {
     return new Promise((resolve, reject) => {
@@ -149,18 +128,17 @@
       request.onerror = (event) => reject(event.target.error);
     });
   }
-
   async function saveAudioToDB(blob, time, fileName, duration = 0) {
     try {
       const db = await openDB();
       const transaction = db.transaction(['audioStore'], 'readwrite');
       const store = transaction.objectStore('audioStore');
-      const audioData = { 
-        id: 'userAudio', 
-        blob, 
-        time, 
+      const audioData = {
+        id: 'userAudio',
+        blob,
+        time,
         fileName,
-        duration  // ← nouvelle info sauvegardée
+        duration // ← nouvelle info sauvegardée
       };
       await store.put(audioData);
       console.log('Fichier sauvegardé avec durée:', audioData);
@@ -168,7 +146,6 @@
       console.error('Erreur sauvegarde IndexedDB:', error);
     }
   }
-
   // MODIFICATION: Fonction pour sauvegarder l’état audio (utilisée par le mini-lecteur)
   async function saveAudioStateToDB(state) {
     try {
@@ -181,7 +158,6 @@
       console.error('Erreur lors de la sauvegarde de l\'état dans IndexedDB:', error);
     }
   }
-
   async function loadAudioFromDB() {
     try {
       const db = await openDB();
@@ -197,7 +173,6 @@
       return null;
     }
   }
-
   // MODIFICATION: Fonction pour charger l’état audio (utilisée par le mini-lecteur)
   async function loadAudioStateFromDB() {
     try {
@@ -214,13 +189,13 @@
       return null;
     }
   }
-
   // ==================== GESTION AUDIO UTILISATEUR ====================
   async function setupAudioPlayer() {
     const player = document.getElementById('audioPlayer');
     const fileInput = document.getElementById('audioFile');
     const fileNameDisplay = document.getElementById('audioFileName');
     const playbackSpeed = document.getElementById('playbackSpeed');
+    const volumeControl = document.getElementById('volumeControl');
     const balanceControl = document.getElementById('balanceControl');
     const eqLow = document.getElementById('eqLow');
     const eqMid = document.getElementById('eqMid');
@@ -233,7 +208,6 @@
     const toggleControls = document.getElementById('toggleControls');
     const audioControls = document.getElementById('audioControls');
     const visualizations = document.querySelector('.visualizations');
-
     // Vérification des éléments DOM
     if (!player || !fileInput || !fileNameDisplay || !vuMeterLeftCanvas || !vuMeterRightCanvas || !waveformLeftCanvas || !waveformRightCanvas || !spectrumCanvas || !toggleControls || !audioControls || !visualizations) {
       console.error('Éléments audio, affichage ou visualisations non trouvés dans le DOM:', {
@@ -252,7 +226,6 @@
       fileNameDisplay.textContent = 'Aucun fichier chargé';
       return;
     }
-
     // Initialisation de Web Audio API
     const audioContext = new AudioContext();
     let source;
@@ -265,11 +238,10 @@
     }
     const analyserLeft = audioContext.createAnalyser();
     const analyserRight = audioContext.createAnalyser();
-    
+   
     analyserLeft.fftSize = 2048;
     analyserRight.fftSize = 2048;
     const gainNode = audioContext.createGain();
-    gainNode.gain.value = 1;
     const pannerNode = audioContext.createStereoPanner();
     const lowFilter = audioContext.createBiquadFilter();
     lowFilter.type = 'lowshelf';
@@ -280,14 +252,12 @@
     const highFilter = audioContext.createBiquadFilter();
     highFilter.type = 'highshelf';
     highFilter.frequency.value = 4000;
-
       // === LARGEUR STÉRÉO (Mid-Side) – VERSION ULTRA SÛRE ===
     const merger = audioContext.createChannelMerger(2);
     const midGain = audioContext.createGain();
     const sideGain = audioContext.createGain();
     midGain.gain.value = 1;
     sideGain.gain.value = 1; // on contrôle ça avec le curseur après
-
     // Chaîne audio principale avec analyseurs après les effets
     const splitter = audioContext.createChannelSplitter(2);
     source.connect(pannerNode);
@@ -297,29 +267,23 @@
     highFilter.connect(gainNode);
       // On garde le son normal
     gainNode.connect(splitter);
-    gainNode.connect(audioContext.destination);     // son garanti
-
+    gainNode.connect(audioContext.destination); // son garanti
     // On ajoute le traitement Mid-Side en parallèle
     splitter.connect(midGain, 0);
     splitter.connect(midGain, 1);
     splitter.connect(sideGain, 0);
     splitter.connect(sideGain, 1);
-
     midGain.connect(merger, 0, 0);
     midGain.connect(merger, 0, 1);
     sideGain.connect(merger, 0, 0);
     sideGain.connect(merger, 0, 1);
     sideGain.gain.value = -1; // inversion côté droit pour le Side
-
     merger.connect(audioContext.destination);
-
     splitter.connect(analyserLeft, 0);
     splitter.connect(analyserRight, 1);
-
     // Activer le curseur de balance par défaut
     balanceControl.disabled = false;
     balanceControl.title = 'Ajuster la balance stéréo (gauche/droite)';
-
     // Vérification du nombre de canaux après chargement
     let isMono = false;
     async function checkChannels() {
@@ -351,7 +315,6 @@
         isMono = false;
       }
     }
-
     // Gestion du bouton Contrôles
     const savedAudioState = await loadAudioStateFromDB();
     console.log('Données récupérées de IndexedDB:', savedAudioState);
@@ -360,7 +323,6 @@
     visualizations.classList.remove('active');
     toggleControls.textContent = 'Contrôles';
     console.log('État initial des contrôles et visualisations: masqués');
-
     toggleControls.addEventListener('click', () => {
       console.log('Bouton Contrôles cliqué');
       const isVisible = audioControls.classList.toggle('active');
@@ -386,7 +348,6 @@
         console.log('Contextes des canvas réinitialisés pour les visualisations');
       }
     });
-
     // Initialisation des canvas
     vuMeterLeftCanvas.width = vuMeterLeftCanvas.offsetWidth;
     vuMeterLeftCanvas.height = 125;
@@ -398,7 +359,6 @@
     waveformRightCanvas.height = 125;
     spectrumCanvas.width = spectrumCanvas.offsetWidth;
     spectrumCanvas.height = 100;
-
     // Déclarer les contextes comme variables modifiables
     let vuMeterLeftCtx = vuMeterLeftCanvas.getContext('2d');
     let vuMeterRightCtx = vuMeterRightCanvas.getContext('2d');
@@ -411,8 +371,6 @@
     analyserLeftGlobal = analyserLeft;
     dataArrayLeftGlobal = dataArrayLeft;
     resizeSpectrogramCanvas();
-
-
     // Calcul du RMS pour les VU-mètres
     function calculateRMS(analyser, dataArray) {
       try {
@@ -430,7 +388,6 @@
         return 0;
       }
     }
-
     // Dessin des VU-mètres à aiguille avec look analogique
     function drawVUMeters() {
       try {
@@ -439,7 +396,6 @@
         const radius = Math.min(vuMeterLeftCanvas.width / 2 - 10, vuMeterLeftCanvas.height - 39.0625);
         const startAngle = -Math.PI / 2;
         const endAngle = Math.PI / 2;
-
         // VU-mètre gauche
         vuMeterLeftCtx.clearRect(0, 0, vuMeterLeftCanvas.width, vuMeterLeftCanvas.height);
         const gradient = vuMeterLeftCtx.createRadialGradient(centerX, centerY, 10, centerX, centerY, radius);
@@ -484,7 +440,6 @@
         vuMeterLeftCtx.strokeStyle = '#000';
         vuMeterLeftCtx.lineWidth = 1;
         vuMeterLeftCtx.stroke();
-
         // VU-mètre droit
         vuMeterRightCtx.clearRect(0, 0, vuMeterRightCanvas.width, vuMeterRightCanvas.height);
         vuMeterRightCtx.fillStyle = gradient;
@@ -536,7 +491,6 @@
         console.error('Erreur lors du dessin des VU-mètres:', error);
       }
     }
-
     // Visualisation de la forme d'onde (gauche et droite) en couleur
     function drawWaveform() {
       try {
@@ -602,65 +556,55 @@
         console.error('Erreur lors du dessin des formes d\'onde:', error);
       }
     }
-
     // Visualisation spectrale avec couleurs par plage de fréquences
     function drawSpectrum() {
   try {
     // Fond blanc
     spectrumCtx.clearRect(0, 0, spectrumCanvas.width, spectrumCanvas.height);
-
     // Vérifier si on a des données audio réelles
     let hasAudioData = false;
     let dataArray = new Uint8Array(bufferLength);
-    
+   
     if (analyserLeftGlobal && dataArrayLeftGlobal) {
       analyserLeftGlobal.getByteFrequencyData(dataArrayLeftGlobal);
       dataArray = dataArrayLeftGlobal;
-      
+     
       // Vérifier si les données ne sont pas silencieuses (pas seulement des zéros)
       const sum = dataArray.reduce((a, b) => a + b, 0);
       hasAudioData = sum > 100; // Seuil minimal pour considérer qu'il y a de l'audio
     }
-
     const barWidth = (spectrumCanvas.width / bufferLength) * 2.5;
     const maxFreq = audioContext ? audioContext.sampleRate / 2 : 22050; // Valeur par défaut
     let x = 0;
-
     // === BARRES avec TES couleurs ===
     for (let i = 0; i < bufferLength; i++) {
       const freq = (i / bufferLength) * maxFreq;
-      
+     
       // Si pas de données audio, afficher des barres très basses (bruit de fond)
       const value = hasAudioData ? dataArray[i] : Math.random() * 5 + 2;
       const barHeight = (value / 255) * spectrumCanvas.height * (hasAudioData ? 0.9 : 0.05);
-
       let color;
       if (freq <= 250) {
-        color = '#ff4c4c';      // Rouge → basses
+        color = '#ff4c4c'; // Rouge → basses
       } else if (freq <= 4000) {
-        color = '#ffeb3b';      // Jaune → médiums
+        color = '#ffeb3b'; // Jaune → médiums
       } else {
-        color = '#2196f3';      // Bleu → aigus
+        color = '#2196f3'; // Bleu → aigus
       }
-
       // Réduire l'opacité si pas de fichier chargé
       if (!hasAudioData) {
         spectrumCtx.globalAlpha = 0.3;
       } else {
         spectrumCtx.globalAlpha = 1.0;
       }
-
       spectrumCtx.fillStyle = color;
       spectrumCtx.fillRect(x, spectrumCanvas.height - barHeight, barWidth, barHeight);
       x += barWidth + 1;
     }
-
     // Réinitialiser l'opacité
     spectrumCtx.globalAlpha = 1.0;
-
     // === LABELS FRÉQUENCES — TOUJOURS VISIBLES ===
     const width = spectrumCanvas.width;
-
     let freqsToShow = [];
     if (width < 768) {
       // Mobile → fréquences principales
@@ -669,18 +613,14 @@
       // PC → plus de détails
       freqsToShow = [500, 1000, 5000, 10000, 15000, 20000];
     }
-
     // MODIFICATION : Labels TOUJOURS visibles avec bonne visibilité
     spectrumCtx.fillStyle = '#333'; // Couleur fixe bien visible
     spectrumCtx.font = '11px Consolas, monospace';
     spectrumCtx.textAlign = 'center';
-
     freqsToShow.forEach(freq => {
       const xPos = (freq / maxFreq) * spectrumCanvas.width;
       const label = freq === 1000 ? '1kHz' : freq === 20000 ? '20kHz' : freq < 1000 ? `${freq}` : `${freq / 1000}k`;
-
       spectrumCtx.fillText(label, xPos, 16);
-
       // Ligne verticale discrète - TOUJOURS visible
       spectrumCtx.beginPath();
       spectrumCtx.moveTo(xPos, spectrumCanvas.height - 10);
@@ -689,7 +629,6 @@
       spectrumCtx.lineWidth = 1;
       spectrumCtx.stroke();
     });
-
   } catch (error) {
     console.error('Erreur drawSpectrum:', error);
   }
@@ -699,25 +638,23 @@
     function animate() {
     try {
       drawSpectrum(); // TOUJOURS dessiner le spectre
-      
+     
       // Le reste seulement si l'audio est prêt
       if (analyserLeftGlobal && frameCount++ % 2 === 0) {
         drawSpectrogram();
       }
-      
+     
       if (visualizations && visualizations.classList.contains('active')) {
         drawVUMeters();
         drawWaveform();
       }
-      
+     
       animationId = requestAnimationFrame(animate);
     } catch (error) {
       console.error('Erreur dans animate:', error);
       animationId = requestAnimationFrame(animate); // RELANCER même en cas d'erreur
     }
   }
-
-
     // Arrêter l'animation lorsque la page est déchargée
     window.addEventListener('beforeunload', () => {
       if (animationId) {
@@ -726,34 +663,27 @@
         console.log('Animation arrêtée avant déchargement de la page');
       }
     });
-
     // Contrôle de la balance stéréo
     balanceControl.addEventListener('input', () => {
       pannerNode.pan.value = parseFloat(balanceControl.value);
       console.log('Balance stéréo ajustée:', pannerNode.pan.value);
       updateAudioState();
     });
-
       // === LARGEUR STÉRÉO L12/R04 – VERSION FINALE PROPRE & IMMERSIVE CASQUE ===
     const widthControl = document.getElementById('widthControl');
-    const widthLabel   = document.getElementById('widthLabel');
-
+    const widthLabel = document.getElementById('widthLabel');
     if (widthControl && widthLabel) {
       const updateWidth = () => {
         const val = parseFloat(widthControl.value);
         const level = val / 100;
-
         let sideLevel;
         if (level <= 0.42) {
-          sideLevel = level * 1.9;                    // montée très douce
+          sideLevel = level * 1.9; // montée très douce
         } else {
-          sideLevel = 0.8 + (level - 0.42) * 2.4;     // boost progressif mais contrôlé
+          sideLevel = 0.8 + (level - 0.42) * 2.4; // boost progressif mais contrôlé
         }
-
         sideGain.gain.setValueAtTime(Math.min(sideLevel, 1.2), audioContext.currentTime);
-
         let text = "Mono";
-
   if (val <= 10) {
     text = "Mono";
   } else if (val <= 40) {
@@ -767,26 +697,26 @@
   } else {
     text = "Ultra-large";
   }
-
   // Ajustement spécial
   if (val >= 83 && val <= 88) {
     text = "L12/R04 – Orchestre";
   }
-
-
         widthLabel.textContent = `${text} (${val} %)`;
       };
-
       widthControl.addEventListener('input', updateWidth);
       updateWidth(); // valeur initiale
     }
-
     // Contrôle de la vitesse de lecture
     playbackSpeed.addEventListener('change', () => {
       player.playbackRate = parseFloat(playbackSpeed.value);
       updateAudioState();
     });
-
+    // Contrôle du volume
+    volumeControl.addEventListener('input', () => {
+      gainNode.gain.value = parseFloat(volumeControl.value);
+      console.log('Volume ajusté:', gainNode.gain.value);
+      updateAudioState();
+    });
     // Contrôles de l'égaliseur
     eqLow.addEventListener('input', () => {
       lowFilter.gain.value = parseFloat(eqLow.value);
@@ -803,13 +733,13 @@
       console.log('Égaliseur aigus ajusté:', highFilter.gain.value);
       updateAudioState();
     });
-
     const updateAudioState = async () => {
       const state = {
         time: player.currentTime,
         isPlaying: !player.paused,
         duration: player.duration || 0,
         playbackRate: player.playbackRate,
+        volume: gainNode.gain.value,
         balance: pannerNode.pan.value,
         eqLow: lowFilter.gain.value,
         eqMid: midFilter.gain.value,
@@ -821,45 +751,39 @@
       localStorage.setItem('audioState', JSON.stringify(state));
       console.log('État audio mis à jour:', state);
     };
-
     // Recharger l'audio sauvegardé
     const savedAudioData = await loadAudioFromDB();
     console.log('Données audio récupérées de IndexedDB:', savedAudioData);
-
     if (savedAudioData && savedAudioData.blob) {
       try {
         const audioUrl = URL.createObjectURL(savedAudioData.blob);
         console.log('URL de l\'audio créé:', audioUrl);
         player.src = audioUrl;
         player.load();
-        fileNameDisplay.textContent = savedAudioData.fileName 
-          ? `Fichier chargé : ${savedAudioData.fileName}` 
+        fileNameDisplay.textContent = savedAudioData.fileName
+          ? `Fichier chargé : ${savedAudioData.fileName}`
           : 'Aucun nom de fichier disponible';
         console.log('Nom affiché:', fileNameDisplay.textContent);
-
         const savedTime = savedAudioState?.time || parseFloat(savedAudioData.time || 0);
         const isPlaying = savedAudioState?.isPlaying || false;
         const savedPlaybackRate = savedAudioState?.playbackRate || 1;
-       
+        const savedVolume = savedAudioState?.volume ?? 0.4;
         const savedBalance = savedAudioState?.balance || 0;
         const savedEqLow = savedAudioState?.eqLow || 0;
         const savedEqMid = savedAudioState?.eqMid || 0;
         const savedEqHigh = savedAudioState?.eqHigh || 0;
-
         player.playbackRate = savedPlaybackRate;
-       
+        gainNode.gain.value = savedVolume;
         pannerNode.pan.value = savedBalance;
         lowFilter.gain.value = savedEqLow;
         midFilter.gain.value = savedEqMid;
         highFilter.gain.value = savedEqHigh;
-
         playbackSpeed.value = savedPlaybackRate;
-
+        volumeControl.value = savedVolume;
         balanceControl.value = savedBalance;
         eqLow.value = savedEqLow;
         eqMid.value = savedEqMid;
         eqHigh.value = savedEqHigh;
-
         player.addEventListener('canplaythrough', async () => {
           console.log('Événement canplaythrough déclenché');
           player.currentTime = savedTime;
@@ -883,7 +807,6 @@
             console.log('Animation démarrée sans lecture automatique');
           }
         }, { once: true });
-
         player.addEventListener('error', () => {
     console.warn("Erreur de lecture audio ignorée (fichier supprimé ou corrompu)");
   });
@@ -896,7 +819,6 @@
       console.log('Aucun audio sauvegardé dans IndexedDB');
       fileNameDisplay.textContent = 'Aucun fichier chargé';
     }
-
     // Gestion explicite du bouton play (si présent dans le DOM)
     const playButton = document.querySelector('#playButton');
     if (playButton) {
@@ -915,7 +837,6 @@
         }
       });
     }
-
     player.addEventListener('timeupdate', updateAudioState);
     player.addEventListener('play', async () => {
       await audioContext.resume();
@@ -927,11 +848,12 @@
     });
     player.addEventListener('pause', updateAudioState);
     player.addEventListener('ended', async () => {
-      const state = { 
-        time: 0, 
-        isPlaying: false, 
-        duration: player.duration || 0, 
+      const state = {
+        time: 0,
+        isPlaying: false,
+        duration: player.duration || 0,
         playbackRate: player.playbackRate,
+        volume: gainNode.gain.value,
         balance: pannerNode.pan.value,
         eqLow: lowFilter.gain.value,
         eqMid: midFilter.gain.value,
@@ -942,7 +864,6 @@
       await saveAudioStateToDB(state);
       localStorage.setItem('audioState', JSON.stringify(state));
     });
-
     fileInput.addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) {
@@ -950,20 +871,16 @@
         fileNameDisplay.textContent = 'Aucun fichier chargé';
         return;
       }
-
       console.log('Importation d\'un nouveau fichier:', file.name, 'Taille (octets):', file.size);
       fileNameDisplay.textContent = `Fichier chargé : ${file.name}`;
       localStorage.setItem('audioFileName', file.name);
-
       const reader = new FileReader();
       reader.onload = async (e) => {
         try {
           const audioData = e.target.result;
           player.src = audioData;
-
-          eqLow.value = -6;           // le curseur "Basses" démarre à -6
-          lowFilter.gain.value = -6;  // applique immédiatement -6 dB sur les basses
-
+          eqLow.value = -6; // le curseur "Basses" démarre à -6
+          lowFilter.gain.value = -6; // applique immédiatement -6 dB sur les basses
           player.load();
           await saveAudioToDB(file, player.currentTime || 0, file.name, player.duration || 0);
           console.log('Nouveau fichier audio sauvegardé dans IndexedDB');
@@ -990,7 +907,6 @@
       reader.readAsDataURL(file);
     });
   }
-
   // ==================== ENREGISTREMENT AUDIO ====================
   async function setupAudioRecorder() {
     const recordButton = document.getElementById('recordButton');
@@ -1000,19 +916,16 @@
     let recorder = null;
     let recordingSeconds = 0;
     let timerInterval = null;
-
     if (!recordButton || !recordingIndicator || !recordingConfirmation) {
       console.error('Éléments d’enregistrement non trouvés dans le DOM');
       return;
     }
-
     recordButton.onclick = async () => {
       if (!recorder || recorder.state === 'inactive') {
         try {
           const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
           recorder = new MediaRecorder(stream);
           audioChunks = [];
-
           recorder.ondataavailable = e => audioChunks.push(e.data);
           recorder.onstop = () => {
             const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
@@ -1032,7 +945,6 @@
             console.log('Enregistrement arrêté, commentaire enregistré');
             stream.getTracks().forEach(track => track.stop());
           };
-
           recorder.start();
           recordButton.classList.remove('btn-danger');
           recordButton.classList.add('btn-warning');
@@ -1055,23 +967,19 @@
       }
     };
   }
-
   // ==================== INITIALISATION ====================
   document.addEventListener("DOMContentLoaded", async () => {
-
     setTimeout(() => {
     if (!animationId) {
       animate();
       console.log('Animation démarrée au chargement');
     }
   }, 100);
-
     const currentPage = getPageName();
     console.log('Page actuelle:', currentPage);
     if (currentPage === '' || currentPage === 'index') {
       console.log('Initialisation de setupAudioPlayer sur la page principale');
       await setupAudioPlayer();
-
     // Sauvegarde et restauration du brouillon de commentaire
   const commentText = document.getElementById('commentText');
   if (commentText) {
@@ -1082,7 +990,7 @@
     commentText.addEventListener('input', () => {
       localStorage.setItem('commentDraft', commentText.value);
     });
-    
+   
     const generateTextButton = document.getElementById('generateTextButton');
     if (generateTextButton) {
       generateTextButton.addEventListener('click', () => {
@@ -1095,17 +1003,13 @@
     console.warn('Champ de commentaire avec id="commentText" non trouvé.');
   }
     }
-
     Object.keys(PAGES).forEach(displayWordsForPage);
-
     const savedVideoID = localStorage.getItem('youtubeVideoID');
     if (savedVideoID) {
       document.getElementById('youtubePlayer').src = `https://www.youtube.com/embed/${savedVideoID}`;
       document.getElementById('videoUrl').value = `https://youtu.be/${savedVideoID}`;
     }
-
     setupAudioRecorder();
-
   document.getElementById('downloadButton').onclick = () => {
     if (!window.audioBlob) return alert('Aucun enregistrement');
     const name = document.getElementById('fileName').value || 'enregistrement';
@@ -1115,19 +1019,17 @@
     link.click();
   };
   });
-
   // ==================== GÉNÉRATION FICHIER TEXTE ====================
   function generateTextFile() {
     const commentText = document.getElementById('commentText');
     const text = commentText.value.trim();
     if (!text) return alert('Veuillez écrire un commentaire');
-
     const blob = new Blob([text], { type: 'text/plain' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = 'commentaire.txt';
     link.click();
-    
+   
     // NE PAS SUPPRIMER le texte après génération
     // Le commentaire reste dans la zone de texte
   }
@@ -1140,47 +1042,41 @@
       alert('Veuillez écrire un commentaire');
       return;
     }
-
   // Ajouter BOM UTF-8 pour que Word reconnaisse automatiquement l'encodage
     const BOM = '\uFEFF';
     const content = BOM + text;
-    
+   
     const blob = new Blob([content], { type: 'text/plain; charset=utf-8' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = 'commentaire_musical.doc';
     link.click();
-    
+   
     console.log('Fichier Word exporté');
   }
   // ==================== INITIALISATION ====================
   document.addEventListener("DOMContentLoaded", () => {
     Object.keys(PAGES).forEach(displayWordsForPage);
-
     const savedVideoID = localStorage.getItem('youtubeVideoID');
     if (savedVideoID) {
       document.getElementById('youtubePlayer').src = `https://www.youtube.com/embed/${savedVideoID}`;
       document.getElementById('videoUrl').value = `https://youtu.be/${savedVideoID}`;
     }
-
     setupAudioRecorder();
     setupAudioPlayer();
-
     document.getElementById('downloadButton').onclick = async () => {
     if (!window.audioBlob) return alert('Aucun enregistrement disponible');
-
     const fileName = document.getElementById('fileName').value || 'enregistrement';
-    
+   
     // Téléchargement direct en WAV - 100% fiable
     const link = document.createElement('a');
     link.href = URL.createObjectURL(window.audioBlob);
     link.download = `${fileName}.wav`;
     link.click();
-    
+   
     console.log('Fichier WAV téléchargé:', `${fileName}.wav`);
   };
   });
-
   // Stocker les données des pays
   let countryData = {};
   const isoCorrections = {
@@ -1432,7 +1328,6 @@
     'NC': 'Nouméa',
     'YT': 'Mamoudzou'
   };
-
   // Données de secours pour la France et la Norvège
   const fallbackCountryData = {
     'FR': {
@@ -1444,7 +1339,6 @@
       languages: 'Norvégien Nynorsk, Norvégien Bokmål, Sami'
     }
   };
-
   // Table de correspondance pour traduire les codes/noms de langues en français
   const languageTranslations = {
     'eng': 'Anglais',
@@ -1547,11 +1441,9 @@
     'Norwegian Bokmål': 'Norvégien Bokmål',
     'Sami': 'Sami'
   };
-
   var map = null;
   var geojsonLayer = null;
   var carteMondeModal = document.getElementById('carteMondeModal');
-
   // Charger les données des pays depuis countries.json
   async function loadCountryData() {
     try {
@@ -1574,7 +1466,6 @@
       console.log('Données de secours appliquées:', countryData);
     }
   }
-
   carteMondeModal.addEventListener('shown.bs.modal', async function () {
     if (map === null) {
       map = L.map('map').setView([0, 0], 2);
@@ -1582,10 +1473,8 @@
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         maxZoom: 18
       }).addTo(map);
-
       // Charger countryData avant le GeoJSON
       await loadCountryData();
-
       try {
         const response = await fetch('data/ne_110m_admin_0_countries.geojson'); // Utiliser le fichier local
         if (!response.ok) {
@@ -1622,7 +1511,6 @@
             const capital = feature.properties.CAPITAL || capitalFallbacks[isoCode] || 'N/A';
             const population = feature.properties.POP_EST ? feature.properties.POP_EST.toLocaleString('fr-FR') : 'N/A';
             const countryName = feature.properties.NAME_FR || feature.properties.ADMIN || 'N/A';
-
             if (!feature.properties.CAPITAL) {
               console.log(`Capitale manquante pour ${countryName} :`, {
                 ISO_A2: isoCode,
@@ -1630,7 +1518,6 @@
                 FallbackCapital: capitalFallbacks[isoCode] || 'N/A'
               });
             }
-
             let popupContent = `<b>Pays :</b> ${countryName}<br>`;
             popupContent += `<b>Code ISO :</b> ${isoCode}<br>`;
             popupContent += `<b>Capitale :</b> ${capital}<br>`;
@@ -1641,7 +1528,6 @@
             } else {
               popupContent += `<b>Drapeau :</b> Non disponible<br>`;
             }
-
             layer.bindPopup(popupContent);
             layer.on({
               click: function (e) {
@@ -1667,7 +1553,6 @@
       map.invalidateSize();
     }
   });
-
   carteMondeModal.addEventListener('hidden.bs.modal', function () {
     if (map !== null) {
       map.remove();
@@ -1675,7 +1560,6 @@
       geojsonLayer = null;
     }
   });
-
   // Fonction pour effacer toutes les sélections et réinitialiser les boutons
   function clearSelection() {
     if (confirm("Voulez-vous vraiment effacer toutes les sélections ?")) {
@@ -1683,25 +1567,20 @@
       Object.keys(PAGES).forEach(page => {
         saveToLocalStorage(`selectedWords_${page}`, []);
       });
-      
+     
       // EFFACER AUSSI la page classification des langues
       saveToLocalStorage('selectedWords_langues-classification', []);
       saveToLocalStorage('selectedWords', []);
-
       // Mettre à jour l'affichage de toutes les pages
       Object.keys(PAGES).forEach(page => {
         displayWordsForPage(page);
       });
-
       // Mettre à jour aussi l'affichage de la page13 (qui inclut classification)
       displayWordsForPage('page13');
-
       // Déclencher un événement de stockage
       localStorage.setItem('clearSelectionEvent', Date.now().toString());
-
       // MISE À JOUR DU CADRE GLOBAL
       updateGlobalSelectedWords();
-
       console.log('Toutes les sélections ont été effacées');
     }
   }
@@ -1712,23 +1591,19 @@
       const words = loadFromLocalStorage(`selectedWords_${page}`) || [];
       allWords.push(...words);
     });
-
     const container = document.getElementById('globalSelectedWords');
     const list = document.getElementById('globalWordsList');
     if (!container || !list) return;
-
     if (allWords.length === 0) {
       container.style.display = 'none';
       return;
     }
-
     container.style.display = 'block';
     list.innerHTML = allWords.map(word => `
       <span class="badge bg-primary text-white me-1" data-bs-toggle="tooltip" title="${wordDefinitions[word]?.definition || ''}">
         ${word}
       </span>
     `).join('');
-
     // Réactiver les tooltips
     list.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
       const t = bootstrap.Tooltip.getInstance(el);
@@ -1736,27 +1611,23 @@
       new bootstrap.Tooltip(el, { trigger: 'hover' });
     });
   }
-
   // === ÉCOUTE LES CHANGEMENTS (localStorage) ===
   document.addEventListener("DOMContentLoaded", () => {
     updateGlobalSelectedWords();
-
     window.addEventListener('storage', (e) => {
       if (e.key?.startsWith('selectedWords_') || e.key === 'forceGlobalUpdate') {
         updateGlobalSelectedWords();
       }
     });
-
-    
+   
   });
-
   // Écoute les suppressions depuis index.html
   window.addEventListener('storage', (e) => {
     if (e.key === 'forceGlobalUpdate') {
       // Recharger les mots sélectionnés localement
       const pageName = window.location.pathname.split('/').pop().replace('.html', '');
       const saved = JSON.parse(localStorage.getItem(`selectedWords_${pageName}`)) || [];
-      
+     
       // Mettre à jour les classes .selected
       document.querySelectorAll('.selectable').forEach(span => {
         const text = span.textContent.trim();
@@ -1766,31 +1637,26 @@
           span.classList.remove('selected');
         }
       });
-
       // Masquer le panneau si plus rien
       if (saved.length === 0) {
         document.getElementById('definition-container').style.display = 'none';
       }
     }
   });
-
-
   // === SUPPRESSION D'UN MOT DEPUIS index.html (croix) ===
   function deleteWordFromMainPage(page, word) {
     if (!confirm(`Supprimer "${word}" ?`)) return;
-
   // Si c'est page13, chercher dans les deux pages
     if (page === 'page13') {
       const page13Words = loadFromLocalStorage('selectedWords_page13') || [];
       const classificationWords = loadFromLocalStorage('selectedWords_langues-classification') || [];
-      
+     
       saveToLocalStorage('selectedWords_page13', page13Words.filter(w => w !== word));
       saveToLocalStorage('selectedWords_langues-classification', classificationWords.filter(w => w !== word));
     } else {
       const pageWords = loadFromLocalStorage(`selectedWords_${page}`) || [];
       saveToLocalStorage(`selectedWords_${page}`, pageWords.filter(w => w !== word));
     }
-
     // Désactiver tous les tooltips du conteneur avant suppression
     const container = document.querySelector(`.selected-words-container[data-page="${page}"]`);
     if (container) {
@@ -1802,26 +1668,19 @@
         }
       });
     }
-
     const pageWords = loadFromLocalStorage(`selectedWords_${page}`) || [];
     saveToLocalStorage(`selectedWords_${page}`, pageWords.filter(w => w !== word));
-
     const globalWords = loadFromLocalStorage('selectedWords') || [];
     saveToLocalStorage('selectedWords', globalWords.filter(w => w !== word));
-
     // Recréer l'affichage (ce qui réinitialisera les tooltips)
     displayWordsForPage(page);
     updateGlobalSelectedWords();
-
     console.log(`Mot "${word}" supprimé de ${page}`);
   }
-
-
   // ==================== SPECTROGRAMME – VERSION QUI MARCHE À 100% (GARANTI) ====================
   const spectroCanvas = document.getElementById('spectrogramCanvas');
   const spectroCtx = spectroCanvas?.getContext('2d');
   let history = [];
-
   // ON FORCE LE REDIMENSIONNEMENT CORRECT DU CANVAS À CHAQUE FOIS
   function resizeSpectrogramCanvas() {
     if (!spectroCanvas) return;
@@ -1829,25 +1688,18 @@
     spectroCanvas.height = 180;
     history = []; // on vide l'historique pour repartir propre
   }
-
   function drawSpectrogram() {
     if (!spectroCtx || !analyserLeftGlobal || !dataArrayLeftGlobal) return;
-
     analyserLeftGlobal.getByteFrequencyData(dataArrayLeftGlobal);
-
     // === SCROLL TRÈS LENT + FONDU ULTRA-DOUX ===
     spectroCtx.drawImage(spectroCtx.canvas, -1, 0);
-
     // Nouvelle colonne à droite
     const height = spectroCanvas.height;
     const width = spectroCanvas.width;
-
     for (let i = 0; i < dataArrayLeftGlobal.length; i += 2) {
       const value = dataArrayLeftGlobal[i] / 255;
       if (value < 0.02) continue;
-
       const y = height - (i / dataArrayLeftGlobal.length) * height;
-
       // === COULEURS INTENSES ET DURABLES ===
       let r, g, b;
       if (value < 0.2) {
@@ -1871,22 +1723,16 @@
         g = Math.round(255 - 100 * ((value - 0.8) / 0.2));
         b = Math.round(255 - 255 * ((value - 0.8) / 0.2));
       }
-
       spectroCtx.fillStyle = `rgb(${r}, ${g}, ${b})`;
       spectroCtx.fillRect(width - 1, y, 2, 8); // 2px de large pour plus de lumière
     }
-
     // === FONDU TRÈS LENT (le secret !) ===
-    spectroCtx.fillStyle = 'rgba(0, 0, 0, 0.008)';  // 0.008 = très très lent
+    spectroCtx.fillStyle = 'rgba(0, 0, 0, 0.008)'; // 0.008 = très très lent
     spectroCtx.fillRect(0, 0, width - 2, height);
   }
-
-
   // On redimensionne au chargement + au resize
   window.addEventListener('load', resizeSpectrogramCanvas);
   window.addEventListener('resize', resizeSpectrogramCanvas);
-
-
   // === AFFICHAGE PRO + SUPPRESSION DU FICHIER CHARGÉ (VERSION FINALE) ===
   const fileInput = document.getElementById('audioFile');
   const fileInfo = document.getElementById('audioFileInfo');
@@ -1894,9 +1740,7 @@
   const fileDetailsSpan = document.getElementById('audioFileDetails');
   const clearBtn = document.getElementById('clearAudioFile');
   const player = document.getElementById('audioPlayer');
-
   if (fileInput && fileInfo && fileNameSpan && fileDetailsSpan && clearBtn && player) {
-
     function formatBytes(bytes) {
       if (!bytes) return '0 o';
       const k = 1024;
@@ -1904,61 +1748,49 @@
       const i = Math.floor(Math.log(bytes) / Math.log(k));
       return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
     }
-
     function formatDuration(seconds) {
       if (!seconds || isNaN(seconds)) return '—';
       const mins = Math.floor(seconds / 60);
       const secs = Math.floor(seconds % 60);
       return `${mins}:${secs.toString().padStart(2, '0')}`;
     }
-
     function showFileInfo() {
       fileInfo.style.display = 'flex';
       setTimeout(() => fileInfo.classList.remove('opacity-0'), 10);
     }
-
     function hideFileInfo() {
       fileInfo.classList.add('opacity-0');
       setTimeout(() => fileInfo.style.display = 'none', 400);
     }
-
     fileInput.addEventListener('change', function(e) {
       const file = e.target.files[0];
       if (!file) return;
-
       fileNameSpan.textContent = file.name;
       fileDetailsSpan.textContent = `${formatBytes(file.size)} · calcul de la durée...`;
       showFileInfo();
-
       const tempUrl = URL.createObjectURL(file);
       player.src = tempUrl;
-
       player.addEventListener('loadedmetadata', () => {
         fileDetailsSpan.textContent = `${formatDuration(player.duration)} · ${formatBytes(file.size)}`;
         URL.revokeObjectURL(tempUrl);
       }, { once: true });
     });
-
     // Bouton de suppression
   clearBtn.addEventListener('click', async () => {
     if (!confirm("Supprimer le fichier audio chargé ?")) return;
-
     try {
       // 1. On supprime physiquement de IndexedDB
       const db = await openDB();
       const transaction = db.transaction(['audioStore'], 'readwrite');
       const store = transaction.objectStore('audioStore');
-      await store.delete('userAudio');  // clé magique qui efface tout
+      await store.delete('userAudio'); // clé magique qui efface tout
       await store.delete('audioState'); // au cas où tu sauvegardes aussi l'état
       console.log('Fichier supprimé d\'IndexedDB');
-
       // 2. On vide le lecteur
       player.src = '';
       player.load();
-
       // 3. On vide l'input fichier
       fileInput.value = '';
-
       // 4. On cache l'affichage avec animation
       fileInfo.classList.add('opacity-0');
       setTimeout(() => {
@@ -1966,28 +1798,23 @@
         fileNameSpan.textContent = 'Aucun fichier chargé';
         fileDetailsSpan.textContent = '—';
       }, 400);
-
     } catch (err) {
       console.error("Erreur lors de la suppression du fichier", err);
       alert("Erreur lors de la suppression. Réessayez.");
     }
   });
   }
-
   // === RESTAURATION DE L'AFFICHAGE DU FICHIER AU CHARGEMENT DE LA PAGE ===
   async function restoreFileDisplay() {
     try {
       const savedAudioData = await loadAudioFromDB(); // ta fonction existante
       if (!savedAudioData || !savedAudioData.fileName) return;
-
       // On a un fichier sauvegardé → on restaure l'affichage
       const fileInfo = document.getElementById('audioFileInfo');
       const fileNameSpan = document.getElementById('audioFileName');
       const fileDetailsSpan = document.getElementById('audioFileDetails');
-
       if (fileInfo && fileNameSpan && fileDetailsSpan) {
         fileNameSpan.textContent = savedAudioData.fileName;
-
         // Si on a aussi sauvegardé la durée (recommandé !), on l'affiche
         if (savedAudioData.duration) {
           const formattedDuration = formatDuration(savedAudioData.duration);
@@ -1996,7 +1823,6 @@
         } else {
           fileDetailsSpan.textContent = `${formatBytes(savedAudioData.blob?.size || 0)}`;
         }
-
         // On affiche le bloc avec animation
         fileInfo.style.display = 'flex';
         setTimeout(() => fileInfo.classList.remove('opacity-0'), 50);
@@ -2005,7 +1831,6 @@
       console.warn("Impossible de restaurer l'affichage du fichier", err);
     }
   }
-
   // On appelle cette fonction au chargement de la page principale
   document.addEventListener('DOMContentLoaded', () => {
     const currentPage = getPageName();

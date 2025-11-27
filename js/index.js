@@ -734,26 +734,52 @@
       updateAudioState();
     });
 
-      // === LARGEUR STÉRÉO – VERSION ANTI-CLIPPING (2025) ===
-const widthControl = document.getElementById('widthControl');
-const widthLabel = document.getElementById('widthLabel');
+      // === LARGEUR STÉRÉO L12/R04 – VERSION FINALE PROPRE & IMMERSIVE CASQUE ===
+    const widthControl = document.getElementById('widthControl');
+    const widthLabel   = document.getElementById('widthLabel');
 
-if (widthControl && widthLabel) {
-  widthControl.addEventListener('input', () => {
-    const val = parseFloat(widthControl.value); // 0 à 100
-    const width = val / 100; // 0 à 1
+    if (widthControl && widthLabel) {
+      const updateWidth = () => {
+        const val = parseFloat(widthControl.value);
+        const level = val / 100;
 
-    // Formule ultra-propre : jamais plus de +3 dB même à fond
-    const midGain.gain.setValueAtTime(1, audioContext.currentTime);
-    sideGain.gain.setValueAtTime(width * 0.7, audioContext.currentTime); // max 0.7 = +3 dB safe
+        let sideLevel;
+        if (level <= 0.42) {
+          sideLevel = level * 1.9;                    // montée très douce
+        } else {
+          sideLevel = 0.8 + (level - 0.42) * 2.4;     // boost progressif mais contrôlé
+        }
 
-    // Label identique à avant
-    let text = val <= 10 ? "Mono" : val <= 40 ? "Étroite" : val <= 60 ? "Normale" : val <= 80 ? "Large" : val <= 92 ? "L12/R04" : "Ultra-large";
-    if (val >= 83 && val <= 88) text = "L12/R04 – Orchestre";
-    widthLabel.textContent = `${text} (${val} %)`;
-  });
-  widthControl.dispatchEvent(new Event('input')); // valeur initiale
-}
+        sideGain.gain.setValueAtTime(Math.min(sideLevel, 1.2), audioContext.currentTime);
+
+        let text = "Mono";
+
+  if (val <= 10) {
+    text = "Mono";
+  } else if (val <= 40) {
+    text = "Étroite";
+  } else if (val <= 60) {
+    text = "Normale";
+  } else if (val <= 80) {
+    text = "Large";
+  } else if (val <= 92) {
+    text = "L12/R04";
+  } else {
+    text = "Ultra-large";
+  }
+
+  // Ajustement spécial
+  if (val >= 83 && val <= 88) {
+    text = "L12/R04 – Orchestre";
+  }
+
+
+        widthLabel.textContent = `${text} (${val} %)`;
+      };
+
+      widthControl.addEventListener('input', updateWidth);
+      updateWidth(); // valeur initiale
+    }
 
     // Contrôle de la vitesse de lecture
     playbackSpeed.addEventListener('change', () => {

@@ -858,12 +858,17 @@ textarea {
 
 
 
-/* VOLUME NATIF = MORT SUR TOUS LES NAVIGATEURS – GARANTI 2025 */
-#audioPlayer::-webkit-media-controls-volume-slider-container { 
-  display: none !important; 
-  width: 0 !important; 
-  height: 0 !important; 
-}
-#audioPlayer { 
-  overflow: hidden !important; 
+/* VOLUME NATIF = MORT À 100% – MÉTHODE 2025 */
+#audioPlayer::-webkit-media-controls-volume-slider-container,
+#audioPlayer::-webkit-media-controls-volume-slider,
+#audioPlayer::-webkit-media-controls-mute-button,
+#audioPlayer::-webkit-media-controls-volume-control-container,
+#audioPlayer::volume-slider,
+audio::-webkit-media-controls-volume-slider {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  opacity: 0 !important;
+  position: absolute !important;
+  left: -9999px !important;
 }

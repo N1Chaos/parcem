@@ -856,10 +856,11 @@ textarea {
   min-height: 180px !important;
 }
 
-/* Masque le curseur volume sur TOUS les navigateurs – 100% fiable */
-#audioPlayer::-webkit-media-controls-volume-slider-container,
+
+/* Supprime complètement le contrôle volume natif – marche partout */
 #audioPlayer::-webkit-media-controls-volume-slider,
 #audioPlayer::-webkit-media-controls-mute-button,
+#audioPlayer::-webkit-media-controls-volume-control-container,
 #audioPlayer::-moz-range-track,
 #audioPlayer::-ms-volume-slider {
   display: none !important;
@@ -868,4 +869,9 @@ textarea {
   padding: 0 !important;
   margin: 0 !important;
   opacity: 0 !important;
+}
+
+/*cache toute la barre de contrôle sauf play/pause et progress */
+#audioPlayer::-webkit-media-controls-panel {
+  -webkit-mask-image: linear-gradient(to right, transparent 70%, black 70%);
 }

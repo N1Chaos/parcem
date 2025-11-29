@@ -395,6 +395,7 @@ header p {
   padding: 4px 10px !important;
   border-radius: 20px !important;         /* coins bien arrondis */
   font-size: 0.9rem !important;
+  font-weight: 700 !important;   /* gras franc et net */
   display: inline-flex !important;
   align-items: center !important;
   gap: 6px !important;

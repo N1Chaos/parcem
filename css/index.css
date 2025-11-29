@@ -387,6 +387,26 @@ header p {
   border: 5px solid #ff9800;  /* Cadre vert pour commentaire audio */
 }
 
+.selected-words-container {
+  background-color: #f0f0f0; /* fond gris clair */
+  padding: 5px 8px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 3px;
+}
+
+.selected-words-container .remove-word {
+  color: red; /* croix rouge */
+  cursor: pointer; /* change le curseur au survol */
+  font-weight: bold;
+  margin-left: 5px;
+}
+.selected-words-container .remove-word:hover {
+  color: darkred;
+}
+
 
 
 

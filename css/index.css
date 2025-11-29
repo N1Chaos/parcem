@@ -375,8 +375,13 @@ header p {
 
 /* Cadres colorés harmonisés selon ton thème */
 .card.bg-secondary-light {
-  border: 3px solid red; /* couleur et épaisseur du cadre */
+  border: 5px solid red; /* couleur et épaisseur du cadre */
 }
+
+.card.bg-primary {
+  border: 5px solid blue; /* couleur et épaisseur du cadre */
+}
+
 
 
 

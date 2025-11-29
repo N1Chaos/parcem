@@ -1840,7 +1840,9 @@ document.addEventListener("DOMContentLoaded", () => {
       controls: ['play-large', 'play', 'progress', 'current-time', 'duration', 'mute', 'settings', 'fullscreen'],
       settings: ['speed'],
       hideControls: true,
-      volume: 0.75
+      volume: 0.75,
+      youtube: { noCookie: true, rel: 0, showinfo: 0, iv_load_policy: 3 },
+      vimeo: { byline: false, portrait: false, title: false, speed: true }
     });
 
     // Cache le bouton volume

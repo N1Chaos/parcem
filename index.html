@@ -109,24 +109,27 @@
         </div>
         
         <!-- Balance (identique) -->
-        <div class="control-group">
-          <label for="balanceControl">Balance stéréo (Gauche/Droite) :</label>
-          <input type="range" id="balanceControl" min="-1" max="1" step="0.01" value="0" class="form-range" />
-        </div>
-        
-        <!-- Largeur stéréo (identique) -->
-        <div class="control-group">
-          <label for="widthControl">Largeur stéréo :</label>
-          <input type="range" id="widthControl" min="0" max="100" value="42" class="form-range" />
-          <div class="d-flex justify-content-between small text-muted">
-            <span>0 Mono</span>
-            <span>42 Normal</span>
-            <span>70 Large</span>
-            <span>85 L12/R04</span>
-            <span>100 Ultra</span>
-          </div>
-          <div class="text-center mt-1"><small id="widthLabel">Normal (42 %)</small></div>
-        </div>
+        <!-- Contrôles stéréo regroupés -->
+<div class="control-group">
+  <div class="row">
+    <div class="col-md-6">
+      <label for="balanceControl">Balance stéréo (Gauche/Droite) :</label>
+      <input type="range" id="balanceControl" min="-1" max="1" step="0.01" value="0" class="form-range" />
+    </div>
+    <div class="col-md-6">
+      <label for="widthControl">Largeur stéréo :</label>
+      <input type="range" id="widthControl" min="0" max="100" value="42" class="form-range" />
+      <div class="d-flex justify-content-between small text-muted">
+        <span>0 Mono</span>
+        <span>42 Normal</span>
+        <span>70 Large</span>
+        <span>85 L12/R04</span>
+        <span>100 Ultra</span>
+      </div>
+      <div class="text-center mt-1"><small id="widthLabel">Normal (42 %)</small></div>
+    </div>
+  </div>
+</div>
         
       </div>
 

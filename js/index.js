@@ -1829,3 +1829,27 @@
       restoreFileDisplay();
     }
   });
+
+  // ==================== PLYR PAR-DESSUS TON LECTEUR (SOLUTION ULTRA SÛRE) ====================
+document.addEventListener("DOMContentLoaded", () => {
+  const player = document.getElementById('audioPlayer');
+  
+  // Si Plyr n'est pas déjà activé
+  if (player && !player.hasAttribute('data-plyr-initialized')) {
+    const plyr = new Plyr('#audioPlayer', {
+      controls: ['play-large', 'play', 'progress', 'current-time', 'duration', 'mute', 'settings', 'fullscreen'],
+      settings: ['speed'],
+      hideControls: true,
+      volume: 0.75
+    });
+
+    // Cache le bouton volume
+    setTimeout(() => {
+      const volumeBtn = document.querySelector('.plyr__volume');
+      if (volumeBtn) volumeBtn.style.display = 'none';
+    }, 100);
+
+    // Empêche que Plyr soit initialisé deux fois
+    player.setAttribute('data-plyr-initialized', 'true');
+  }
+});

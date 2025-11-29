@@ -880,3 +880,10 @@ audio::-webkit-media-controls-volume-slider {
 .plyr__controls .plyr__controls__item.plyr__volume {
   display: none !important;
 }
+
+/* Barres de lecture audio ultra-minimalistes */
+.plyr--audio .plyr__video-wrapper,
+.plyr--audio video {
+  height: 50px !important;
+  background: transparent !important;
+}

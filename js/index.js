@@ -1768,7 +1768,7 @@
     });
     // Bouton de suppression
   clearBtn.addEventListener('click', async () => {
-    if (!confirm("Supprimer le fichier audio chargé ?")) return;
+    if (!confirm("Supprimer le fichier chargé ?")) return;
     try {
       // 1. On supprime physiquement de IndexedDB
       const db = await openDB();

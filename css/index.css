@@ -389,19 +389,43 @@ header p {
 /* ========================= */
 .plyr--audio{height:56px!important;}
 .plyr--audio .plyr__video-wrapper,.plyr--audio video{height:56px!important;background:transparent!important;border-radius:var(--border-radius);}
-.plyr--audio .plyr__controls{background:rgba(0,0,0,0.85)!important;border-radius:var(--border-radius);padding:0 10px!important;height:56px!important;opacity:1!important;}
+
+/* CONTROLES TOUJOURS VISIBLES + jamais de fade-out */
+.plyr--audio .plyr__controls{
+  background:rgba(0,0,0,0.85)!important;
+  border-radius:var(--border-radius);
+  padding:0 10px!important;
+  height:56px!important;
+  opacity:1!important;                /* toujours visible */
+  transform:translateY(0)!important;  /* empêche le déplacement vers le bas */
+  transition:none!important;          /* désactive toutes les animations de hide/show */
+}
+
+/* Même quand Plyr ajoute la classe .plyr--hide-controls → on force l’affichage */
+.plyr--audio.plyr--hide-controls .plyr__controls{
+  opacity:1!important;
+  transform:translateY(0)!important;
+}
+
 .plyr--audio .plyr__control{color:white!important;padding:10px!important;}
 .plyr--audio .plyr__progress__buffer{background:rgba(255,255,255,0.2)!important;}
 .plyr--audio input[type=range]{height:6px!important;}
 .plyr__volume{display:none!important;}
 .plyr,.plyr__controls{box-shadow:none!important;}
-.plyr__controls,.plyr{transition:background 0.25s ease;}
+
+/* On garde le fond qui réagit au survol si tu veux, sinon tu peux virer cette ligne */
+.plyr__controls,.plyr{transition:none;}   /* plus aucune transition */
 
 /* MOBILE OPTIMIZATIONS */
 @media(max-width:768px){
   .plyr--audio{height:52px!important;}
   .plyr--audio .plyr__video-wrapper,.plyr--audio video{height:52px!important;}
-  .plyr--audio .plyr__controls{height:52px!important;padding:0 8px!important;}
+  .plyr--audio .plyr__controls{
+    height:52px!important;
+    padding:0 8px!important;
+    opacity:1!important;
+    transform:translateY(0)!important;
+  }
 }
 @media(max-width:380px){
   .plyr--audio .plyr__video-wrapper,.plyr--audio video{height:48px!important;}

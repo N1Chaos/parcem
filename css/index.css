@@ -375,11 +375,11 @@ header p {
 
 /* Cadres colorés harmonisés selon ton thème */
 .card.bg-secondary-light {
-  border: 5px solid var(--highlight-color); /* couleur et épaisseur du cadre */
+  border: 5px solid var(--secondary-color); /* couleur et épaisseur du cadre */
 }
 
 #commentCard {
-  border: 5px solid var(--secondary-color); /* Bordure bleue */
+  border: 5px solid var(--highlight-color); /* Bordure bleue */
   border-radius: 8px;      /* Angle arrondi optionnel */
 }
 

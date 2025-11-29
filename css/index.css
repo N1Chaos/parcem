@@ -436,8 +436,8 @@ header p {
 
 /* Bouton TÉLÉCHARGER - vert */
 #downloadButton {
-  background-color: #43a047;   /* vert profond */
-  border-color: #43a047;
+  background-color: var(--highlight-color);  
+  border-color: var(--highlight-color);
   color: white;
 }
 

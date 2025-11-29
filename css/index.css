@@ -387,29 +387,32 @@ header p {
   border: 5px solid #ff9800;  /* Cadre vert pour commentaire audio */
 }
 
-/* Fond gris autour de chaque mot sélectionné */
-.selected-words-container {
-  background-color: #f0f0f0;
-  padding: 4px 8px;
-  border-radius: 4px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin: 3px;
-  font-size: 0.9rem;
+
+/* === MOTS SÉLECTIONNÉS DANS LES RUBRIQUES (index.html) === */
+.selected-words-container .tag {
+  background-color: #e9ecef !important;   /* fond gris clair */
+  color: #212529 !important;
+  padding: 4px 10px !important;
+  border-radius: 20px !important;         /* coins bien arrondis */
+  font-size: 0.9rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  margin: 3px !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2) !important;
 }
 
-/* Croix rouge pour supprimer le mot */
-.delete-icon {
-  color: red;
-  cursor: pointer;
-  font-size: 18px;
-  font-weight: bold;
+/* Croix de suppression en rouge + main au survol */
+.selected-words-container .delete-word {
+  color: #dc3545 !important;              /* rouge Bootstrap danger */
+  font-weight: bold !important;
+  font-size: 1.1em !important;
+  cursor: pointer !important;             /* petite main */
+  transition: color 0.2s !important;
 }
 
-.delete-icon:hover {
-  color: darkred;
-  cursor: pointer;
+.selected-words-container .delete-word:hover {
+  color: #c82333 !important;              /* rouge plus foncé au hover */
 }
 
 

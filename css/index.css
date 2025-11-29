@@ -378,9 +378,11 @@ header p {
   border: 5px solid red; /* couleur et épaisseur du cadre */
 }
 
-.card.bg-primary {
-  border: 5px solid blue; /* couleur et épaisseur du cadre */
+#commentCard {
+  border: 5px solid blue; /* Bordure bleue */
+  border-radius: 8px;      /* Angle arrondi optionnel */
 }
+
 
 
 

@@ -53,7 +53,7 @@
     <i class="bi bi-x-lg"></i>
   </button>
 </div>
-<div class="position-relative">
+
 <div id="plyr-container">
   <video id="audioPlayer" controls crossorigin playsinline>
   <!-- Le fichier audio ou vidéo sera chargé via JS -->
@@ -67,27 +67,8 @@
   <canvas id="spectrumCanvas" class="visualization-canvas spectrum mb-2" 
         style="height: 180px; background: white !important;"></canvas>
 
-  
-  </div>
-</div>
-
-
-
-<!-- Ajoute juste après cette ligne (n’importe où après le <audio>) -->
-<div id="fake-volume" style="display:none;"></div>
-      <button id="toggleControls" class="btn btn-primary mt-3">Contrôles</button>
-      <div id="audioControls" class="audio-controls mt-3">
-        <div class="control-group">
-          <label>Égaliseur :</label>
-          <div class="equalizer-controls">
-            <label>Basses <input type="range" id="eqLow" min="-12" max="12" step="0.1" value="0" class="form-range" /></label>
-            <label>Médiums <input type="range" id="eqMid" min="-12" max="12" step="0.1" value="0" class="form-range" /></label>
-            <label>Aigus <input type="range" id="eqHigh" min="-12" max="12" step="0.1" value="0" class="form-range" /></label>
-          </div>
-        </div>
-        
-<!-- Spectrogramme + ses labels (fréquences + temps) -->
-  
+  <!-- Spectrogramme + ses labels (fréquences + temps) -->
+  <div class="position-relative">
     <canvas id="spectrogramCanvas" class="visualization-canvas" style="height: 180px; background: black; display: block;"></canvas>
 
     <!-- Labels fréquences (gauche) + temps (bas) — uniquement sur le spectrogramme -->
@@ -111,7 +92,24 @@
         <span style="position: absolute; right: 0%;">1:00</span>
       </div>
     </div>
+  </div>
+</div>
 
+
+
+<!-- Ajoute juste après cette ligne (n’importe où après le <audio>) -->
+<div id="fake-volume" style="display:none;"></div>
+      <button id="toggleControls" class="btn btn-primary mt-3">Contrôles</button>
+      <div id="audioControls" class="audio-controls mt-3">
+        <div class="control-group">
+          <label>Égaliseur :</label>
+          <div class="equalizer-controls">
+            <label>Basses <input type="range" id="eqLow" min="-12" max="12" step="0.1" value="0" class="form-range" /></label>
+            <label>Médiums <input type="range" id="eqMid" min="-12" max="12" step="0.1" value="0" class="form-range" /></label>
+            <label>Aigus <input type="range" id="eqHigh" min="-12" max="12" step="0.1" value="0" class="form-range" /></label>
+          </div>
+        </div>
+        
         <div class="control-group">
           <label for="playbackSpeed">Vitesse de lecture :</label>
           <select id="playbackSpeed" class="form-control">

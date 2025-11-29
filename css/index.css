@@ -459,9 +459,9 @@ header p {
 
 /* Rouge quand le bouton affiche "Arrêter l’enregistrement" */
 #recordButton:not(:empty):has(i.bi-stop-fill) {
-  background-color: #dc3545 !important;
-  border-color: #dc3545 !important;
-  box-shadow: 0 0 0 0.25rem rgba(220,53,69,0.4) !important;
+  background-color: #ff4c4c !important;
+  border-color: #ff4c4c !important;
+  box-shadow: 0 0 0 0.25rem rgba(212, 25, 44, 0.747) !important;
 }
 
 /* Bouton TÉLÉCHARGER */

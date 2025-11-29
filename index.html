@@ -82,7 +82,13 @@
             <label>Aigus <input type="range" id="eqHigh" min="-12" max="12" step="0.1" value="0" class="form-range" /></label>
           </div>
         </div>
+<!-- Conteneur relatif pour les deux canvas + labels -->
+<div class="position-relative">
 
+  <!-- Spectre de fréquences -->
+  <canvas id="spectrumCanvas" class="visualization-canvas spectrum mb-2" 
+        style="height: 180px; background: white !important;"></canvas>
+</div>
          <!-- Spectrogramme + ses labels (fréquences + temps) -->
   <div class="position-relative">
     <canvas id="spectrogramCanvas" class="visualization-canvas" style="height: 180px; background: black; display: block;"></canvas>

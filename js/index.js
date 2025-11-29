@@ -442,7 +442,7 @@ async function initPlyrAudio() {
     }
 
     setupAudioRecorder();
-    setupAudioPlayer();
+    await initPlyrAudio();
 
     document.getElementById('downloadButton').onclick = async () => {
     if (!window.audioBlob) return alert('Aucun enregistrement disponible');

@@ -706,11 +706,7 @@
       widthControl.addEventListener('input', updateWidth);
       updateWidth(); // valeur initiale
     }
-    // Contrôle de la vitesse de lecture
-    playbackSpeed.addEventListener('change', () => {
-      player.playbackRate = parseFloat(playbackSpeed.value);
-      updateAudioState();
-    });
+    
     // Contrôles de l'égaliseur
     eqLow.addEventListener('input', () => {
       lowFilter.gain.value = parseFloat(eqLow.value);
@@ -732,7 +728,6 @@
         time: player.currentTime,
         isPlaying: !player.paused,
         duration: player.duration || 0,
-        playbackRate: player.playbackRate,
         balance: pannerNode.pan.value,
         eqLow: lowFilter.gain.value,
         eqMid: midFilter.gain.value,
@@ -844,7 +839,6 @@
         time: 0,
         isPlaying: false,
         duration: player.duration || 0,
-        playbackRate: player.playbackRate,
         balance: pannerNode.pan.value,
         eqLow: lowFilter.gain.value,
         eqMid: midFilter.gain.value,

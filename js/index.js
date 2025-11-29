@@ -1,8 +1,6 @@
   let frameCount = 0;
   let analyserLeftGlobal;
   let dataArrayLeftGlobal;
-
-
   // ==================== CONSTANTES ====================
   const PAGES = {
     page1: "Styles",
@@ -21,25 +19,20 @@
     page14: "Adjectifs",
     'langues-classification': "Classification"
   };
-
   // ==================== FONCTIONS UTILITAIRES ====================
   function getPageName() {
     return window.location.pathname.split('/').pop().replace('.html', '');
   }
-
   function saveToLocalStorage(key, value) {
     localStorage.setItem(key, JSON.stringify(value));
   }
-
   function loadFromLocalStorage(key) {
     return JSON.parse(localStorage.getItem(key)) || [];
   }
-
   // ==================== GESTION DES MOTS SÉLECTIONNÉS ====================
   function displayWordsForPage(page) {
     const container = document.querySelector(`.selected-words-container[data-page="${page}"]`);
     if (!container) return;
-
     // Si c'est la page Langues, fusionner page13 + langues-classification
     let words = [];
     if (page === 'page13') {
@@ -49,8 +42,6 @@
     } else {
       words = loadFromLocalStorage(`selectedWords_${page}`) || [];
     }
-
-
     if (words.length === 0) {
       container.innerHTML = "<span class='empty'>Aucun mot sélectionné</span>";
     } else {
@@ -64,18 +55,14 @@
         `;
       }).join(' ');
     }
-
     // Réactiver les tooltips
     container.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
       const t = bootstrap.Tooltip.getInstance(el);
       if (t) t.dispose();
       new bootstrap.Tooltip(el, { trigger: 'hover' });
     });
-
     console.log(`Mots affichés pour ${page}:`, words);
   }
-
-
   // Mettre à jour les mots affichés lorsqu’un changement est détecté dans localStorage
   function updateWordsOnStorageChange() {
     const pages = ['page1', 'page2', 'page3', 'page4', 'page5', 'page6', 'page7', 'page8', 'page9', 'page10', 'page11', 'page12', 'page13', 'page14'];
@@ -83,7 +70,6 @@
       displayWordsForPage(pageName);
     });
   }
-
   // Écouter les changements dans localStorage
   window.addEventListener('storage', (event) => {
     if (event.key && (event.key === 'selectedWords' || event.key.startsWith('selectedWords_') || event.key === 'clearSelectionEvent')) {
@@ -91,29 +77,24 @@
       updateWordsOnStorageChange();
     }
   });
-
   // ==================== LECTEUR YOUTUBE ====================
   function extractVideoID(url) {
     const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
     return url.match(regex)?.[1];
   }
-
   function loadVideo() {
     const videoID = extractVideoID(document.getElementById('videoUrl').value);
     if (!videoID) return alert('URL YouTube invalide');
-
     const player = document.getElementById('youtubePlayer');
     player.src = `https://www.youtube.com/embed/${videoID}`;
     localStorage.setItem('youtubeVideoID', videoID);
   }
-
   // ==================== ENREGISTREMENT AUDIO ====================
   async function setupAudioRecorder() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       let audioChunks = [];
       const recorder = new MediaRecorder(stream);
-
       recorder.ondataavailable = e => audioChunks.push(e.data);
       recorder.onstop = () => {
         const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
@@ -121,7 +102,6 @@
         document.getElementById('audioPlayback').src = audioUrl;
         window.audioBlob = audioBlob;
       };
-
       document.getElementById('recordButton').onclick = () => {
         if (recorder.state === 'inactive') {
           audioChunks = [];
@@ -136,7 +116,6 @@
       console.error("Erreur microphone:", error);
     }
   }
-
   // ==================== FONCTIONS IndexedDB ====================
   async function openDB() {
     return new Promise((resolve, reject) => {
@@ -149,18 +128,17 @@
       request.onerror = (event) => reject(event.target.error);
     });
   }
-
   async function saveAudioToDB(blob, time, fileName, duration = 0) {
     try {
       const db = await openDB();
       const transaction = db.transaction(['audioStore'], 'readwrite');
       const store = transaction.objectStore('audioStore');
-      const audioData = { 
-        id: 'userAudio', 
-        blob, 
-        time, 
+      const audioData = {
+        id: 'userAudio',
+        blob,
+        time,
         fileName,
-        duration  // ← nouvelle info sauvegardée
+        duration // ← nouvelle info sauvegardée
       };
       await store.put(audioData);
       console.log('Fichier sauvegardé avec durée:', audioData);
@@ -168,7 +146,6 @@
       console.error('Erreur sauvegarde IndexedDB:', error);
     }
   }
-
   // MODIFICATION: Fonction pour sauvegarder l’état audio (utilisée par le mini-lecteur)
   async function saveAudioStateToDB(state) {
     try {
@@ -181,7 +158,6 @@
       console.error('Erreur lors de la sauvegarde de l\'état dans IndexedDB:', error);
     }
   }
-
   async function loadAudioFromDB() {
     try {
       const db = await openDB();
@@ -197,7 +173,6 @@
       return null;
     }
   }
-
   // MODIFICATION: Fonction pour charger l’état audio (utilisée par le mini-lecteur)
   async function loadAudioStateFromDB() {
     try {
@@ -214,61 +189,715 @@
       return null;
     }
   }
-
   // ==================== GESTION AUDIO UTILISATEUR ====================
- // ==================== PLYR + WEB AUDIO API (SANS VOLUME) ====================
-let plyrInstance, audioContext, sourceNode, analyserLeft, analyserRight, gainNode, splitter;
-let analyserLeftGlobal, dataArrayLeftGlobal; // gardés pour tes visualisations existantes
-
-async function initPlyrAudio() {
-  const audioEl = document.getElementById('audioPlayer');
-
-  plyrInstance = new Plyr('#audioPlayer', {
-    controls: ['play-large', 'play', 'progress', 'current-time', 'duration', 'mute', 'settings', 'fullscreen'],
-    settings: ['speed'],
-    speed: { selected: 1, options: [0.5, 1, 1.5, 2] },
-    volume: 0.75,
-    hideControls: true
-  });
-
-  // Cacher le contrôle volume de Plyr
-  const vol = document.querySelector('.plyr__volume');
-  if (vol) vol.style.display = 'none';
-
-  // Web Audio API
-  audioContext = new (window.AudioContext || window.webkitAudioContext)();
-  sourceNode = audioContext.createMediaElementSource(audioEl);
-
-  analyserLeft = audioContext.createAnalyser();
-  analyserRight = audioContext.createAnalyser();
-  analyserLeft.fftSize = analyserRight.fftSize = 2048;
-
-  gainNode = audioContext.createGain();
-  gainNode.gain.value = 0.75;
-
-  splitter = audioContext.createChannelSplitter(2);
-
-  sourceNode.connect(gainNode);
-  gainNode.connect(splitter);
-  splitter.connect(analyserLeft, 0);
-  splitter.connect(analyserRight, 1);
-  gainNode.connect(audioContext.destination);
-
-  // Pour que tes visualisations continuent de marcher
-  analyserLeftGlobal = analyserLeft;
-  dataArrayLeftGlobal = new Uint8Array(analyserLeft.frequencyBinCount);
-
-  // Synchro vitesse Plyr ↔ ton select
-  const speedSelect = document.getElementById('playbackSpeed');
-  speedSelect.addEventListener('change', () => plyrInstance.speed = +speedSelect.value);
-  plyrInstance.on('ratechange', () => speedSelect.value = plyrInstance.speed);
-
-  // Démarre les animations (spectre, spectrogramme, VU…)
-  if (!animationId) animate();
-
-  console.log('Plyr + Web Audio initialisés proprement');
+  async function setupAudioPlayer() {
+    const player = document.getElementById('audioPlayer');
+    const fileInput = document.getElementById('audioFile');
+    const fileNameDisplay = document.getElementById('audioFileName');
+    const playbackSpeed = document.getElementById('playbackSpeed');
+    const balanceControl = document.getElementById('balanceControl');
+    const eqLow = document.getElementById('eqLow');
+    const eqMid = document.getElementById('eqMid');
+    const eqHigh = document.getElementById('eqHigh');
+    const vuMeterLeftCanvas = document.getElementById('vuMeterLeftCanvas');
+    const vuMeterRightCanvas = document.getElementById('vuMeterRightCanvas');
+    const waveformLeftCanvas = document.getElementById('waveformLeftCanvas');
+    const waveformRightCanvas = document.getElementById('waveformRightCanvas');
+    const spectrumCanvas = document.getElementById('spectrumCanvas');
+    const toggleControls = document.getElementById('toggleControls');
+    const audioControls = document.getElementById('audioControls');
+    const visualizations = document.querySelector('.visualizations');
+    // Vérification des éléments DOM
+    if (!player || !fileInput || !fileNameDisplay || !vuMeterLeftCanvas || !vuMeterRightCanvas || !waveformLeftCanvas || !waveformRightCanvas || !spectrumCanvas || !toggleControls || !audioControls || !visualizations) {
+      console.error('Éléments audio, affichage ou visualisations non trouvés dans le DOM:', {
+        player: !!player,
+        fileInput: !!fileInput,
+        fileNameDisplay: !!fileNameDisplay,
+        vuMeterLeftCanvas: !!vuMeterLeftCanvas,
+        vuMeterRightCanvas: !!vuMeterRightCanvas,
+        waveformLeftCanvas: !!waveformLeftCanvas,
+        waveformRightCanvas: !!waveformRightCanvas,
+        spectrumCanvas: !!spectrumCanvas,
+        toggleControls: !!toggleControls,
+        audioControls: !!audioControls,
+        visualizations: !!visualizations
+      });
+      fileNameDisplay.textContent = 'Aucun fichier chargé';
+      return;
+    }
+    // Initialisation de Web Audio API
+    const audioContext = new AudioContext();
+    let source;
+    try {
+      source = audioContext.createMediaElementSource(player);
+    } catch (error) {
+      console.error('Erreur lors de la création de la source audio:', error);
+      fileNameDisplay.textContent = 'Erreur: Veuillez réimporter le fichier';
+      return;
+    }
+    const analyserLeft = audioContext.createAnalyser();
+    const analyserRight = audioContext.createAnalyser();
+   
+    analyserLeft.fftSize = 2048;
+    analyserRight.fftSize = 2048;
+    const gainNode = audioContext.createGain();
+    gainNode.gain.setValueAtTime(0.75, audioContext.currentTime);
+    const pannerNode = audioContext.createStereoPanner();
+    const lowFilter = audioContext.createBiquadFilter();
+    lowFilter.type = 'lowshelf';
+    lowFilter.frequency.value = 200;
+    const midFilter = audioContext.createBiquadFilter();
+    midFilter.type = 'peaking';
+    midFilter.frequency.value = 1000;
+    const highFilter = audioContext.createBiquadFilter();
+    highFilter.type = 'highshelf';
+    highFilter.frequency.value = 4000;
+      // === LARGEUR STÉRÉO (Mid-Side) – VERSION ULTRA SÛRE ===
+    const merger = audioContext.createChannelMerger(2);
+    const midGain = audioContext.createGain();
+    const sideGain = audioContext.createGain();
+    midGain.gain.value = 1;
+    sideGain.gain.value = 1; // on contrôle ça avec le curseur après
+    // Chaîne audio principale avec analyseurs après les effets
+    const splitter = audioContext.createChannelSplitter(2);
+    source.connect(pannerNode);
+    pannerNode.connect(lowFilter);
+    lowFilter.connect(midFilter);
+    midFilter.connect(highFilter);
+    highFilter.connect(gainNode);
+      // On garde le son normal
+    gainNode.connect(splitter);
+    gainNode.connect(audioContext.destination); // son garanti
+    // On ajoute le traitement Mid-Side en parallèle
+    splitter.connect(midGain, 0);
+    splitter.connect(midGain, 1);
+    splitter.connect(sideGain, 0);
+    splitter.connect(sideGain, 1);
+    midGain.connect(merger, 0, 0);
+    midGain.connect(merger, 0, 1);
+    sideGain.connect(merger, 0, 0);
+    sideGain.connect(merger, 0, 1);
+    sideGain.gain.value = -1; // inversion côté droit pour le Side
+    merger.connect(audioContext.destination);
+    splitter.connect(analyserLeft, 0);
+    splitter.connect(analyserRight, 1);
+    // Activer le curseur de balance par défaut
+    balanceControl.disabled = false;
+    balanceControl.title = 'Ajuster la balance stéréo (gauche/droite)';
+    // Vérification du nombre de canaux après chargement
+    let isMono = false;
+    async function checkChannels() {
+      try {
+        if (!player.src) {
+          console.warn('Aucun fichier audio chargé pour vérifier les canaux');
+          return;
+        }
+        const response = await fetch(player.src);
+        if (!response.ok) {
+          throw new Error('Échec du chargement du fichier audio pour la vérification des canaux');
+        }
+        const arrayBuffer = await response.arrayBuffer();
+        const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+        const channels = audioBuffer.numberOfChannels;
+        console.log(`Nombre de canaux de l'audio : ${channels}`);
+        isMono = channels === 1;
+        if (isMono) {
+          console.warn('Fichier audio mono détecté. Le contrôle de balance stéréo et le VU-mètre droit sont désactivés.');
+          balanceControl.disabled = true;
+          balanceControl.title = 'Non disponible pour les fichiers mono';
+        } else {
+          balanceControl.disabled = false;
+          balanceControl.title = 'Ajuster la balance stéréo (gauche/droite)';
+        }
+      } catch (error) {
+        console.error('Erreur lors de la vérification des canaux:', error);
+        balanceControl.disabled = false;
+        isMono = false;
+      }
+    }
+    // Gestion du bouton Contrôles
+    const savedAudioState = await loadAudioStateFromDB();
+    console.log('Données récupérées de IndexedDB:', savedAudioState);
+    // Forcer les contrôles et visualisations à être masqués au chargement
+    audioControls.classList.remove('active');
+    visualizations.classList.remove('active');
+    toggleControls.textContent = 'Contrôles';
+    console.log('État initial des contrôles et visualisations: masqués');
+    toggleControls.addEventListener('click', () => {
+      console.log('Bouton Contrôles cliqué');
+      const isVisible = audioControls.classList.toggle('active');
+      visualizations.classList.toggle('active', isVisible);
+      console.log('Nouvel état des contrôles et visualisations:', isVisible ? 'affiché' : 'masqué');
+      toggleControls.textContent = isVisible ? 'Masquer les contrôles' : 'Contrôles';
+      updateAudioState();
+      if (isVisible) {
+        // Réinitialiser les dimensions et contextes des canvas lorsque les visualisations sont affichées
+        vuMeterLeftCanvas.width = vuMeterLeftCanvas.offsetWidth;
+        vuMeterLeftCanvas.height = 125;
+        vuMeterRightCanvas.width = vuMeterRightCanvas.offsetWidth;
+        vuMeterRightCanvas.height = 125;
+        waveformLeftCanvas.width = waveformLeftCanvas.offsetWidth;
+        waveformLeftCanvas.height = 125;
+        waveformRightCanvas.width = waveformRightCanvas.offsetWidth;
+        waveformRightCanvas.height = 125;
+        // Réacquérir les contextes
+        vuMeterLeftCtx = vuMeterLeftCanvas.getContext('2d');
+        vuMeterRightCtx = vuMeterRightCanvas.getContext('2d');
+        waveformLeftCtx = waveformLeftCanvas.getContext('2d');
+        waveformRightCtx = waveformRightCanvas.getContext('2d');
+        console.log('Contextes des canvas réinitialisés pour les visualisations');
+      }
+    });
+    // Initialisation des canvas
+    vuMeterLeftCanvas.width = vuMeterLeftCanvas.offsetWidth;
+    vuMeterLeftCanvas.height = 125;
+    vuMeterRightCanvas.width = vuMeterRightCanvas.offsetWidth;
+    vuMeterRightCanvas.height = 125;
+    waveformLeftCanvas.width = waveformLeftCanvas.offsetWidth;
+    waveformLeftCanvas.height = 125;
+    waveformRightCanvas.width = waveformRightCanvas.offsetWidth;
+    waveformRightCanvas.height = 125;
+    spectrumCanvas.width = spectrumCanvas.offsetWidth;
+    spectrumCanvas.height = 100;
+    // Déclarer les contextes comme variables modifiables
+    let vuMeterLeftCtx = vuMeterLeftCanvas.getContext('2d');
+    let vuMeterRightCtx = vuMeterRightCanvas.getContext('2d');
+    let waveformLeftCtx = waveformLeftCanvas.getContext('2d');
+    let waveformRightCtx = waveformRightCanvas.getContext('2d');
+    let spectrumCtx = spectrumCanvas.getContext('2d');
+    const bufferLength = analyserLeft.frequencyBinCount;
+    const dataArrayLeft = new Uint8Array(bufferLength);
+    const dataArrayRight = new Uint8Array(bufferLength);
+    analyserLeftGlobal = analyserLeft;
+    dataArrayLeftGlobal = dataArrayLeft;
+    resizeSpectrogramCanvas();
+    // Calcul du RMS pour les VU-mètres
+    function calculateRMS(analyser, dataArray) {
+      try {
+        analyser.getByteTimeDomainData(dataArray);
+        let sum = 0;
+        for (let i = 0; i < dataArray.length; i++) {
+          const value = (dataArray[i] - 128) / 128;
+          sum += value * value;
+        }
+        const mean = sum / dataArray.length;
+        const rms = Math.sqrt(mean);
+        return Math.max(0, Math.min(1, rms));
+      } catch (error) {
+        console.error('Erreur lors du calcul du RMS:', error);
+        return 0;
+      }
+    }
+    // Dessin des VU-mètres à aiguille avec look analogique
+    function drawVUMeters() {
+      try {
+        const centerX = vuMeterLeftCanvas.width / 2;
+        const centerY = vuMeterLeftCanvas.height - 23.4375;
+        const radius = Math.min(vuMeterLeftCanvas.width / 2 - 10, vuMeterLeftCanvas.height - 39.0625);
+        const startAngle = -Math.PI / 2;
+        const endAngle = Math.PI / 2;
+        // VU-mètre gauche
+        vuMeterLeftCtx.clearRect(0, 0, vuMeterLeftCanvas.width, vuMeterLeftCanvas.height);
+        const gradient = vuMeterLeftCtx.createRadialGradient(centerX, centerY, 10, centerX, centerY, radius);
+        gradient.addColorStop(0, '#f0f0f0');
+        gradient.addColorStop(1, '#d0d0d0');
+        vuMeterLeftCtx.fillStyle = gradient;
+        vuMeterLeftCtx.fillRect(0, 0, vuMeterLeftCanvas.width, vuMeterLeftCanvas.height);
+        vuMeterLeftCtx.strokeStyle = '#555';
+        vuMeterLeftCtx.lineWidth = 4;
+        vuMeterLeftCtx.strokeRect(2, 2, vuMeterLeftCanvas.width - 4, vuMeterLeftCanvas.height - 4);
+        vuMeterLeftCtx.beginPath();
+        vuMeterLeftCtx.arc(centerX, centerY, radius, startAngle, endAngle);
+        vuMeterLeftCtx.lineWidth = 10;
+        vuMeterLeftCtx.strokeStyle = '#e0e0e0';
+        vuMeterLeftCtx.stroke();
+        vuMeterLeftCtx.fillStyle = '#0000FF';
+        vuMeterLeftCtx.font = '10px var(--body-font)';
+        const levels = [-60, -50, -40, -30, -20, -10, 0];
+        levels.forEach(level => {
+          const angle = startAngle + ((level + 60) / 60) * (endAngle - startAngle);
+          const x = centerX + Math.cos(angle) * (radius + 5);
+          const y = centerY + Math.sin(angle) * (radius + 5);
+          vuMeterLeftCtx.fillText(`${level} dB`, x - 15, y + 5);
+          vuMeterLeftCtx.beginPath();
+          vuMeterLeftCtx.moveTo(centerX + Math.cos(angle) * radius, centerY + Math.sin(angle) * radius);
+          vuMeterLeftCtx.lineTo(centerX + Math.cos(angle) * (radius - 5), centerY + Math.sin(angle) * (radius - 5));
+          vuMeterLeftCtx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+          vuMeterLeftCtx.stroke();
+        });
+        const rmsLeft = calculateRMS(analyserLeft, dataArrayLeft);
+        const angleLeft = startAngle + rmsLeft * (endAngle - startAngle);
+        vuMeterLeftCtx.beginPath();
+        vuMeterLeftCtx.moveTo(centerX, centerY);
+        vuMeterLeftCtx.lineTo(centerX + Math.cos(angleLeft) * radius, centerY + Math.sin(angleLeft) * radius);
+        vuMeterLeftCtx.lineWidth = 2;
+        vuMeterLeftCtx.strokeStyle = '#e63946'; // Rouge pour l'aiguille gauche, même couleur que la forme d'onde gauche
+        vuMeterLeftCtx.stroke();
+        vuMeterLeftCtx.beginPath();
+        vuMeterLeftCtx.arc(centerX, centerY, 5, 0, 2 * Math.PI);
+        vuMeterLeftCtx.fillStyle = '#333';
+        vuMeterLeftCtx.fill();
+        vuMeterLeftCtx.strokeStyle = '#000';
+        vuMeterLeftCtx.lineWidth = 1;
+        vuMeterLeftCtx.stroke();
+        // VU-mètre droit
+        vuMeterRightCtx.clearRect(0, 0, vuMeterRightCanvas.width, vuMeterRightCanvas.height);
+        vuMeterRightCtx.fillStyle = gradient;
+        vuMeterRightCtx.fillRect(0, 0, vuMeterRightCanvas.width, vuMeterRightCanvas.height);
+        vuMeterRightCtx.strokeStyle = '#555';
+        vuMeterRightCtx.lineWidth = 4;
+        vuMeterRightCtx.strokeRect(2, 2, vuMeterRightCanvas.width - 4, vuMeterRightCanvas.height - 4);
+        if (isMono) {
+          vuMeterRightCtx.fillStyle = 'var(--font-color)';
+          vuMeterRightCtx.font = '12px var(--body-font)';
+          vuMeterRightCtx.textAlign = 'center';
+          vuMeterRightCtx.fillText('Mono', vuMeterRightCanvas.width / 2, vuMeterRightCanvas.height / 2);
+        } else {
+          vuMeterRightCtx.beginPath();
+          vuMeterRightCtx.arc(centerX, centerY, radius, startAngle, endAngle);
+          vuMeterRightCtx.lineWidth = 10;
+          vuMeterRightCtx.strokeStyle = '#e0e0e0';
+          vuMeterRightCtx.stroke();
+          vuMeterRightCtx.fillStyle = '#0000FF';
+          vuMeterRightCtx.font = '10px var(--body-font)';
+          levels.forEach(level => {
+            const angle = startAngle + ((level + 60) / 60) * (endAngle - startAngle);
+            const x = centerX + Math.cos(angle) * (radius + 5);
+            const y = centerY + Math.sin(angle) * (radius + 5);
+            vuMeterRightCtx.fillText(`${level} dB`, x - 15, y + 5);
+            vuMeterRightCtx.beginPath();
+            vuMeterRightCtx.moveTo(centerX + Math.cos(angle) * radius, centerY + Math.sin(angle) * radius);
+            vuMeterRightCtx.lineTo(centerX + Math.cos(angle) * (radius - 5), centerY + Math.sin(angle) * (radius - 5));
+            vuMeterRightCtx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+            vuMeterRightCtx.stroke();
+          });
+          const rmsRight = calculateRMS(analyserRight, dataArrayRight);
+          const angleRight = startAngle + rmsRight * (endAngle - startAngle);
+          vuMeterRightCtx.beginPath();
+          vuMeterRightCtx.moveTo(centerX, centerY);
+          vuMeterRightCtx.lineTo(centerX + Math.cos(angleRight) * radius, centerY + Math.sin(angleRight) * radius);
+          vuMeterRightCtx.lineWidth = 2;
+          vuMeterRightCtx.strokeStyle = '#f4a261'; // Orange pour l'aiguille droite, même couleur que la forme d'onde droite
+          vuMeterRightCtx.stroke();
+          vuMeterRightCtx.beginPath();
+          vuMeterRightCtx.arc(centerX, centerY, 5, 0, 2 * Math.PI);
+          vuMeterRightCtx.fillStyle = '#333';
+          vuMeterRightCtx.fill();
+          vuMeterRightCtx.strokeStyle = '#000';
+          vuMeterRightCtx.lineWidth = 1;
+          vuMeterRightCtx.stroke();
+        }
+      } catch (error) {
+        console.error('Erreur lors du dessin des VU-mètres:', error);
+      }
+    }
+    // Visualisation de la forme d'onde (gauche et droite) en couleur
+    function drawWaveform() {
+      try {
+        analyserLeft.getByteTimeDomainData(dataArrayLeft);
+        analyserRight.getByteTimeDomainData(dataArrayRight);
+        waveformLeftCtx.clearRect(0, 0, waveformLeftCanvas.width, waveformLeftCanvas.height);
+        waveformLeftCtx.beginPath();
+        waveformLeftCtx.strokeStyle = '#e63946'; // Rouge pour la forme d'onde gauche
+        waveformLeftCtx.lineWidth = 2;
+        let sliceWidth = waveformLeftCanvas.width / bufferLength;
+        let x = 0;
+        for (let i = 0; i < bufferLength; i++) {
+          const v = dataArrayLeft[i] / 128.0;
+          const y = (v * waveformLeftCanvas.height) / 2;
+          if (i === 0) {
+            waveformLeftCtx.moveTo(x, y);
+          } else {
+            waveformLeftCtx.lineTo(x, y);
+          }
+          x += sliceWidth;
+        }
+        waveformLeftCtx.stroke();
+        waveformLeftCtx.fillStyle = 'var(--font-color)';
+        waveformLeftCtx.font = '10px var(--body-font)';
+        const duration = player.duration || 60;
+        for (let t = 0; t <= duration; t += 25) {
+          const xPos = (t / duration) * waveformLeftCanvas.width;
+          waveformLeftCtx.fillText(`${t}s`, xPos, waveformLeftCanvas.height - 5);
+          waveformLeftCtx.beginPath();
+          waveformLeftCtx.moveTo(xPos, 0);
+          waveformLeftCtx.lineTo(xPos, waveformLeftCanvas.height);
+          waveformLeftCtx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+          waveformLeftCtx.stroke();
+        }
+        waveformRightCtx.clearRect(0, 0, waveformRightCanvas.width, waveformRightCanvas.height);
+        waveformRightCtx.beginPath();
+        waveformRightCtx.strokeStyle = '#f4a261'; // Orange pour la forme d'onde droite
+        waveformRightCtx.lineWidth = 2;
+        x = 0;
+        for (let i = 0; i < bufferLength; i++) {
+          const v = dataArrayRight[i] / 128.0;
+          const y = (v * waveformRightCanvas.height) / 2;
+          if (i === 0) {
+            waveformRightCtx.moveTo(x, y);
+          } else {
+            waveformRightCtx.lineTo(x, y);
+          }
+          x += sliceWidth;
+        }
+        waveformRightCtx.stroke();
+        waveformRightCtx.fillStyle = 'var(--font-color)';
+        waveformRightCtx.font = '10px var(--body-font)';
+        for (let t = 0; t <= duration; t += 25) {
+          const xPos = (t / duration) * waveformRightCanvas.width;
+          waveformRightCtx.fillText(`${t}s`, xPos, waveformRightCanvas.height - 5);
+          waveformRightCtx.beginPath();
+          waveformRightCtx.moveTo(xPos, 0);
+          waveformRightCtx.lineTo(xPos, waveformRightCanvas.height);
+          waveformRightCtx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+          waveformRightCtx.stroke();
+        }
+      } catch (error) {
+        console.error('Erreur lors du dessin des formes d\'onde:', error);
+      }
+    }
+    // Visualisation spectrale avec couleurs par plage de fréquences
+    function drawSpectrum() {
+  try {
+    // Fond blanc
+    spectrumCtx.clearRect(0, 0, spectrumCanvas.width, spectrumCanvas.height);
+    // Vérifier si on a des données audio réelles
+    let hasAudioData = false;
+    let dataArray = new Uint8Array(bufferLength);
+   
+    if (analyserLeftGlobal && dataArrayLeftGlobal) {
+      analyserLeftGlobal.getByteFrequencyData(dataArrayLeftGlobal);
+      dataArray = dataArrayLeftGlobal;
+     
+      // Vérifier si les données ne sont pas silencieuses (pas seulement des zéros)
+      const sum = dataArray.reduce((a, b) => a + b, 0);
+      hasAudioData = sum > 100; // Seuil minimal pour considérer qu'il y a de l'audio
+    }
+    const barWidth = (spectrumCanvas.width / bufferLength) * 2.5;
+    const maxFreq = audioContext ? audioContext.sampleRate / 2 : 22050; // Valeur par défaut
+    let x = 0;
+    // === BARRES avec TES couleurs ===
+    for (let i = 0; i < bufferLength; i++) {
+      const freq = (i / bufferLength) * maxFreq;
+     
+      // Si pas de données audio, afficher des barres très basses (bruit de fond)
+      const value = hasAudioData ? dataArray[i] : Math.random() * 5 + 2;
+      const barHeight = (value / 255) * spectrumCanvas.height * (hasAudioData ? 0.9 : 0.05);
+      let color;
+      if (freq <= 250) {
+        color = '#ff4c4c'; // Rouge → basses
+      } else if (freq <= 4000) {
+        color = '#ffeb3b'; // Jaune → médiums
+      } else {
+        color = '#2196f3'; // Bleu → aigus
+      }
+      // Réduire l'opacité si pas de fichier chargé
+      if (!hasAudioData) {
+        spectrumCtx.globalAlpha = 0.3;
+      } else {
+        spectrumCtx.globalAlpha = 1.0;
+      }
+      spectrumCtx.fillStyle = color;
+      spectrumCtx.fillRect(x, spectrumCanvas.height - barHeight, barWidth, barHeight);
+      x += barWidth + 1;
+    }
+    // Réinitialiser l'opacité
+    spectrumCtx.globalAlpha = 1.0;
+    // === LABELS FRÉQUENCES — TOUJOURS VISIBLES ===
+    const width = spectrumCanvas.width;
+    let freqsToShow = [];
+    if (width < 768) {
+      // Mobile → fréquences principales
+      freqsToShow = [1000, 5000, 10000, 15000, 20000];
+    } else {
+      // PC → plus de détails
+      freqsToShow = [500, 1000, 5000, 10000, 15000, 20000];
+    }
+    // MODIFICATION : Labels TOUJOURS visibles avec bonne visibilité
+    spectrumCtx.fillStyle = '#333'; // Couleur fixe bien visible
+    spectrumCtx.font = '11px Consolas, monospace';
+    spectrumCtx.textAlign = 'center';
+    freqsToShow.forEach(freq => {
+      const xPos = (freq / maxFreq) * spectrumCanvas.width;
+      const label = freq === 1000 ? '1kHz' : freq === 20000 ? '20kHz' : freq < 1000 ? `${freq}` : `${freq / 1000}k`;
+      spectrumCtx.fillText(label, xPos, 16);
+      // Ligne verticale discrète - TOUJOURS visible
+      spectrumCtx.beginPath();
+      spectrumCtx.moveTo(xPos, spectrumCanvas.height - 10);
+      spectrumCtx.lineTo(xPos, spectrumCanvas.height);
+      spectrumCtx.strokeStyle = 'rgba(0,0,0,0.15)'; // Opacité fixe
+      spectrumCtx.lineWidth = 1;
+      spectrumCtx.stroke();
+    });
+  } catch (error) {
+    console.error('Erreur drawSpectrum:', error);
+  }
 }
-
+    // Gestion de l'animation avec annulation
+    let animationId = null;
+    function animate() {
+    try {
+      drawSpectrum(); // TOUJOURS dessiner le spectre
+     
+      // Le reste seulement si l'audio est prêt
+      if (analyserLeftGlobal && frameCount++ % 2 === 0) {
+        drawSpectrogram();
+      }
+     
+      if (visualizations && visualizations.classList.contains('active')) {
+        drawVUMeters();
+        drawWaveform();
+      }
+     
+      animationId = requestAnimationFrame(animate);
+    } catch (error) {
+      console.error('Erreur dans animate:', error);
+      animationId = requestAnimationFrame(animate); // RELANCER même en cas d'erreur
+    }
+  }
+    // Arrêter l'animation lorsque la page est déchargée
+    window.addEventListener('beforeunload', () => {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+        console.log('Animation arrêtée avant déchargement de la page');
+      }
+    });
+    // Contrôle de la balance stéréo
+    balanceControl.addEventListener('input', () => {
+      pannerNode.pan.value = parseFloat(balanceControl.value);
+      console.log('Balance stéréo ajustée:', pannerNode.pan.value);
+      updateAudioState();
+    });
+      // === LARGEUR STÉRÉO L12/R04 – VERSION FINALE PROPRE & IMMERSIVE CASQUE ===
+    const widthControl = document.getElementById('widthControl');
+    const widthLabel = document.getElementById('widthLabel');
+    if (widthControl && widthLabel) {
+      const updateWidth = () => {
+        const val = parseFloat(widthControl.value);
+        const level = val / 100;
+        let sideLevel;
+        if (level <= 0.42) {
+          sideLevel = level * 1.9; // montée très douce
+        } else {
+          sideLevel = 0.8 + (level - 0.42) * 2.4; // boost progressif mais contrôlé
+        }
+        sideGain.gain.setValueAtTime(Math.min(sideLevel, 1.2), audioContext.currentTime);
+        let text = "Mono";
+  if (val <= 10) {
+    text = "Mono";
+  } else if (val <= 40) {
+    text = "Étroite";
+  } else if (val <= 60) {
+    text = "Normale";
+  } else if (val <= 80) {
+    text = "Large";
+  } else if (val <= 92) {
+    text = "L12/R04";
+  } else {
+    text = "Ultra-large";
+  }
+  // Ajustement spécial
+  if (val >= 83 && val <= 88) {
+    text = "L12/R04 – Orchestre";
+  }
+        widthLabel.textContent = `${text} (${val} %)`;
+      };
+      widthControl.addEventListener('input', updateWidth);
+      updateWidth(); // valeur initiale
+    }
+    // Contrôle de la vitesse de lecture
+    playbackSpeed.addEventListener('change', () => {
+      player.playbackRate = parseFloat(playbackSpeed.value);
+      updateAudioState();
+    });
+    // Contrôles de l'égaliseur
+    eqLow.addEventListener('input', () => {
+      lowFilter.gain.value = parseFloat(eqLow.value);
+      console.log('Égaliseur basses ajusté:', lowFilter.gain.value);
+      updateAudioState();
+    });
+    eqMid.addEventListener('input', () => {
+      midFilter.gain.value = parseFloat(eqMid.value);
+      console.log('Égaliseur médiums ajusté:', midFilter.gain.value);
+      updateAudioState();
+    });
+    eqHigh.addEventListener('input', () => {
+      highFilter.gain.value = parseFloat(eqHigh.value);
+      console.log('Égaliseur aigus ajusté:', highFilter.gain.value);
+      updateAudioState();
+    });
+    const updateAudioState = async () => {
+      const state = {
+        time: player.currentTime,
+        isPlaying: !player.paused,
+        duration: player.duration || 0,
+        playbackRate: player.playbackRate,
+        balance: pannerNode.pan.value,
+        eqLow: lowFilter.gain.value,
+        eqMid: midFilter.gain.value,
+        eqHigh: highFilter.gain.value,
+        controlsVisible: audioControls.classList.contains('active'),
+        visualizationsVisible: visualizations.classList.contains('active')
+      };
+      await saveAudioStateToDB(state);
+      localStorage.setItem('audioState', JSON.stringify(state));
+      console.log('État audio mis à jour:', state);
+    };
+    // Recharger l'audio sauvegardé
+    const savedAudioData = await loadAudioFromDB();
+    console.log('Données audio récupérées de IndexedDB:', savedAudioData);
+    if (savedAudioData && savedAudioData.blob) {
+      try {
+        const audioUrl = URL.createObjectURL(savedAudioData.blob);
+        console.log('URL de l\'audio créé:', audioUrl);
+        player.src = audioUrl;
+        player.load();
+        fileNameDisplay.textContent = savedAudioData.fileName
+          ? `Fichier chargé : ${savedAudioData.fileName}`
+          : 'Aucun nom de fichier disponible';
+        console.log('Nom affiché:', fileNameDisplay.textContent);
+        const savedTime = savedAudioState?.time || parseFloat(savedAudioData.time || 0);
+        const isPlaying = savedAudioState?.isPlaying || false;
+        const savedPlaybackRate = savedAudioState?.playbackRate || 1;
+      
+        const savedBalance = savedAudioState?.balance || 0;
+        const savedEqLow = savedAudioState?.eqLow || 0;
+        const savedEqMid = savedAudioState?.eqMid || 0;
+        const savedEqHigh = savedAudioState?.eqHigh || 0;
+        player.playbackRate = savedPlaybackRate;
+      
+        pannerNode.pan.value = savedBalance;
+        lowFilter.gain.value = savedEqLow;
+        midFilter.gain.value = savedEqMid;
+        highFilter.gain.value = savedEqHigh;
+        playbackSpeed.value = savedPlaybackRate;
+        balanceControl.value = savedBalance;
+        eqLow.value = savedEqLow;
+        eqMid.value = savedEqMid;
+        eqHigh.value = savedEqHigh;
+        player.addEventListener('canplaythrough', async () => {
+          console.log('Événement canplaythrough déclenché');
+          player.currentTime = savedTime;
+          console.log('Audio prêt, minutage appliqué:', player.currentTime);
+          await checkChannels();
+          if (isPlaying) {
+            try {
+              await audioContext.resume();
+              await player.play();
+              console.log('Lecture automatique démarrée');
+              if (!animationId) {
+                animate();
+                console.log('Animation démarrée après lecture automatique');
+              }
+            } catch (err) {
+              console.error('Erreur lors de la lecture automatique:', err);
+              fileNameDisplay.textContent = 'Erreur: Cliquez sur play pour démarrer';
+            }
+          } else if (!animationId) {
+            animate();
+            console.log('Animation démarrée sans lecture automatique');
+          }
+        }, { once: true });
+        player.addEventListener('error', () => {
+    console.warn("Erreur de lecture audio ignorée (fichier supprimé ou corrompu)");
+  });
+      } catch (error) {
+        console.error('Erreur lors de la configuration de l\'audio:', error);
+        alert('Erreur lors du rechargement de l\'audio. Essayez de réimporter le fichier.');
+        fileNameDisplay.textContent = 'Erreur lors du chargement';
+      }
+    } else {
+      console.log('Aucun audio sauvegardé dans IndexedDB');
+      fileNameDisplay.textContent = 'Aucun fichier chargé';
+    }
+    // Gestion explicite du bouton play (si présent dans le DOM)
+    const playButton = document.querySelector('#playButton');
+    if (playButton) {
+      playButton.addEventListener('click', async () => {
+        try {
+          await audioContext.resume();
+          await player.play();
+          console.log('Lecture démarrée via le bouton play');
+          if (!animationId) {
+            animate();
+            console.log('Animation démarrée via le bouton play');
+          }
+        } catch (err) {
+          console.error('Erreur lors de la lecture via le bouton play:', err);
+          alert('Erreur lors de la lecture. Vérifiez le fichier audio.');
+        }
+      });
+    }
+    player.addEventListener('timeupdate', updateAudioState);
+    player.addEventListener('play', async () => {
+      await audioContext.resume();
+      updateAudioState();
+      if (!animationId) {
+        animate();
+        console.log('Animation démarrée lors de la lecture');
+      }
+    });
+    player.addEventListener('pause', updateAudioState);
+    player.addEventListener('ended', async () => {
+      const state = {
+        time: 0,
+        isPlaying: false,
+        duration: player.duration || 0,
+        playbackRate: player.playbackRate,
+        balance: pannerNode.pan.value,
+        eqLow: lowFilter.gain.value,
+        eqMid: midFilter.gain.value,
+        eqHigh: highFilter.gain.value,
+        controlsVisible: audioControls.classList.contains('active'),
+        visualizationsVisible: visualizations.classList.contains('active')
+      };
+      await saveAudioStateToDB(state);
+      localStorage.setItem('audioState', JSON.stringify(state));
+    });
+    fileInput.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) {
+        console.log('Aucun fichier sélectionné');
+        fileNameDisplay.textContent = 'Aucun fichier chargé';
+        return;
+      }
+      console.log('Importation d\'un nouveau fichier:', file.name, 'Taille (octets):', file.size);
+      fileNameDisplay.textContent = `Fichier chargé : ${file.name}`;
+      localStorage.setItem('audioFileName', file.name);
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const audioData = e.target.result;
+          player.src = audioData;
+          eqLow.value = -6; // le curseur "Basses" démarre à -6
+          lowFilter.gain.value = -6; // applique immédiatement -6 dB sur les basses
+          player.load();
+          await saveAudioToDB(file, player.currentTime || 0, file.name, player.duration || 0);
+          console.log('Nouveau fichier audio sauvegardé dans IndexedDB');
+          player.addEventListener('canplaythrough', async () => {
+            player.currentTime = 0;
+            updateAudioState();
+            await checkChannels();
+            if (!animationId) {
+              animate();
+              console.log('Animation démarrée après chargement de nouveau fichier');
+            }
+          }, { once: true });
+        } catch (error) {
+          console.error('Erreur lors du chargement du nouveau fichier:', error);
+          alert('Erreur lors du chargement du fichier audio.');
+          fileNameDisplay.textContent = 'Erreur lors du chargement';
+        }
+      };
+      reader.onerror = (e) => {
+        console.error('Erreur de lecture du fichier:', e);
+        alert('Impossible de lire le fichier audio.');
+        fileNameDisplay.textContent = 'Erreur lors du chargement';
+      };
+      reader.readAsDataURL(file);
+    });
+  }
   // ==================== ENREGISTREMENT AUDIO ====================
   async function setupAudioRecorder() {
     const recordButton = document.getElementById('recordButton');
@@ -278,19 +907,16 @@ async function initPlyrAudio() {
     let recorder = null;
     let recordingSeconds = 0;
     let timerInterval = null;
-
     if (!recordButton || !recordingIndicator || !recordingConfirmation) {
       console.error('Éléments d’enregistrement non trouvés dans le DOM');
       return;
     }
-
     recordButton.onclick = async () => {
       if (!recorder || recorder.state === 'inactive') {
         try {
           const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
           recorder = new MediaRecorder(stream);
           audioChunks = [];
-
           recorder.ondataavailable = e => audioChunks.push(e.data);
           recorder.onstop = () => {
             const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
@@ -310,7 +936,6 @@ async function initPlyrAudio() {
             console.log('Enregistrement arrêté, commentaire enregistré');
             stream.getTracks().forEach(track => track.stop());
           };
-
           recorder.start();
           recordButton.classList.remove('btn-danger');
           recordButton.classList.add('btn-warning');
@@ -333,23 +958,19 @@ async function initPlyrAudio() {
       }
     };
   }
-
   // ==================== INITIALISATION ====================
   document.addEventListener("DOMContentLoaded", async () => {
-
     setTimeout(() => {
     if (!animationId) {
       animate();
       console.log('Animation démarrée au chargement');
     }
   }, 100);
-
     const currentPage = getPageName();
     console.log('Page actuelle:', currentPage);
     if (currentPage === '' || currentPage === 'index') {
       console.log('Initialisation de setupAudioPlayer sur la page principale');
-      await initPlyrAudio();
-
+      await setupAudioPlayer();
     // Sauvegarde et restauration du brouillon de commentaire
   const commentText = document.getElementById('commentText');
   if (commentText) {
@@ -360,7 +981,7 @@ async function initPlyrAudio() {
     commentText.addEventListener('input', () => {
       localStorage.setItem('commentDraft', commentText.value);
     });
-    
+   
     const generateTextButton = document.getElementById('generateTextButton');
     if (generateTextButton) {
       generateTextButton.addEventListener('click', () => {
@@ -373,17 +994,13 @@ async function initPlyrAudio() {
     console.warn('Champ de commentaire avec id="commentText" non trouvé.');
   }
     }
-
     Object.keys(PAGES).forEach(displayWordsForPage);
-
     const savedVideoID = localStorage.getItem('youtubeVideoID');
     if (savedVideoID) {
       document.getElementById('youtubePlayer').src = `https://www.youtube.com/embed/${savedVideoID}`;
       document.getElementById('videoUrl').value = `https://youtu.be/${savedVideoID}`;
     }
-
     setupAudioRecorder();
-
   document.getElementById('downloadButton').onclick = () => {
     if (!window.audioBlob) return alert('Aucun enregistrement');
     const name = document.getElementById('fileName').value || 'enregistrement';
@@ -393,19 +1010,17 @@ async function initPlyrAudio() {
     link.click();
   };
   });
-
   // ==================== GÉNÉRATION FICHIER TEXTE ====================
   function generateTextFile() {
     const commentText = document.getElementById('commentText');
     const text = commentText.value.trim();
     if (!text) return alert('Veuillez écrire un commentaire');
-
     const blob = new Blob([text], { type: 'text/plain' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = 'commentaire.txt';
     link.click();
-    
+   
     // NE PAS SUPPRIMER le texte après génération
     // Le commentaire reste dans la zone de texte
   }
@@ -418,47 +1033,41 @@ async function initPlyrAudio() {
       alert('Veuillez écrire un commentaire');
       return;
     }
-
   // Ajouter BOM UTF-8 pour que Word reconnaisse automatiquement l'encodage
     const BOM = '\uFEFF';
     const content = BOM + text;
-    
+   
     const blob = new Blob([content], { type: 'text/plain; charset=utf-8' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = 'commentaire_musical.doc';
     link.click();
-    
+   
     console.log('Fichier Word exporté');
   }
   // ==================== INITIALISATION ====================
   document.addEventListener("DOMContentLoaded", () => {
     Object.keys(PAGES).forEach(displayWordsForPage);
-
     const savedVideoID = localStorage.getItem('youtubeVideoID');
     if (savedVideoID) {
       document.getElementById('youtubePlayer').src = `https://www.youtube.com/embed/${savedVideoID}`;
       document.getElementById('videoUrl').value = `https://youtu.be/${savedVideoID}`;
     }
-
     setupAudioRecorder();
-    await initPlyrAudio();
-
+    setupAudioPlayer();
     document.getElementById('downloadButton').onclick = async () => {
     if (!window.audioBlob) return alert('Aucun enregistrement disponible');
-
     const fileName = document.getElementById('fileName').value || 'enregistrement';
-    
+   
     // Téléchargement direct en WAV - 100% fiable
     const link = document.createElement('a');
     link.href = URL.createObjectURL(window.audioBlob);
     link.download = `${fileName}.wav`;
     link.click();
-    
+   
     console.log('Fichier WAV téléchargé:', `${fileName}.wav`);
   };
   });
-
   // Stocker les données des pays
   let countryData = {};
   const isoCorrections = {
@@ -710,7 +1319,6 @@ async function initPlyrAudio() {
     'NC': 'Nouméa',
     'YT': 'Mamoudzou'
   };
-
   // Données de secours pour la France et la Norvège
   const fallbackCountryData = {
     'FR': {
@@ -722,7 +1330,6 @@ async function initPlyrAudio() {
       languages: 'Norvégien Nynorsk, Norvégien Bokmål, Sami'
     }
   };
-
   // Table de correspondance pour traduire les codes/noms de langues en français
   const languageTranslations = {
     'eng': 'Anglais',
@@ -825,11 +1432,9 @@ async function initPlyrAudio() {
     'Norwegian Bokmål': 'Norvégien Bokmål',
     'Sami': 'Sami'
   };
-
   var map = null;
   var geojsonLayer = null;
   var carteMondeModal = document.getElementById('carteMondeModal');
-
   // Charger les données des pays depuis countries.json
   async function loadCountryData() {
     try {
@@ -852,7 +1457,6 @@ async function initPlyrAudio() {
       console.log('Données de secours appliquées:', countryData);
     }
   }
-
   carteMondeModal.addEventListener('shown.bs.modal', async function () {
     if (map === null) {
       map = L.map('map').setView([0, 0], 2);
@@ -860,10 +1464,8 @@ async function initPlyrAudio() {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         maxZoom: 18
       }).addTo(map);
-
       // Charger countryData avant le GeoJSON
       await loadCountryData();
-
       try {
         const response = await fetch('data/ne_110m_admin_0_countries.geojson'); // Utiliser le fichier local
         if (!response.ok) {
@@ -900,7 +1502,6 @@ async function initPlyrAudio() {
             const capital = feature.properties.CAPITAL || capitalFallbacks[isoCode] || 'N/A';
             const population = feature.properties.POP_EST ? feature.properties.POP_EST.toLocaleString('fr-FR') : 'N/A';
             const countryName = feature.properties.NAME_FR || feature.properties.ADMIN || 'N/A';
-
             if (!feature.properties.CAPITAL) {
               console.log(`Capitale manquante pour ${countryName} :`, {
                 ISO_A2: isoCode,
@@ -908,7 +1509,6 @@ async function initPlyrAudio() {
                 FallbackCapital: capitalFallbacks[isoCode] || 'N/A'
               });
             }
-
             let popupContent = `<b>Pays :</b> ${countryName}<br>`;
             popupContent += `<b>Code ISO :</b> ${isoCode}<br>`;
             popupContent += `<b>Capitale :</b> ${capital}<br>`;
@@ -919,7 +1519,6 @@ async function initPlyrAudio() {
             } else {
               popupContent += `<b>Drapeau :</b> Non disponible<br>`;
             }
-
             layer.bindPopup(popupContent);
             layer.on({
               click: function (e) {
@@ -945,7 +1544,6 @@ async function initPlyrAudio() {
       map.invalidateSize();
     }
   });
-
   carteMondeModal.addEventListener('hidden.bs.modal', function () {
     if (map !== null) {
       map.remove();
@@ -953,7 +1551,6 @@ async function initPlyrAudio() {
       geojsonLayer = null;
     }
   });
-
   // Fonction pour effacer toutes les sélections et réinitialiser les boutons
   function clearSelection() {
     if (confirm("Voulez-vous vraiment effacer toutes les sélections ?")) {
@@ -961,25 +1558,20 @@ async function initPlyrAudio() {
       Object.keys(PAGES).forEach(page => {
         saveToLocalStorage(`selectedWords_${page}`, []);
       });
-      
+     
       // EFFACER AUSSI la page classification des langues
       saveToLocalStorage('selectedWords_langues-classification', []);
       saveToLocalStorage('selectedWords', []);
-
       // Mettre à jour l'affichage de toutes les pages
       Object.keys(PAGES).forEach(page => {
         displayWordsForPage(page);
       });
-
       // Mettre à jour aussi l'affichage de la page13 (qui inclut classification)
       displayWordsForPage('page13');
-
       // Déclencher un événement de stockage
       localStorage.setItem('clearSelectionEvent', Date.now().toString());
-
       // MISE À JOUR DU CADRE GLOBAL
       updateGlobalSelectedWords();
-
       console.log('Toutes les sélections ont été effacées');
     }
   }
@@ -990,23 +1582,19 @@ async function initPlyrAudio() {
       const words = loadFromLocalStorage(`selectedWords_${page}`) || [];
       allWords.push(...words);
     });
-
     const container = document.getElementById('globalSelectedWords');
     const list = document.getElementById('globalWordsList');
     if (!container || !list) return;
-
     if (allWords.length === 0) {
       container.style.display = 'none';
       return;
     }
-
     container.style.display = 'block';
     list.innerHTML = allWords.map(word => `
       <span class="badge bg-primary text-white me-1" data-bs-toggle="tooltip" title="${wordDefinitions[word]?.definition || ''}">
         ${word}
       </span>
     `).join('');
-
     // Réactiver les tooltips
     list.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
       const t = bootstrap.Tooltip.getInstance(el);
@@ -1014,27 +1602,23 @@ async function initPlyrAudio() {
       new bootstrap.Tooltip(el, { trigger: 'hover' });
     });
   }
-
   // === ÉCOUTE LES CHANGEMENTS (localStorage) ===
   document.addEventListener("DOMContentLoaded", () => {
     updateGlobalSelectedWords();
-
     window.addEventListener('storage', (e) => {
       if (e.key?.startsWith('selectedWords_') || e.key === 'forceGlobalUpdate') {
         updateGlobalSelectedWords();
       }
     });
-
-    
+   
   });
-
   // Écoute les suppressions depuis index.html
   window.addEventListener('storage', (e) => {
     if (e.key === 'forceGlobalUpdate') {
       // Recharger les mots sélectionnés localement
       const pageName = window.location.pathname.split('/').pop().replace('.html', '');
       const saved = JSON.parse(localStorage.getItem(`selectedWords_${pageName}`)) || [];
-      
+     
       // Mettre à jour les classes .selected
       document.querySelectorAll('.selectable').forEach(span => {
         const text = span.textContent.trim();
@@ -1044,31 +1628,26 @@ async function initPlyrAudio() {
           span.classList.remove('selected');
         }
       });
-
       // Masquer le panneau si plus rien
       if (saved.length === 0) {
         document.getElementById('definition-container').style.display = 'none';
       }
     }
   });
-
-
   // === SUPPRESSION D'UN MOT DEPUIS index.html (croix) ===
   function deleteWordFromMainPage(page, word) {
     if (!confirm(`Supprimer "${word}" ?`)) return;
-
   // Si c'est page13, chercher dans les deux pages
     if (page === 'page13') {
       const page13Words = loadFromLocalStorage('selectedWords_page13') || [];
       const classificationWords = loadFromLocalStorage('selectedWords_langues-classification') || [];
-      
+     
       saveToLocalStorage('selectedWords_page13', page13Words.filter(w => w !== word));
       saveToLocalStorage('selectedWords_langues-classification', classificationWords.filter(w => w !== word));
     } else {
       const pageWords = loadFromLocalStorage(`selectedWords_${page}`) || [];
       saveToLocalStorage(`selectedWords_${page}`, pageWords.filter(w => w !== word));
     }
-
     // Désactiver tous les tooltips du conteneur avant suppression
     const container = document.querySelector(`.selected-words-container[data-page="${page}"]`);
     if (container) {
@@ -1080,26 +1659,19 @@ async function initPlyrAudio() {
         }
       });
     }
-
     const pageWords = loadFromLocalStorage(`selectedWords_${page}`) || [];
     saveToLocalStorage(`selectedWords_${page}`, pageWords.filter(w => w !== word));
-
     const globalWords = loadFromLocalStorage('selectedWords') || [];
     saveToLocalStorage('selectedWords', globalWords.filter(w => w !== word));
-
     // Recréer l'affichage (ce qui réinitialisera les tooltips)
     displayWordsForPage(page);
     updateGlobalSelectedWords();
-
     console.log(`Mot "${word}" supprimé de ${page}`);
   }
-
-
   // ==================== SPECTROGRAMME – VERSION QUI MARCHE À 100% (GARANTI) ====================
   const spectroCanvas = document.getElementById('spectrogramCanvas');
   const spectroCtx = spectroCanvas?.getContext('2d');
   let history = [];
-
   // ON FORCE LE REDIMENSIONNEMENT CORRECT DU CANVAS À CHAQUE FOIS
   function resizeSpectrogramCanvas() {
     if (!spectroCanvas) return;
@@ -1107,25 +1679,18 @@ async function initPlyrAudio() {
     spectroCanvas.height = 180;
     history = []; // on vide l'historique pour repartir propre
   }
-
   function drawSpectrogram() {
     if (!spectroCtx || !analyserLeftGlobal || !dataArrayLeftGlobal) return;
-
     analyserLeftGlobal.getByteFrequencyData(dataArrayLeftGlobal);
-
     // === SCROLL TRÈS LENT + FONDU ULTRA-DOUX ===
     spectroCtx.drawImage(spectroCtx.canvas, -1, 0);
-
     // Nouvelle colonne à droite
     const height = spectroCanvas.height;
     const width = spectroCanvas.width;
-
     for (let i = 0; i < dataArrayLeftGlobal.length; i += 2) {
       const value = dataArrayLeftGlobal[i] / 255;
       if (value < 0.02) continue;
-
       const y = height - (i / dataArrayLeftGlobal.length) * height;
-
       // === COULEURS INTENSES ET DURABLES ===
       let r, g, b;
       if (value < 0.2) {
@@ -1149,22 +1714,16 @@ async function initPlyrAudio() {
         g = Math.round(255 - 100 * ((value - 0.8) / 0.2));
         b = Math.round(255 - 255 * ((value - 0.8) / 0.2));
       }
-
       spectroCtx.fillStyle = `rgb(${r}, ${g}, ${b})`;
       spectroCtx.fillRect(width - 1, y, 2, 8); // 2px de large pour plus de lumière
     }
-
     // === FONDU TRÈS LENT (le secret !) ===
-    spectroCtx.fillStyle = 'rgba(0, 0, 0, 0.008)';  // 0.008 = très très lent
+    spectroCtx.fillStyle = 'rgba(0, 0, 0, 0.008)'; // 0.008 = très très lent
     spectroCtx.fillRect(0, 0, width - 2, height);
   }
-
-
   // On redimensionne au chargement + au resize
   window.addEventListener('load', resizeSpectrogramCanvas);
   window.addEventListener('resize', resizeSpectrogramCanvas);
-
-
   // === AFFICHAGE PRO + SUPPRESSION DU FICHIER CHARGÉ (VERSION FINALE) ===
   const fileInput = document.getElementById('audioFile');
   const fileInfo = document.getElementById('audioFileInfo');
@@ -1172,9 +1731,7 @@ async function initPlyrAudio() {
   const fileDetailsSpan = document.getElementById('audioFileDetails');
   const clearBtn = document.getElementById('clearAudioFile');
   const player = document.getElementById('audioPlayer');
-
   if (fileInput && fileInfo && fileNameSpan && fileDetailsSpan && clearBtn && player) {
-
     function formatBytes(bytes) {
       if (!bytes) return '0 o';
       const k = 1024;
@@ -1182,61 +1739,49 @@ async function initPlyrAudio() {
       const i = Math.floor(Math.log(bytes) / Math.log(k));
       return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
     }
-
     function formatDuration(seconds) {
       if (!seconds || isNaN(seconds)) return '—';
       const mins = Math.floor(seconds / 60);
       const secs = Math.floor(seconds % 60);
       return `${mins}:${secs.toString().padStart(2, '0')}`;
     }
-
     function showFileInfo() {
       fileInfo.style.display = 'flex';
       setTimeout(() => fileInfo.classList.remove('opacity-0'), 10);
     }
-
     function hideFileInfo() {
       fileInfo.classList.add('opacity-0');
       setTimeout(() => fileInfo.style.display = 'none', 400);
     }
-
     fileInput.addEventListener('change', function(e) {
       const file = e.target.files[0];
       if (!file) return;
-
       fileNameSpan.textContent = file.name;
       fileDetailsSpan.textContent = `${formatBytes(file.size)} · calcul de la durée...`;
       showFileInfo();
-
       const tempUrl = URL.createObjectURL(file);
       player.src = tempUrl;
-
       player.addEventListener('loadedmetadata', () => {
         fileDetailsSpan.textContent = `${formatDuration(player.duration)} · ${formatBytes(file.size)}`;
         URL.revokeObjectURL(tempUrl);
       }, { once: true });
     });
-
     // Bouton de suppression
   clearBtn.addEventListener('click', async () => {
     if (!confirm("Supprimer le fichier audio chargé ?")) return;
-
     try {
       // 1. On supprime physiquement de IndexedDB
       const db = await openDB();
       const transaction = db.transaction(['audioStore'], 'readwrite');
       const store = transaction.objectStore('audioStore');
-      await store.delete('userAudio');  // clé magique qui efface tout
+      await store.delete('userAudio'); // clé magique qui efface tout
       await store.delete('audioState'); // au cas où tu sauvegardes aussi l'état
       console.log('Fichier supprimé d\'IndexedDB');
-
       // 2. On vide le lecteur
       player.src = '';
       player.load();
-
       // 3. On vide l'input fichier
       fileInput.value = '';
-
       // 4. On cache l'affichage avec animation
       fileInfo.classList.add('opacity-0');
       setTimeout(() => {
@@ -1244,28 +1789,23 @@ async function initPlyrAudio() {
         fileNameSpan.textContent = 'Aucun fichier chargé';
         fileDetailsSpan.textContent = '—';
       }, 400);
-
     } catch (err) {
       console.error("Erreur lors de la suppression du fichier", err);
       alert("Erreur lors de la suppression. Réessayez.");
     }
   });
   }
-
   // === RESTAURATION DE L'AFFICHAGE DU FICHIER AU CHARGEMENT DE LA PAGE ===
   async function restoreFileDisplay() {
     try {
       const savedAudioData = await loadAudioFromDB(); // ta fonction existante
       if (!savedAudioData || !savedAudioData.fileName) return;
-
       // On a un fichier sauvegardé → on restaure l'affichage
       const fileInfo = document.getElementById('audioFileInfo');
       const fileNameSpan = document.getElementById('audioFileName');
       const fileDetailsSpan = document.getElementById('audioFileDetails');
-
       if (fileInfo && fileNameSpan && fileDetailsSpan) {
         fileNameSpan.textContent = savedAudioData.fileName;
-
         // Si on a aussi sauvegardé la durée (recommandé !), on l'affiche
         if (savedAudioData.duration) {
           const formattedDuration = formatDuration(savedAudioData.duration);
@@ -1274,7 +1814,6 @@ async function initPlyrAudio() {
         } else {
           fileDetailsSpan.textContent = `${formatBytes(savedAudioData.blob?.size || 0)}`;
         }
-
         // On affiche le bloc avec animation
         fileInfo.style.display = 'flex';
         setTimeout(() => fileInfo.classList.remove('opacity-0'), 50);
@@ -1283,7 +1822,6 @@ async function initPlyrAudio() {
       console.warn("Impossible de restaurer l'affichage du fichier", err);
     }
   }
-
   // On appelle cette fonction au chargement de la page principale
   document.addEventListener('DOMContentLoaded', () => {
     const currentPage = getPageName();
@@ -1291,5 +1829,3 @@ async function initPlyrAudio() {
       restoreFileDisplay();
     }
   });
-
-  

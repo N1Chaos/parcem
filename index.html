@@ -65,73 +65,72 @@
       <div id="fake-volume" style="display:none;"></div>
       
       <!-- Bouton contrôles (identique) -->
-      <button id="toggleControls" class="btn btn-primary mt-3">Contrôles</button>
-      
-      <!-- Section contrôles (identique - juste réorganisée visuellement) -->
-      <div id="audioControls" class="audio-controls mt-3" style="display: block;">
-        
-        <!-- Égaliseur (identique) -->
-        <div class="control-group">
-          <label>Égaliseur :</label>
-          <div class="equalizer-controls">
-            <label>Basses <input type="range" id="eqLow" min="-12" max="12" step="0.1" value="0" class="form-range" /></label>
-            <label>Médiums <input type="range" id="eqMid" min="-12" max="12" step="0.1" value="0" class="form-range" /></label>
-            <label>Aigus <input type="range" id="eqHigh" min="-12" max="12" step="0.1" value="0" class="form-range" /></label>
-          </div>
-        </div>
+<button id="toggleControls" class="btn btn-primary mt-3">Contrôles</button>
 
-        <!-- Spectre + Spectrogramme (identique) -->
-        <div class="position-relative">
-          <canvas id="spectrumCanvas" class="visualization-canvas spectrum mb-2" 
-                  style="height: 180px; background: white !important;"></canvas>
-        </div>
-        
-        <!-- Spectrogramme avec labels (identique) -->
-        <div class="position-relative">
-          <canvas id="spectrogramCanvas" class="visualization-canvas" style="height: 180px; background: black; display: block;"></canvas>
-          <div style="position: absolute; inset: 0; pointer-events: none;">
-            <div style="position: absolute; left: 8px; top: 0; bottom: 0; width: 50px; font-size: 11px; color: rgba(255,255,255,0.85); text-shadow: 0 0 4px black; display: flex; flex-direction: column; justify-content: space-between; padding: 4px 0;">
-              <span>20 kHz</span>
-              <span>10 k</span>
-              <span>5 k</span>
-              <span>2 k</span>
-              <span>500</span>
-              <span>20 Hz</span>
-            </div>
-            <div style="position: absolute; bottom: -24px; left: 0; right: 0; text-align: center; font-size: 11px; color: rgba(255,255,255,0.7);">
-              <span style="position: absolute; left: 0%;">0s</span>
-              <span style="position: absolute; left: 25%;">15s</span>
-              <span style="position: absolute; left: 50%;">30s</span>
-              <span style="position: absolute; left: 75%;">45s</span>
-              <span style="position: absolute; right: 0%;">1:00</span>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Balance (identique) -->
-        <!-- Contrôles stéréo regroupés -->
-<div class="control-group">
-  <div class="row">
-    <div class="col-md-6">
-      <label for="balanceControl">Balance stéréo (Gauche/Droite) :</label>
-      <input type="range" id="balanceControl" min="-1" max="1" step="0.01" value="0" class="form-range" />
-    </div>
-    <div class="col-md-6">
-      <label for="widthControl">Largeur stéréo :</label>
-      <input type="range" id="widthControl" min="0" max="100" value="42" class="form-range" />
-      <div class="d-flex justify-content-between small text-muted">
-        <span>0 Mono</span>
-        <span>42 Normal</span>
-        <span>70 Large</span>
-        <span>85 L12/R04</span>
-        <span>100 Ultra</span>
-      </div>
-      <div class="text-center mt-1"><small id="widthLabel">Normal (42 %)</small></div>
+<!-- Section contrôles -->
+<div id="audioControls" class="audio-controls mt-3" style="display: block;">
+
+  <!-- Égaliseur (identique) -->
+  <div class="control-group">
+    <label>Égaliseur :</label>
+    <div class="equalizer-controls">
+      <label>Basses <input type="range" id="eqLow" min="-12" max="12" step="0.1" value="0" class="form-range" /></label>
+      <label>Médiums <input type="range" id="eqMid" min="-12" max="12" step="0.1" value="0" class="form-range" /></label>
+      <label>Aigus <input type="range" id="eqHigh" min="-12" max="12" step="0.1" value="0" class="form-range" /></label>
     </div>
   </div>
-</div>
-        
+
+  <!-- Spectre + Spectrogramme (identique) -->
+  <div class="position-relative">
+    <canvas id="spectrumCanvas" class="visualization-canvas spectrum mb-2" 
+            style="height: 180px; background: white !important;"></canvas>
+  </div>
+  
+  <!-- Spectrogramme avec labels (identique) -->
+  <div class="position-relative">
+    <canvas id="spectrogramCanvas" class="visualization-canvas" style="height: 180px; background: black; display: block;"></canvas>
+    <div style="position: absolute; inset: 0; pointer-events: none;">
+      <div style="position: absolute; left: 8px; top: 0; bottom: 0; width: 50px; font-size: 11px; color: rgba(255,255,255,0.85); text-shadow: 0 0 4px black; display: flex; flex-direction: column; justify-content: space-between; padding: 4px 0;">
+        <span>20 kHz</span>
+        <span>10 k</span>
+        <span>5 k</span>
+        <span>2 k</span>
+        <span>500</span>
+        <span>20 Hz</span>
       </div>
+      <div style="position: absolute; bottom: -24px; left: 0; right: 0; text-align: center; font-size: 11px; color: rgba(255,255,255,0.7);">
+        <span style="position: absolute; left: 0%;">0s</span>
+        <span style="position: absolute; left: 25%;">15s</span>
+        <span style="position: absolute; left: 50%;">30s</span>
+        <span style="position: absolute; left: 75%;">45s</span>
+        <span style="position: absolute; right: 0%;">1:00</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- === LES 2 BARRES STÉRÉO DÉPLACÉES ICI (juste après le spectrogramme) === -->
+  <div class="control-group">
+    <div class="row">
+      <div class="col-md-6">
+        <label for="balanceControl">Balance stéréo (Gauche/Droite) :</label>
+        <input type="range" id="balanceControl" min="-1" max="1" step="0.01" value="0" class="form-range" />
+      </div>
+      <div class="col-md-6">
+        <label for="widthControl">Largeur stéréo :</label>
+        <input type="range" id="widthControl" min="0" max="100" value="42" class="form-range" />
+        <div class="d-flex justify-content-between small text-muted">
+          <span>0 Mono</span>
+          <span>42 Normal</span>
+          <span>70 Large</span>
+          <span>85 L12/R04</span>
+          <span>100 Ultra</span>
+        </div>
+        <div class="text-center mt-1"><small id="widthLabel">Normal (42 %)</small></div>
+      </div>
+    </div>
+  </div>
+
+</div> <!-- fin du div.audio-controls -->
 
       <!-- VU-mètres et formes d'onde (identique - déplacé après les contrôles) -->
       <div class="visualizations mt-3">

@@ -423,15 +423,15 @@ header p {
 
 /* Bouton ENREGISTRER - couleur normale */
 #recordButton {
-  background-color: #ff5100;
-  border-color: #ff5100;
+  background-color: #ff9800;
+  border-color: #ff9800;
   color: white;
 }
 
 /* Pendant l’enregistrement → ROUGE */
 #recordButton.recording {
-  background-color: #ff4c4c !important;
-  border-color: #ff4c4c !important;
+  background-color: var(--secondary-color) !important;
+  border-color: var(--secondary-color) !important;
 }
 
 /* Bouton TÉLÉCHARGER - vert */
@@ -442,8 +442,8 @@ header p {
 }
 
 #downloadButton:hover {
-  background-color: #4caf50;   /* ton vert principal */
-  border-color: #4caf50;
+  background-color: #2195f3e0;   
+  border-color: #2195f3e0;
 }
 
 

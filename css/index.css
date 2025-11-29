@@ -375,22 +375,17 @@ header p {
 
 /* Cadres colorés harmonisés selon ton thème */
 #globalSelectedWords {
-  border: 2px solid var(--highlight-color); /* bleu */
-  padding: 10px;
-  border-radius: var(--border-radius);
+  border: 3px solid var(--highlight-color) !important; /* bleu */
 }
 
 textarea {
-  border: 2px solid var(--secondary-color); /* rouge */
-  padding: 10px;
-  border-radius: var(--border-radius);
+  border: 3px solid var(--secondary-color) !important; /* rouge */
 }
 
 #audioFileInfo {
-  border: 2px solid #ff9800; /* orange */
-  padding: 10px;
-  border-radius: var(--border-radius);
+  border: 3px solid #ff9800 !important; /* orange */
 }
+
 
 
 /* ========================= */

@@ -305,6 +305,41 @@ header p {
 .vu-meter-container label, .waveform-container label { font-size: 12px; color: var(--font-color); margin-bottom: 0.25rem; text-align: center; }
 .vu-meter-container canvas, .waveform-container canvas { width: 100%; border: 1px solid #555; }
 
+/* ====================== */
+/* VU-MÈTRES & FORMES D’ONDE ×2 EN HAUTEUR */
+/* ====================== */
+
+/* Hauteur doublée pour les 4 canvas */
+#vuMeterLeftCanvas,
+#vuMeterRightCanvas,
+#waveformLeftCanvas,
+#waveformRightCanvas {
+  height: 250px !important;        /* ← 2× plus grand (avant : ~125px) */
+  min-height: 250px !important;
+  max-height: 250px !important;
+  width: 100% !important;
+  background-color: white !important;
+  border: 1px solid #ddd !important;
+  border-radius: var(--border-radius) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+}
+
+/* Ajustement du conteneur pour qu’il suive la nouvelle hauteur */
+.vu-meter-container,
+.waveform-container {
+  height: 270px !important;         /* +20px de marge pour les labels */
+  margin-bottom: 1.5rem !important;
+}
+
+/* Labels un peu plus lisibles avec plus d’espace */
+.vu-meter-container label,
+.waveform-container label {
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 0.5rem !important;
+  color: #444 !important;
+}
+
 /* ========================= */
 /* MOTS SÉLECTIONNÉS          */
 /* ========================= */

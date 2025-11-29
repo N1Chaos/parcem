@@ -374,17 +374,10 @@ header p {
 }
 
 /* Cadres colorés harmonisés selon ton thème */
-#globalSelectedWords {
-  border: 3px solid var(--highlight-color) !important; /* bleu */
+.card.bg-secondary-light {
+  border: 3px solid red; /* couleur et épaisseur du cadre */
 }
 
-textarea {
-  border: 3px solid var(--secondary-color) !important; /* rouge */
-}
-
-#audioFileInfo {
-  border: 3px solid #ff9800 !important; /* orange */
-}
 
 
 

@@ -887,3 +887,43 @@ audio::-webkit-media-controls-volume-slider {
   height: 50px !important;
   background: transparent !important;
 }
+
+/* Lecteur audio ultra-compact sur mobile portrait */
+@media (max-width: 768px) {
+  .plyr--audio .plyr__controls {
+    padding: 6px 8px !important;
+    min-height: 44px !important;
+    font-size: 13px !important;
+  }
+
+  .plyr--audio .plyr__control {
+    padding: 8px !important;
+    margin: 0 2px !important;
+  }
+
+  .plyr--audio .plyr__progress {
+    margin: 0 8px !important;
+  }
+
+  .plyr--audio .plyr__time {
+    font-size: 11px !important;
+    min-width: 36px !important;
+  }
+
+  /* Hauteur totale du lecteur audio sur mobile */
+  .plyr--audio .plyr__video-wrapper,
+  .plyr--audio video {
+    height: 52px !important;
+  }
+}
+
+/* Encore plus petit sur très petits écrans (iPhone SE, etc.) */
+@media (max-width: 380px) {
+  .plyr--audio .plyr__video-wrapper,
+  .plyr--audio video {
+    height: 48px !important;
+  }
+  .plyr--audio .plyr__controls {
+    padding: 4px 6px !important;
+  }
+}

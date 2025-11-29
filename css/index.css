@@ -388,7 +388,7 @@ header p {
 }
 
 /* Fond gris autour de chaque mot sélectionné */
-.word-container {
+.selected-words-container {
   background-color: #f0f0f0;
   padding: 4px 8px;
   border-radius: 4px;
@@ -434,7 +434,7 @@ header p {
   border-color: var(--secondary-color) !important;
 }
 
-/* Bouton TÉLÉCHARGER - vert */
+/* Bouton TÉLÉCHARGER */
 #downloadButton {
   background-color: var(--highlight-color);  
   border-color: var(--highlight-color);

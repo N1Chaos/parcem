@@ -1034,3 +1034,62 @@ audio::-webkit-media-controls-volume-slider {
     padding: 0 8px !important;
   }
 }
+
+/* === PLAYER AUDIO — STYLE HARMONISÉ (ÉTAPE 1) === */
+
+/* Conteneur général du lecteur */
+#audioPlayerContainer {
+  width: 100%;
+  max-width: 960px;
+  margin: 20px auto;
+  padding: 16px;
+  background: #f8f9fa;
+  border: 1px solid #e3e3e3;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* Hauteur harmonisée du player */
+.plyr--audio {
+  height: 56px !important;
+}
+
+/* Fond stable du player */
+.plyr--audio .plyr__controls {
+  background: #ffffff !important;
+  border-radius: 8px;
+  height: 56px;
+  padding: 4px 10px !important;
+}
+
+/* Alignement parfait des boutons */
+.plyr__controls > button,
+.plyr__controls > div {
+  margin: 0 6px !important;
+}
+
+/* Barre de progression – style uniforme */
+.plyr__progress input[type="range"] {
+  height: 6px !important;
+}
+
+.plyr__progress {
+  margin: 0 12px !important;
+}
+
+/* Enlever la zone volume (on cache proprement) */
+.plyr__volume {
+  display: none !important;
+}
+
+/* Supprime toutes les ombres Plyr incohérentes */
+.plyr,
+.plyr__controls {
+  box-shadow: none !important;
+}
+
+/* Transition douce */
+.plyr__controls,
+.plyr {
+  transition: background 0.25s ease;
+}

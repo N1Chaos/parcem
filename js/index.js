@@ -1844,7 +1844,7 @@ document.addEventListener("DOMContentLoaded", () => {
       blankVideo: 'https://cdn.plyr.io/static/blank.mp4',
       ratio: '16:1',                    // ← très important
       clickToPlay: false,               // évite le gros bouton play au milieu
-      hidePosterOnPlay: true,
+      hidePosterOnPlay: false,
       youtube: { noCookie: true, rel: 0, showinfo: 0, iv_load_policy: 3 },
       vimeo: { byline: false, portrait: false, title: false, speed: true }
     });

@@ -373,6 +373,26 @@ header p {
   .plyr--audio .plyr__controls{padding:4px 6px!important;}
 }
 
+/* Cadres colorés harmonisés selon ton thème */
+#globalSelectedWords {
+  border: 2px solid var(--highlight-color); /* bleu */
+  padding: 10px;
+  border-radius: var(--border-radius);
+}
+
+textarea {
+  border: 2px solid var(--secondary-color); /* rouge */
+  padding: 10px;
+  border-radius: var(--border-radius);
+}
+
+#audioFileInfo {
+  border: 2px solid #ff9800; /* orange */
+  padding: 10px;
+  border-radius: var(--border-radius);
+}
+
+
 /* ========================= */
 /* FIN DU CSS                */
 /* ========================= */

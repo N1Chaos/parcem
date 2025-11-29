@@ -407,6 +407,12 @@ header p {
   color: darkred;
 }
 
+/* Couleur orange au survol des boutons Carte du monde et Frise */
+.btn-outline-primary[data-bs-toggle="modal"]:hover {
+  background-color: #ff9800 !important;
+  border-color: #ff9800 !important;
+  color: white !important;
+}
 
 
 

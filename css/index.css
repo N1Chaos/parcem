@@ -415,6 +415,30 @@ header p {
   color: #c82333 !important;              /* rouge plus foncé au hover */
 }
 
+/* Fond gris très léger quand aucun mot n’est sélectionné dans une rubrique */
+.selected-words-container {
+  min-height: 38px;                    /* évite que ça saute quand ça passe de vide → rempli */
+  background-color: #f8f9fa;           /* gris très clair (même que ton thème) */
+  border-radius: 8px;                  /* coins légèrement arrondis */
+  padding: 6px 10px;                   /* un peu d’air */
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  transition: background-color 0.3s ease;
+}
+
+/* Quand il y a au moins un mot → on garde le même fond (ou on peut le rendre blanc si tu veux) */
+.selected-words-container:not(:empty) {
+  background-color: #f1f3f5;           /* un poil plus foncé quand y’a du contenu */
+}
+
+/* Texte "Aucun mot sélectionné" un peu plus discret */
+.selected-words-container .empty {
+  color: #6c757d;
+  font-style: italic;
+  font-size: 0.9rem;
+}
 
 /* Couleur orange au survol des boutons Carte du monde et Frise */
 .btn-outline-primary[data-bs-toggle="modal"]:hover {

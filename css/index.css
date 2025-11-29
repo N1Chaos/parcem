@@ -933,3 +933,104 @@ audio::-webkit-media-controls-volume-slider {
   opacity: 1 !important;
   visibility: visible !important;
 }
+
+/* ===================================================== */
+/*  ORDRE FINAL PARFAIT : SPECTRE + SPECTROGRAMME EN HAUT  */
+/* ===================================================== */
+
+/* On force l'ordre d'affichage dans la card audio */
+.audio-player-container > .position-relative:first-of-type {
+  order: 1; /* spectre + spectrogramme */
+}
+
+.audio-player-container > #plyr-container {
+  order: 2; /* lecteur Plyr */
+}
+
+.audio-player-container > button#toggleControls {
+  order: 3;
+}
+
+.audio-player-container > #audioControls {
+  order: 4;
+}
+
+/* Flex pour que ça marche même sans flex dans le HTML */
+.audio-player-container .card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ===================================================== */
+/*  SPECTRE & SPECTROGRAMME : BEAUX ET SANS HALO NOIR   */
+/* ===================================================== */
+#spectrumCanvas {
+  background: white !important;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  border-radius: var(--border-radius);
+  margin-bottom: 0.5rem;
+}
+
+#spectrogramCanvas {
+  background: black !important;
+  border: 1px solid #222;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+  border-radius: var(--border-radius);
+  image-rendering: pixelated;
+}
+
+/* ===================================================== */
+/*  LECTEUR AUDIO : BARRE ULTRA-FINE ET PROPRE         */
+/* ===================================================== */
+.plyr--audio {
+  height: 56px !important;
+  min-height: 56px !important;
+}
+
+.plyr--audio .plyr__video-wrapper,
+.plyr--audio video {
+  height: 56px !important;
+  background: transparent !important;
+  border-radius: var(--border-radius);
+}
+
+.plyr--audio .plyr__controls {
+  background: rgba(0,0,0,0.85) !important;
+  border-radius: var(--border-radius);
+  padding: 0 10px !important;
+  height: 56px !important;
+  opacity: 1 !important;
+}
+
+/* Boutons toujours visibles et bien espacés */
+.plyr--audio .plyr__control {
+  color: white !important;
+  padding: 10px !important;
+}
+
+/* Barre de progression plus épaisse et belle */
+.plyr--audio .plyr__progress__buffer {
+  background: rgba(255,255,255,0.2) !important;
+}
+.plyr--audio input[type=range] {
+  height: 6px !important;
+}
+
+/* ===================================================== */
+/*  MOBILE : TOUT PARFAIT EN PORTRAIT                  */
+/* ===================================================== */
+@media (max-width: 768px) {
+  .plyr--audio {
+    height: 52px !important;
+  }
+  .plyr--audio .plyr__video-wrapper,
+  .plyr--audio video {
+    height: 52px !important;
+  }
+  .plyr--audio .plyr__controls {
+    height: 52px !important;
+    padding: 0 8px !important;
+  }
+}

@@ -23,6 +23,9 @@
   <meta name="description" content="Écoutez, commentez et partagez vos impressions musicales. Un outil interactif pour commenter la musique."/>
   <meta name="keywords" content="musique, commentaires, écoute, audio, vidéo, interaction"/>
   <meta name="author" content="Amar, Sagiadinos"/>
+  <!-- Plyr CSS + JS -->
+<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
 </head>
 
 <body class="container-fluid">
@@ -86,8 +89,11 @@
   </div>
 </div>
 
-<!-- Remplace ta ligne actuelle par celle-ci -->
-<audio id="audioPlayer" class="w-100 audio-player" controls controlsList="nodownload"></audio>
+<div id="plyr-container">
+  <audio id="audioPlayer" controls crossorigin playsinline>
+    <!-- Le fichier sera chargé en JS -->
+  </audio>
+</div>
 
 <!-- Ajoute juste après cette ligne (n’importe où après le <audio>) -->
 <div id="fake-volume" style="display:none;"></div>

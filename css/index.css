@@ -872,3 +872,11 @@ audio::-webkit-media-controls-volume-slider {
   position: absolute !important;
   left: -9999px !important;
 }
+
+/* Virer le contrôle volume de Plyr proprement */
+.plyr__volume {
+  display: none !important;
+}
+.plyr__controls .plyr__controls__item.plyr__volume {
+  display: none !important;
+}

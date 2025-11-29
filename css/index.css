@@ -423,8 +423,8 @@ header p {
 
 /* Bouton ENREGISTRER - couleur normale */
 #recordButton {
-  background-color: #1e88e5;   /* bleu */
-  border-color: #1e88e5;
+  background-color: #ff5100;
+  border-color: #ff5100;
   color: white;
 }
 

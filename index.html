@@ -35,132 +35,112 @@
   </header>
 
 <!-- Lecteur audio -->
+<!-- Lecteur audio -->
 <div class="col-md-8 mb-4 w-100 audio-player-wrapper">
   <div class="card h-100 audio-player-container">
     <div class="card-body">
       <h3 class="card-title">Lecteur audio</h3>
-      <input type="file" id="audioFile" class="form-control mb-3" accept="audio/*" />
-      <div id="audioFileInfo" class="mt-3 mb-3 p-3 bg-light border rounded position-relative d-flex align-items-center gap-3 opacity-0"
-     style="transition: all 0.4s ease; display: none;">
-  <i class="bi bi-file-earmark-music-fill text-primary" style="font-size: 2.2rem;"></i>
-  <div class="flex-grow-1">
-    <div id="audioFileName" class="fw-bold text-dark mb-1">Aucun fichier chargé</div>
-    <div id="audioFileDetails" class="text-muted small">—</div>
-  </div>
-  <!-- Croix rouge bien placée en haut à droite -->
-  <button id="clearAudioFile" class="btn btn-sm btn-danger position-absolute top-0 end-0 mt-2 me-2" 
-          style="z-index: 10;" title="Supprimer le fichier">
-    <i class="bi bi-x-lg"></i>
-  </button>
-</div>
       
-<div id="plyr-container">
-  <video id="audioPlayer" controls crossorigin playsinline>
-  <!-- Le fichier audio ou vidéo sera chargé via JS -->
-</video>
-</div>
-
-<!-- Ajoute juste après cette ligne (n’importe où après le <audio>) -->
-<div id="fake-volume" style="display:none;"></div>
-      <button id="toggleControls" class="btn btn-primary mt-3">Contrôles</button>
-      <div id="audioControls" class="audio-controls mt-3">
-        <div class="control-group">
-          <label>Égaliseur :</label>
-          <div class="equalizer-controls">
-            <label>Basses <input type="range" id="eqLow" min="-12" max="12" step="0.1" value="0" class="form-range" /></label>
-            <label>Médiums <input type="range" id="eqMid" min="-12" max="12" step="0.1" value="0" class="form-range" /></label>
-            <label>Aigus <input type="range" id="eqHigh" min="-12" max="12" step="0.1" value="0" class="form-range" /></label>
+      <!-- Import fichier -->
+      <input type="file" id="audioFile" class="form-control mb-3" accept="audio/*" />
+      <div id="audioFileInfo" class="mt-3 mb-3 p-3 bg-light border rounded">
+        <!-- Info fichier -->
+      </div>
+      
+      <!-- Lecteur Plyr -->
+      <div id="plyr-container">
+        <audio id="audioPlayer" controls crossorigin playsinline></audio>
+      </div>
+      
+      <!-- Bouton contrôles -->
+      <button id="toggleControls" class="btn btn-primary mt-3">Afficher les contrôles</button>
+      
+      <!-- Section contrôles (masquée par défaut) -->
+      <div id="audioControls" class="audio-controls mt-3" style="display: none;">
+        
+        <!-- Égaliseur -->
+        <div class="control-group mb-3">
+          <h6>Égaliseur</h6>
+          <div class="row">
+            <div class="col-4">
+              <label>Basses</label>
+              <input type="range" id="eqLow" min="-12" max="12" step="0.1" value="0" class="form-range" />
+            </div>
+            <div class="col-4">
+              <label>Médiums</label>
+              <input type="range" id="eqMid" min="-12" max="12" step="0.1" value="0" class="form-range" />
+            </div>
+            <div class="col-4">
+              <label>Aigus</label>
+              <input type="range" id="eqHigh" min="-12" max="12" step="0.1" value="0" class="form-range" />
+            </div>
           </div>
         </div>
-<!-- Conteneur relatif pour les deux canvas + labels -->
-<div class="position-relative">
-
-  <!-- Spectre de fréquences -->
-  <canvas id="spectrumCanvas" class="visualization-canvas spectrum mb-2" 
-        style="height: 180px; background: white !important;"></canvas>
-</div>
-         <!-- Spectrogramme + ses labels (fréquences + temps) -->
-  <div class="position-relative">
-    <canvas id="spectrogramCanvas" class="visualization-canvas" style="height: 180px; background: black; display: block;"></canvas>
-
-    <!-- Labels fréquences (gauche) + temps (bas) — uniquement sur le spectrogramme -->
-    <div style="position: absolute; inset: 0; pointer-events: none;">
-      <!-- Fréquences à gauche (logarithmique) -->
-      <div style="position: absolute; left: 8px; top: 0; bottom: 0; width: 50px; font-size: 11px; color: rgba(255,255,255,0.85); text-shadow: 0 0 4px black; display: flex; flex-direction: column; justify-content: space-between; padding: 4px 0;">
-        <span>20 kHz</span>
-        <span>10 k</span>
-        <span>5 k</span>
-        <span>2 k</span>
-        <span>500</span>
-        <span>20 Hz</span>
-      </div>
-
-      <!-- Temps en bas -->
-      <div style="position: absolute; bottom: -24px; left: 0; right: 0; text-align: center; font-size: 11px; color: rgba(255,255,255,0.7);">
-        <span style="position: absolute; left: 0%;">0s</span>
-        <span style="position: absolute; left: 25%;">15s</span>
-        <span style="position: absolute; left: 50%;">30s</span>
-        <span style="position: absolute; left: 75%;">45s</span>
-        <span style="position: absolute; right: 0%;">1:00</span>
-      </div>
-    </div>
-  </div>
         
-        
-        <div class="control-group">
-          <label for="balanceControl">Balance stéréo (Gauche/Droite) :</label>
-          <input type="range" id="balanceControl" min="-1" max="1" step="0.01" value="0" class="form-range" />
+        <!-- Balance et largeur stéréo -->
+        <div class="control-group mb-3">
+          <div class="row">
+            <div class="col-6">
+              <label>Balance</label>
+              <input type="range" id="balanceControl" min="-1" max="1" step="0.01" value="0" class="form-range" />
+            </div>
+            <div class="col-6">
+              <label>Largeur stéréo</label>
+              <input type="range" id="widthControl" min="0" max="100" value="42" class="form-range" />
+            </div>
+          </div>
         </div>
-        <div class="control-group">
-  <label for="widthControl">Largeur stéréo :</label>
-  <input type="range" id="widthControl" min="0" max="100" value="42" class="form-range" />
-  <div class="d-flex justify-content-between small text-muted">
-    <span>0 Mono</span>
-    <span>42 Normal</span>
-    <span>70 Large</span>
-    <span>85 L12/R04</span>
-    <span>100 Ultra</span>
-  </div>
-  <div class="text-center mt-1"><small id="widthLabel">Normal (42 %)</small></div>
-</div>
-      </div>
-      <div class="visualizations mt-3">
-        <div class="row g-2">
-          <div class="col-md-6">
+
+        <!-- Spectre + Spectrogramme -->
+        <div class="row mb-3">
+          <div class="col-6">
+            <h6>Spectre de fréquences</h6>
+            <canvas id="spectrumCanvas"></canvas>
+          </div>
+          <div class="col-6">
+            <h6>Spectrogramme</h6>
+            <canvas id="spectrogramCanvas"></canvas>
+          </div>
+        </div>
+
+        <!-- VU-mètres et formes d'onde -->
+        <div class="row">
+          <div class="col-6">
             <div class="card">
               <div class="card-body">
-                <h5 class="card-title">VU-mètres</h5>
-                <div class="d-flex flex-row gap-2">
+                <h6>VU-mètres</h6>
+                <div class="d-flex gap-2">
                   <div class="vu-meter-container">
                     <label>Gauche</label>
-                    <canvas id="vuMeterLeftCanvas" class="visualization-canvas"></canvas>
+                    <canvas id="vuMeterLeftCanvas"></canvas>
                   </div>
                   <div class="vu-meter-container">
                     <label>Droite</label>
-                    <canvas id="vuMeterRightCanvas" class="visualization-canvas"></canvas>
+                    <canvas id="vuMeterRightCanvas"></canvas>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="col-md-6">
+          <div class="col-6">
             <div class="card">
               <div class="card-body">
-                <h5 class="card-title">Formes d'onde</h5>
-                <div class="d-flex flex-row gap-2">
+                <h6>Formes d'onde</h6>
+                <div class="d-flex gap-2">
                   <div class="waveform-container">
                     <label>Gauche</label>
-                    <canvas id="waveformLeftCanvas" class="visualization-canvas"></canvas>
+                    <canvas id="waveformLeftCanvas"></canvas>
                   </div>
                   <div class="waveform-container">
                     <label>Droite</label>
-                    <canvas id="waveformRightCanvas" class="visualization-canvas"></canvas>
+                    <canvas id="waveformRightCanvas"></canvas>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+        
       </div>
     </div>
   </div>

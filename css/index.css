@@ -390,7 +390,7 @@ header p {
 
 /* === MOTS SÉLECTIONNÉS DANS LES RUBRIQUES (index.html) === */
 .selected-words-container .tag {
-  background-color: #e9ecef !important;   /* fond gris clair */
+  background-color: #e9ecefe1 !important;   /* fond gris clair */
   color: #212529 !important;
   padding: 4px 10px !important;
   border-radius: 20px !important;         /* coins bien arrondis */

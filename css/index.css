@@ -330,7 +330,7 @@ header p {
 .vu-meter-container,
 .waveform-container {
   height: 170px !important;          /* juste ce qu’il faut pour le canvas + label */
-  margin-bottom: 1rem !important;    /* espace réduit entre les blocs */
+  margin-bottom: 0.4rem !important;    /* espace réduit entre les blocs */
   padding: 0 !important;
 }
 
@@ -539,7 +539,6 @@ header p {
   border-color: #2195f3e0;
 }
 
-.visualizations { margin-bottom: 3rem !important; }
 
 /* ========================= */
 /* FIN DU CSS                */

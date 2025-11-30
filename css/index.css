@@ -259,6 +259,8 @@ header p {
   transition: opacity 0.5s ease, max-height 0.5s ease;
   margin-top: 10px;
   pointer-events: none; /* important pour éviter les clics fantômes */
+  margin-bottom: 0 !important;
+  padding-bottom: 0.5rem !important;
 }
 
 .audio-controls.active,

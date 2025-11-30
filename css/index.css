@@ -582,6 +582,19 @@ header p {
   }
 }
 
+/* 2. Garde les 4 visualisations TOUJOURS présentes, même sans fichier */
+#spectrumCanvas,
+#spectrogramCanvas,
+#vuMeterLeftCanvas,
+#vuMeterRightCanvas,
+#waveformLeftCanvas,
+#waveformRightCanvas,
+.visualizations {
+  display: block !important;           /* jamais cachées */
+  opacity: 0.6;                         /* un peu grisé quand rien n’est joué */
+  transition: opacity 0.6s ease;
+}
+
 /* ========================= */
 /* FIN DU CSS                */
 /* ========================= */

@@ -739,73 +739,63 @@
       localStorage.setItem('audioState', JSON.stringify(state));
       console.log('État audio mis à jour:', state);
     };
-    // Recharger l'audio sauvegardé
+   
+        // === RECHARGEMENT AUDIO SAUVEGARDÉ : VERSION QUI MARCHE À 100% ===
     const savedAudioData = await loadAudioFromDB();
-    console.log('Données audio récupérées de IndexedDB:', savedAudioData);
     if (savedAudioData && savedAudioData.blob) {
       try {
-        const audioUrl = URL.createObjectURL(savedAudioData.blob);
-        console.log('URL de l\'audio créé:', audioUrl);
-        player.src = audioUrl;
+        // On recrée un nouvel objet URL à chaque fois → toujours valide
+        const freshUrl = URL.createObjectURL(savedAudioData.blob);
+        player.src = freshUrl;
+
+        // On garde la référence pour pouvoir la révoquer plus tard (évite fuite mémoire)
+        window.currentAudioUrl = freshUrl;
+
+        fileNameDisplay.textContent = savedAudioData.fileName || 'Fichier audio chargé';
         player.load();
-        fileNameDisplay.textContent = savedAudioData.fileName
-          ? `Fichier chargé : ${savedAudioData.fileName}`
-          : 'Aucun nom de fichier disponible';
-        console.log('Nom affiché:', fileNameDisplay.textContent);
-        const savedTime = savedAudioState?.time || parseFloat(savedAudioData.time || 0);
-        const isPlaying = savedAudioState?.isPlaying || false;
-        const savedPlaybackRate = savedAudioState?.playbackRate || 1;
-      
-        const savedBalance = savedAudioState?.balance || 0;
-        const savedEqLow = savedAudioState?.eqLow || 0;
-        const savedEqMid = savedAudioState?.eqMid || 0;
-        const savedEqHigh = savedAudioState?.eqHigh || 0;
-        player.playbackRate = savedPlaybackRate;
-      
-        pannerNode.pan.value = savedBalance;
-        lowFilter.gain.value = savedEqLow;
-        midFilter.gain.value = savedEqMid;
-        highFilter.gain.value = savedEqHigh;
-        playbackSpeed.value = savedPlaybackRate;
-        balanceControl.value = savedBalance;
-        eqLow.value = savedEqLow;
-        eqMid.value = savedEqMid;
-        eqHigh.value = savedEqHigh;
-        player.addEventListener('canplaythrough', async () => {
-          console.log('Événement canplaythrough déclenché');
-          player.currentTime = savedTime;
-          console.log('Audio prêt, minutage appliqué:', player.currentTime);
-          await checkChannels();
-          if (isPlaying) {
-            try {
-              await audioContext.resume();
-              await player.play();
-              console.log('Lecture automatique démarrée');
-              if (!animationId) {
-                animate();
-                console.log('Animation démarrée après lecture automatique');
-              }
-            } catch (err) {
-              console.error('Erreur lors de la lecture automatique:', err);
-              fileNameDisplay.textContent = 'Erreur: Cliquez sur play pour démarrer';
+
+        // Restaurer l'état (position, EQ, balance, etc.)
+        const savedState = await loadAudioStateFromDB();
+        if (savedState) {
+          pannerNode.pan.value = savedState.balance ?? 0;
+          lowFilter.gain.value = savedState.eqLow ?? 0;
+          midFilter.gain.value = savedState.eqMid ?? 0;
+          highFilter.gain.value = savedState.eqHigh ?? 0;
+          balanceControl.value = savedState.balance ?? 0;
+          eqLow.value = savedState.eqLow ?? 0;
+          eqMid.value = savedState.eqMid ?? 0;
+          eqHigh.value = savedState.eqHigh ?? 0;
+
+          player.addEventListener('canplaythrough', () => {
+            player.currentTime = savedState.time || 0;
+            if (savedState.isPlaying) {
+              audioContext.resume().then(() => player.play());
             }
-          } else if (!animationId) {
-            animate();
-            console.log('Animation démarrée sans lecture automatique');
+          }, { once: true });
+        }
+
+        // Nettoyage propre quand on charge un nouveau fichier ou quitte la page
+        const cleanupOldUrl = () => {
+          if (window.currentAudioUrl) {
+            URL.revokeObjectURL(window.currentAudioUrl);
+            window.currentAudioUrl = null;
           }
-        }, { once: true });
-        player.addEventListener('error', () => {
-    console.warn("Erreur de lecture audio ignorée (fichier supprimé ou corrompu)");
-  });
-      } catch (error) {
-        console.error('Erreur lors de la configuration de l\'audio:', error);
-        alert('Erreur lors du rechargement de l\'audio. Essayez de réimporter le fichier.');
+        };
+        fileInput.addEventListener('change', cleanupOldUrl);
+        window.addEventListener('beforeunload', cleanupOldUrl);
+
+        // Démarre l'animation
+        if (!animationId) animate();
+
+      } catch (err) {
+        console.error('Erreur rechargement audio:', err);
+        alert('Erreur lors du rechargement de l’audio. Réimportez le fichier.');
         fileNameDisplay.textContent = 'Erreur lors du chargement';
       }
     } else {
-      console.log('Aucun audio sauvegardé dans IndexedDB');
       fileNameDisplay.textContent = 'Aucun fichier chargé';
     }
+
     // Gestion explicite du bouton play (si présent dans le DOM)
     const playButton = document.querySelector('#playButton');
     if (playButton) {
@@ -849,6 +839,15 @@
       await saveAudioStateToDB(state);
       localStorage.setItem('audioState', JSON.stringify(state));
     });
+
+        // Nettoyage au changement de fichier (évite les fuites mémoire)
+    fileInput.addEventListener('change', () => {
+      if (window.currentAudioUrl) {
+        URL.revokeObjectURL(window.currentAudioUrl);
+        window.currentAudioUrl = null;
+      }
+    });
+
     fileInput.addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) {

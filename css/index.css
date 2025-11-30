@@ -250,6 +250,12 @@ header p {
   gap: 1rem;
 }
 
+/* Cache complètement la zone "info fichier" tant qu’aucun fichier n’est chargé */
+#audioFileInfo.opacity-0,
+#audioFileInfo:not([style*="opacity: 1"]) {
+  display: none !important;
+}
+
 /* === CONTROLES ET VISUALISATIONS === */
 .audio-controls,
 .visualizations {

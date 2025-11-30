@@ -79,6 +79,14 @@
       <label>Aigus <input type="range" id="eqHigh" min="-12" max="12" step="0.1" value="0" class="form-range" /></label>
     </div>
   </div>
+   <div class="control-group">
+    <div class="row">
+      <div class="col-md-6">
+        <label for="balanceControl">Balance stéréo (Gauche/Droite) :</label>
+        <input type="range" id="balanceControl" min="-1" max="1" step="0.01" value="0" class="form-range" />
+      </div>
+    </div>
+  </div>
 
   <!-- Spectre + Spectrogramme (identique) -->
   <div class="position-relative">
@@ -108,29 +116,6 @@
     </div>
   </div>
 
-  <!-- === LES 2 BARRES STÉRÉO DÉPLACÉES ICI (juste après le spectrogramme) === -->
-  <div class="control-group">
-    <div class="row">
-      <div class="col-md-6">
-        <label for="balanceControl">Balance stéréo (Gauche/Droite) :</label>
-        <input type="range" id="balanceControl" min="-1" max="1" step="0.01" value="0" class="form-range" />
-      </div>
-      <div class="col-md-6">
-        <label for="widthControl">Largeur stéréo :</label>
-        <input type="range" id="widthControl" min="0" max="100" value="42" class="form-range" />
-        <div class="d-flex justify-content-between small text-muted">
-          <span>0 Mono</span>
-          <span>42 Normal</span>
-          <span>70 Large</span>
-          <span>85 L12/R04</span>
-          <span>100 Ultra</span>
-        </div>
-        <div class="text-center mt-1"><small id="widthLabel">Normal (42 %)</small></div>
-      </div>
-    </div>
-  </div>
-
-</div> <!-- fin du div.audio-controls -->
 
       <!-- VU-mètres et formes d'onde (identique - déplacé après les contrôles) -->
       <div class="visualizations mt-3">

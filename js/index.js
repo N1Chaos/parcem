@@ -961,41 +961,46 @@ if (!animationId) {
     link.click();
   };
   });
-  // ==================== GÉNÉRATION FICHIER TEXTE ====================
-  function generateTextFile() {
-    const commentText = document.getElementById('commentText');
-    const text = commentText.value.trim();
-    if (!text) return alert('Veuillez écrire un commentaire');
-    const blob = new Blob([text], { type: 'text/plain' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = 'commentaire.txt';
-    link.click();
-   
-    // NE PAS SUPPRIMER le texte après génération
-    // Le commentaire reste dans la zone de texte
+  // === GÉNÉRATION FICHIER TEXTE + WORD → SANS JAMAIS INCLURE LE PLACEHOLDER ===
+function generateTextFile() {
+  const editor = document.getElementById('commentEditor');
+  
+  // Si c'est le placeholder → on considère que c'est vide
+  const isPlaceholder = editor.children.length === 1 && 
+                       editor.querySelector('span[style*="color:#888"]');
+  
+  const text = isPlaceholder ? '' : (editor.innerText || '').trim();
+
+  if (!text) {
+    return alert('Veuillez écrire un commentaire');
   }
-  // ==================== EXPORT WORD ====================
-  // ==================== EXPORT WORD ====================
-  function exportToWord() {
-    const commentText = document.getElementById('commentText');
-    const text = commentText.value.trim();
-    if (!text) {
-      alert('Veuillez écrire un commentaire');
-      return;
-    }
-  // Ajouter BOM UTF-8 pour que Word reconnaisse automatiquement l'encodage
-    const BOM = '\uFEFF';
-    const content = BOM + text;
-   
-    const blob = new Blob([content], { type: 'text/plain; charset=utf-8' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = 'commentaire_musical.doc';
-    link.click();
-   
-    console.log('Fichier Word exporté');
+
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'commentaire_musical.txt';
+  link.click();
+}
+
+function exportToWord() {
+  const editor = document.getElementById('commentEditor');
+  
+  const isPlaceholder = editor.children.length === 1 && 
+                       editor.querySelector('span[style*="color:#888"]');
+  
+  const text = isPlaceholder ? '' : (editor.innerText || '').trim();
+
+  if (!text) {
+    return alert('Veuillez écrire un commentaire');
   }
+
+  const BOM = '\uFEFF';
+  const blob = new Blob([BOM + text], { type: 'application/msword;charset=utf-8' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'commentaire_musical.doc';
+  link.click();
+}
   // ==================== INITIALISATION ====================
   document.addEventListener("DOMContentLoaded", () => {
     Object.keys(PAGES).forEach(displayWordsForPage);

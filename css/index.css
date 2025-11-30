@@ -539,10 +539,7 @@ header p {
   border-color: #2195f3e0;
 }
 
-/* Force l'espace identique partout (corrige le mb-4 Bootstrap) */
-.col-md-8.mb-4.w-100 {
-  margin-bottom: 3rem !important;
-}
+.visualizations { margin-bottom: 3rem !important; }
 
 /* ========================= */
 /* FIN DU CSS                */

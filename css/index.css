@@ -264,7 +264,7 @@ header p {
 .audio-controls.active,
 .visualizations.active {
   opacity: 1;
-  max-height: 600px;        /* un peu plus grand pour être tranquille */
+  max-height: none;        /* un peu plus grand pour être tranquille */
   pointer-events: auto;
 }
 

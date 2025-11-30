@@ -445,8 +445,16 @@ header p {
   border-radius: 8px;      /* Angle arrondi optionnel */
 }
 
-.audio-card {
-  border: 5px solid #ff9800;  /* Cadre vert pour commentaire audio */
+/* Cadre orange → seulement pour l’enregistrement audio */
+#commentAudioCard, .audio-recording-card {
+  border: 5px solid #ff9800;
+}
+
+/* Cadre gris/vert identique au lecteur audio principal */
+.audio-player-container,
+.audio-player-wrapper > .card,
+.card.audio-player-card { 
+  border: 5px solid var(--button-color);  /* ← c’est ÇA que tu veux : gris/vert */
 }
 
 

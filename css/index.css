@@ -577,7 +577,6 @@ header p {
   }
   
   .plyr--audio .plyr__controls {
-    height: 76px !important;
     padding: 0 12px !important;
   }
 }

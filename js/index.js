@@ -327,6 +327,13 @@
       console.log('Bouton Contrôles cliqué');
       const isVisible = audioControls.classList.toggle('active');
       visualizations.classList.toggle('active', isVisible);
+
+      // LES 2 LIGNES MAGIQUES (à ajouter)
+  document.querySelectorAll('#audioControls .control-group').forEach(group => {
+    group.style.opacity = isVisible ? '1' : '0';
+    group.style.pointerEvents = isVisible ? 'auto' : 'none';
+  });
+
       console.log('Nouvel état des contrôles et visualisations:', isVisible ? 'affiché' : 'masqué');
       toggleControls.textContent = isVisible ? 'Masquer les contrôles' : 'Contrôles';
       updateAudioState();

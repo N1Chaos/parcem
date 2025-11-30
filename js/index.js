@@ -1832,7 +1832,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const plyr = new Plyr('#audioPlayer', {
       controls: ['play-large', 'play', 'progress', 'current-time', 'duration', 'mute', 'settings', 'fullscreen'],
       settings: ['speed'],
-      hideControls: true,
+      hideControls: false,
       volume: 0.75,
       blankVideo: 'https://cdn.plyr.io/static/blank.mp4',
       ratio: '16:1',                    // ← très important

@@ -566,34 +566,6 @@ header p {
   border-color: #2195f3e0;
 }
 
-/* FIX DÉFINITIF PLYR MOBILE PORTRAIT – plus jamais de débordement */
-@media (max-width: 768px) and (orientation: portrait) {
-  .plyr--audio .plyr__controls {
-    height: 68px !important;
-    padding: 6px 10px !important;
-    gap: 6px !important;
-    flex-wrap: wrap !important;
-    align-content: center !important;
-  }
-
-  .plyr--audio .plyr__control {
-    padding: 6px !important;
-    margin: 0 !important;
-  }
-
-  .plyr--audio .plyr__control--overlaid {
-    width: 56px !important;
-    height: 56px !important;
-    font-size: 28px !important;
-  }
-
-  /* Très petits écrans (iPhone SE, etc.) */
-  @media (max-height: 670px) {
-    .plyr--audio .plyr__controls { height: 60px !important; }
-    .plyr--audio .plyr__control--overlaid { width: 48px !important; height: 48px !important; }
-  }
-}
-
 /* 2. Garde les 4 visualisations TOUJOURS présentes, même sans fichier */
 #spectrumCanvas,
 #spectrogramCanvas,
@@ -603,6 +575,47 @@ header p {
 #waveformRightCanvas,
 .visualizations {
   display: block !important;           /* jamais cachées */
+}
+
+/* FIX RÉEL PLYR MOBILE PORTRAIT – zéro débordement, une seule ligne */
+@media (max-width: 768px) and (orientation: portrait) {
+  .plyr--audio,
+  .plyr--audio .plyr__controls {
+    height: 56px !important;
+  }
+
+  .plyr--audio .plyr__controls {
+    padding: 0 10px !important;
+    gap: 6px !important;
+    flex-wrap: nowrap !important;     /* ← UNE SEULE LIGNE OBLIGATOIRE */
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+  }
+
+  .plyr--audio .plyr__control {
+    padding: 6px 8px !important;
+    font-size: 13px !important;
+  }
+
+  .plyr__volume {
+    max-width: 70px !important;
+  }
+
+  /* Très petits écrans (iPhone SE, vieux Android) */
+  @media (max-height: 670px) or (max-width: 380px) {
+    .plyr--audio,
+    .plyr--audio .plyr__controls {
+      height: 50px !important;
+    }
+    .plyr--audio .plyr__control {
+      padding: 4px 6px !important;
+      font-size: 12px !important;
+    }
+    .plyr__volume {
+      max-width: 55px !important;
+    }
+  }
 }
 
 /* ========================= */

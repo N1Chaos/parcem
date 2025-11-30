@@ -250,19 +250,22 @@ header p {
   gap: 1rem;
 }
 
-.visualizations, .audio-controls { 
-  display: none;
+/* === CONTROLES ET VISUALISATIONS === */
+.audio-controls,
+.visualizations {
   opacity: 0;
   max-height: 0;
   overflow: hidden;
   transition: opacity 0.5s ease, max-height 0.5s ease;
   margin-top: 10px;
+  pointer-events: none; /* important pour éviter les clics fantômes */
 }
 
-.visualizations.active, .audio-controls.active {
-  display: block;
+.audio-controls.active,
+.visualizations.active {
   opacity: 1;
-  max-height: 500px;
+  max-height: 600px;        /* un peu plus grand pour être tranquille */
+  pointer-events: auto;
 }
 
 .control-group { margin-bottom: 1rem; }

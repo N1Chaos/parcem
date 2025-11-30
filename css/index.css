@@ -251,9 +251,15 @@ header p {
 }
 
 /* Cache complètement la zone "info fichier" tant qu’aucun fichier n’est chargé */
-#audioFileInfo.opacity-0,
-#audioFileInfo:not([style*="opacity: 1"]) {
-  display: none !important;
+#audioFileInfo {
+  display: none !important;           /* caché par défaut */
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+#audioFileInfo:not(.opacity-0) {
+  display: flex !important;            /* réapparaît dès que la classe opacity-0 est retirée */
+  opacity: 1 !important;
 }
 
 /* === CONTROLES ET VISUALISATIONS === */

@@ -567,17 +567,31 @@ header p {
   border-color: #2195f3e0;
 }
 
-/* FIX MOBILE – Plyr coupé sur téléphone */
-@media (max-width: 768px) {
-  .plyr--audio,
-  .plyr--audio .plyr__video-wrapper,
-  .plyr--audio video {
-    height: 76px !important;
-    min-height: 76px !important;
-  }
-  
+/* FIX DÉFINITIF PLYR MOBILE PORTRAIT – plus jamais de débordement */
+@media (max-width: 768px) and (orientation: portrait) {
   .plyr--audio .plyr__controls {
-    padding: 0 12px !important;
+    height: 68px !important;
+    padding: 6px 10px !important;
+    gap: 6px !important;
+    flex-wrap: wrap !important;
+    align-content: center !important;
+  }
+
+  .plyr--audio .plyr__control {
+    padding: 6px !important;
+    margin: 0 !important;
+  }
+
+  .plyr--audio .plyr__control--overlaid {
+    width: 56px !important;
+    height: 56px !important;
+    font-size: 28px !important;
+  }
+
+  /* Très petits écrans (iPhone SE, etc.) */
+  @media (max-height: 670px) {
+    .plyr--audio .plyr__controls { height: 60px !important; }
+    .plyr--audio .plyr__control--overlaid { width: 48px !important; height: 48px !important; }
   }
 }
 

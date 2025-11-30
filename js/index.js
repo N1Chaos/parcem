@@ -252,12 +252,6 @@
     const highFilter = audioContext.createBiquadFilter();
     highFilter.type = 'highshelf';
     highFilter.frequency.value = 4000;
-      // === LARGEUR STÉRÉO (Mid-Side) – VERSION ULTRA SÛRE ===
-    const merger = audioContext.createChannelMerger(2);
-    const midGain = audioContext.createGain();
-    const sideGain = audioContext.createGain();
-    midGain.gain.value = 1;
-    sideGain.gain.value = 1; // on contrôle ça avec le curseur après
     // Chaîne audio principale avec analyseurs après les effets
     const splitter = audioContext.createChannelSplitter(2);
     source.connect(pannerNode);
@@ -268,17 +262,6 @@
       // On garde le son normal
     gainNode.connect(splitter);
     gainNode.connect(audioContext.destination); // son garanti
-    // On ajoute le traitement Mid-Side en parallèle
-    splitter.connect(midGain, 0);
-    splitter.connect(midGain, 1);
-    splitter.connect(sideGain, 0);
-    splitter.connect(sideGain, 1);
-    midGain.connect(merger, 0, 0);
-    midGain.connect(merger, 0, 1);
-    sideGain.connect(merger, 0, 0);
-    sideGain.connect(merger, 0, 1);
-    sideGain.gain.value = -1; // inversion côté droit pour le Side
-    merger.connect(audioContext.destination);
     splitter.connect(analyserLeft, 0);
     splitter.connect(analyserRight, 1);
     // Activer le curseur de balance par défaut
@@ -676,43 +659,6 @@
       console.log('Balance stéréo ajustée:', pannerNode.pan.value);
       updateAudioState();
     });
-      // === LARGEUR STÉRÉO L12/R04 – VERSION FINALE PROPRE & IMMERSIVE CASQUE ===
-    const widthControl = document.getElementById('widthControl');
-    const widthLabel = document.getElementById('widthLabel');
-    if (widthControl && widthLabel) {
-      const updateWidth = () => {
-        const val = parseFloat(widthControl.value);
-        const level = val / 100;
-        let sideLevel;
-        if (level <= 0.42) {
-          sideLevel = level * 1.9; // montée très douce
-        } else {
-          sideLevel = 0.8 + (level - 0.42) * 2.4; // boost progressif mais contrôlé
-        }
-        sideGain.gain.setValueAtTime(Math.min(sideLevel, 1.2), audioContext.currentTime);
-        let text = "Mono";
-  if (val <= 10) {
-    text = "Mono";
-  } else if (val <= 40) {
-    text = "Étroite";
-  } else if (val <= 60) {
-    text = "Normale";
-  } else if (val <= 80) {
-    text = "Large";
-  } else if (val <= 92) {
-    text = "L12/R04";
-  } else {
-    text = "Ultra-large";
-  }
-  // Ajustement spécial
-  if (val >= 83 && val <= 88) {
-    text = "L12/R04 – Orchestre";
-  }
-        widthLabel.textContent = `${text} (${val} %)`;
-      };
-      widthControl.addEventListener('input', updateWidth);
-      updateWidth(); // valeur initiale
-    }
     
     // Contrôles de l'égaliseur
     eqLow.addEventListener('input', () => {

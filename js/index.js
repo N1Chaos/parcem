@@ -626,25 +626,29 @@
     // Gestion de l'animation avec annulation
     let animationId = null;
     function animate() {
-    try {
-      drawSpectrum(); // TOUJOURS dessiner le spectre
-     
-      // Le reste seulement si l'audio est prêt
-      if (analyserLeftGlobal && frameCount++ % 2 === 0) {
-        drawSpectrogram();
-      }
-     
-      if (visualizations && visualizations.classList.contains('active')) {
-        drawVUMeters();
-        drawWaveform();
-      }
-     
-      animationId = requestAnimationFrame(animate);
-    } catch (error) {
-      console.error('Erreur dans animate:', error);
-      animationId = requestAnimationFrame(animate); // RELANCER même en cas d'erreur
-    }
+  // 1. Spectre et spectrogramme → toujours visibles (même sans son)
+  drawSpectrum();
+  if (frameCount++ % 2 === 0) {
+    drawSpectrogram();
   }
+
+  // 2. FORCER les visualisations VU + formes d’onde même sans fichier
+  const noAudio = !player.src || (player.paused && player.currentTime === 0);
+
+  if (noAudio) {
+    // On simule un signal parfaitement silencieux → aiguilles à –∞, ligne plate
+    dataArrayLeft.fill(128);
+    dataArrayRight.fill(128);
+    if (dataArrayLeftGlobal) dataArrayLeftGlobal.fill(0);
+  }
+
+  // 3. On dessine TOUJOURS les VU-mètres et formes d’onde (même si contrôles masqués)
+  drawVUMeters();
+  drawWaveform();
+
+  // 4. On garde l’animation fluide
+  animationId = requestAnimationFrame(animate);
+}
     // Arrêter l'animation lorsque la page est déchargée
     window.addEventListener('beforeunload', () => {
       if (animationId) {

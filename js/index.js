@@ -1815,3 +1815,38 @@ document.addEventListener("DOMContentLoaded", () => {
     player.setAttribute('data-p-initialized', 'true');
   }
 });
+
+// ==================== BROUILLON COMMENTAIRE : TOUJOURS PRÉSENT MÊME APRÈS GÉNÉRATION ====================
+document.addEventListener("DOMContentLoaded", () => {
+  const editor = document.getElementById('commentEditor');
+  if (!editor) return;
+
+  // 1. Restaurer le brouillon au chargement de la page principale
+  const saved = localStorage.getItem('commentDraft');
+  if (saved && saved.trim() !== '' && saved !== '<br>') {
+    editor.innerHTML = saved;
+  }
+
+  // 2. Sauvegarde automatique à chaque frappe (débounce 500 ms)
+  let timeout;
+  editor.addEventListener('input', () => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      const content = editor.innerHTML.trim();
+      if (content && content !== '<br>' && !content.includes('Écrivez votre commentaire')) {
+        localStorage.setItem('commentDraft', editor.innerHTML);
+      } else {
+        localStorage.removeItem('commentDraft');
+      }
+    }, 500);
+  });
+
+  // 3. IMPORTANT : on NE VIDE RIEN quand on génère ou exporte
+  const keepComment = () => {
+    // Ne fait absolument rien → le texte reste
+    console.log('Fichier généré/exporté → commentaire conservé dans l’éditeur et dans localStorage');
+  };
+
+  document.getElementById('generateTextButton')?.addEventListener('click', keepComment);
+  document.querySelector('button[onclick="exportToWord()"]')?.addEventListener('click', keepComment);
+});

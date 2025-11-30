@@ -321,7 +321,10 @@
   <div id="globalWordsList" class="d-flex flex-wrap gap-2 mt-2"></div>
 </div>
         
-        <textarea id="commentText" class="form-control" style="min-height: 200px; resize: vertical" rows="10" placeholder="Écrivez votre commentaire"></textarea>
+        <div id="commentEditor" contenteditable="true" 
+     class="form-control" 
+     style="min-height: 200px; padding: 15px; font-family: 'Georgia', serif; font-size: 1.1rem; line-height: 1.6; overflow-y: auto; border-radius: 8px;"
+     placeholder="Écrivez votre commentaire (gras = Ctrl+B, italique = Ctrl+I)"></div>
         <button class="btn btn-primary mt-3 me-2" id="generateTextButton" onclick="generateTextFile()">
           <i class="bi bi-file-earmark-text"></i> Générer un fichier texte
         </button>

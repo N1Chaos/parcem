@@ -1786,32 +1786,32 @@ function exportToWord() {
     }
   });
 
-  // ==================== PLYR PAR-DESSUS TON LECTEUR (SOLUTION ULTRA SÛRE) ====================
+  // ==================== PLYR AVEC CONTRÔLE VOLUME ====================
 document.addEventListener("DOMContentLoaded", () => {
   const player = document.getElementById('audioPlayer');
-  
-  // Si Plyr n'est pas déjà activé
+
   if (player && !player.hasAttribute('data-plyr-initialized')) {
-    const plyr = new Plyr('#audioPlayer', {
-      controls: ['play-large', 'play', 'progress', 'current-time', 'duration', 'mute', 'settings', 'fullscreen'],
+    const plyrInstance = new Plyr('#audioPlayer', {
+      controls: [
+        'play-large',
+        'play',
+        'progress',
+        'current-time',
+        'duration',
+        'mute',
+        'volume',           // ← VOLUME RÉACTIVÉ ICI
+        'settings',
+        'fullscreen'
+      ],
       settings: ['speed'],
       hideControls: false,
       volume: 0.75,
       blankVideo: 'https://cdn.plyr.io/static/blank.mp4',
-      ratio: '16:1',                    // ← très important
-      clickToPlay: false,               // évite le gros bouton play au milieu
-      hidePosterOnPlay: false,
-      youtube: { noCookie: true, rel: 0, showinfo: 0, iv_load_policy: 3 },
-      vimeo: { byline: false, portrait: false, title: false, speed: true }
+      ratio: '16:1',
+      clickToPlay: false
     });
 
-    // Cache le bouton volume
-    setTimeout(() => {
-      const volumeBtn = document.querySelector('.plyr__volume');
-      if (volumeBtn) volumeBtn.style.display = 'none';
-    }, 100);
-
-    // Empêche que Plyr soit initialisé deux fois
-    player.setAttribute('data-plyr-initialized', 'true');
+    // Plus rien à cacher : le volume est visible et fonctionne parfaitement
+    player.setAttribute('data-p-initialized', 'true');
   }
 });

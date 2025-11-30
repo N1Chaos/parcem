@@ -427,7 +427,6 @@ header p {
 .plyr--audio .plyr__control{color:white!important;padding:10px!important;}
 .plyr--audio .plyr__progress__buffer{background:rgba(255,255,255,0.2)!important;}
 .plyr--audio input[type=range]{height:6px!important;}
-.plyr__volume{display:none!important;}
 .plyr,.plyr__controls{box-shadow:none!important;}
 
 /* On garde le fond qui réagit au survol si tu veux, sinon tu peux virer cette ligne */

@@ -548,6 +548,20 @@ header p {
   border-color: #2195f3e0;
 }
 
+/* FIX MOBILE – Plyr coupé sur téléphone */
+@media (max-width: 768px) {
+  .plyr--audio,
+  .plyr--audio .plyr__video-wrapper,
+  .plyr--audio video {
+    height: 76px !important;
+    min-height: 76px !important;
+  }
+  
+  .plyr--audio .plyr__controls {
+    height: 76px !important;
+    padding: 0 12px !important;
+  }
+}
 
 /* ========================= */
 /* FIN DU CSS                */

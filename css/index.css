@@ -591,7 +591,6 @@ header p {
 #waveformRightCanvas,
 .visualizations {
   display: block !important;           /* jamais cachées */
-  opacity: 0.6;                         /* un peu grisé quand rien n’est joué */
   transition: opacity 0.6s ease;
 }
 

@@ -531,6 +531,13 @@ header p {
   color: white !important;
 }
 
+#commentEditor:empty::before {
+  content: "Écrivez votre commentaire (gras = Ctrl+B, italique = Ctrl+I)";
+  color: #888;
+  font-style: italic;
+}
+#commentEditor:focus { outline: none; }
+
 /* Bouton Enregistrer → passe en rouge identique au site dès qu’on clique dessus */
 
 

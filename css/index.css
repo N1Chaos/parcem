@@ -618,6 +618,80 @@ header p {
   }
 }
 
+/* Style harmonieux pour l'égaliseur et la balance */
+.equalizer-controls .flex-fill {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+}
+
+.equalizer-controls .small {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #495057;
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* Sliders harmonisés avec Bootstrap */
+.form-range {
+  height: 6px;
+  cursor: pointer;
+}
+
+.form-range::-webkit-slider-thumb {
+  width: 18px;
+  height: 18px;
+  background-color: #0d6efd;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+/* Petite distinction de couleur pour l'égaliseur (très subtile) */
+#eqLow::-webkit-slider-thumb { background-color: #dc3545; }
+#eqMid::-webkit-slider-thumb { background-color: #fd7e14; }
+#eqHigh::-webkit-slider-thumb { background-color: #198754; }
+
+/* Balance discrète */
+#balanceControl {
+  height: 6px;
+}
+
+#balanceControl::-webkit-slider-thumb {
+  background-color: #6f42c1;
+}
+
+/* Conteneur de la balance */
+.col-md-4 {
+  padding: 10px 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+}
+
+/* Labels */
+.control-group label {
+  font-size: 0.9rem;
+  color: #212529;
+  font-weight: 500;
+}
+
+/* Espacement cohérent */
+.control-group .row {
+  gap: 20px;
+}
+
+/* Sur mobile, réduction du padding */
+@media (max-width: 768px) {
+  .equalizer-controls .flex-fill {
+    padding: 8px 10px;
+  }
+  
+  .col-md-4, .col-md-8 {
+    padding: 10px;
+  }
+}
 /* ========================= */
 /* FIN DU CSS                */
 /* ========================= */

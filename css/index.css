@@ -577,46 +577,7 @@ header p {
   display: block !important;           /* jamais cachées */
 }
 
-/* FIX RÉEL PLYR MOBILE PORTRAIT – zéro débordement, une seule ligne */
-@media (max-width: 768px) and (orientation: portrait) {
-  .plyr--audio,
-  .plyr--audio .plyr__controls {
-    height: 56px !important;
-  }
 
-  .plyr--audio .plyr__controls {
-    padding: 0 10px !important;
-    gap: 6px !important;
-    flex-wrap: nowrap !important;     /* ← UNE SEULE LIGNE OBLIGATOIRE */
-    align-items: center !important;
-    justify-content: center !important;
-    overflow: hidden !important;
-  }
-
-  .plyr--audio .plyr__control {
-    padding: 6px 8px !important;
-    font-size: 13px !important;
-  }
-
-  .plyr__volume {
-    max-width: 70px !important;
-  }
-
-  /* Très petits écrans (iPhone SE, vieux Android) */
-  @media (max-height: 670px) or (max-width: 380px) {
-    .plyr--audio,
-    .plyr--audio .plyr__controls {
-      height: 50px !important;
-    }
-    .plyr--audio .plyr__control {
-      padding: 4px 6px !important;
-      font-size: 12px !important;
-    }
-    .plyr__volume {
-      max-width: 55px !important;
-    }
-  }
-}
 
 /* Style pour l'égaliseur et balance */
 .equalizer-controls .flex-fill {

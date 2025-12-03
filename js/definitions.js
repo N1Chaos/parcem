@@ -1880,5 +1880,32 @@ window.wordDefinitions =
 },
 "piccolo": {
   "definition": "Petite flûte traversière jouant des notes très aiguës, utilisée pour apporter éclat et brillance dans les morceaux."
+},
+"mat/brillant": {
+    "definition": "Les attributs mat et brillant sont relatifs à la masse de composantes aiguës perçues dans le son. Un son mat a une masse faible de composantes aiguës. On peut aussi utiliser les termes étouffé et sourd. Un son brillant a une masse importante de composantes aiguës. On peut aussi utiliser le terme clair."
+},
+"lisse/rugeux": {
+    "definition": "Les attributs lisse et rugueux sont liés à l'absence ou à la présence d'aspérités et d'irrégularités temporelles. Un son lisse est un son sans aspérité, qui ne donne pas de sensation de frottement. Un son rugueux est un son avec des aspérités, qui donne une sensation de frottement. On peut aussi parler de texture râpeuse ou granuleuse."
+},
+"sec/résonnant": {
+    "definition": "Le caractère sec ou résonant d'un son est lié à l'absence ou à la présence d'un prolongement de son énergie dans le temps. Un son sec est un son dont l'énergie s'arrête de manière nette par l'absence de résonance de la source. Un son résonant est un son dont une partie de l'énergie se dissipe progressivement par résonance de la source."
+},
+"non nasal/nasal": {
+    "definition": "Le caractère nasal d'un son est relatif à ses composantes médiums qui rappellent le son de la voix lorsqu'on se bouche le nez."
+},
+"non riche/riche": {
+    "definition": "Un son riche est un son qui donne la sensation d'être constitué de plusieurs éléments superposés, qui peuvent couvrir une grande partie du spectre audible, du grave vers l'aigu."
+},
+"non rond/rond": {
+    "definition": "La sensation de son rond correspond à un son plutôt grave, plein et homogène, agréable, avec une attaque douce et une chute plutôt progressive."
+},
+"chaud": {
+    "definition": "La sensation de son chaud est associée à un son grave avec une richesse spectrale, agréable, qui donne une impression d'enveloppement, et souvent avec une attaque douce."
+},
+"strident": {
+    "definition": "La sensation de son strident correspond à un son intense et très aigu, qui est souvent perçu comme agressif."
+},
+"métallique": {
+    "definition": "L'aspect métallique d'un son correspond à un son brillant et plutôt résonant, qui rappelle les sonorités du métal."
 }
 };

@@ -618,78 +618,53 @@ header p {
   }
 }
 
-/* Style harmonieux pour l'égaliseur et la balance */
+/* Style pour l'égaliseur et balance */
 .equalizer-controls .flex-fill {
-  padding: 10px 12px;
-  border-radius: 8px;
-  background-color: #f8f9fa;
-  border: 1px solid #dee2e6;
+  padding: 10px 0;
 }
 
-.equalizer-controls .small {
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: #495057;
-  margin-bottom: 6px;
-  display: block;
+.equalizer-controls input[type="range"] {
+  height: 8px;
 }
 
-/* Sliders harmonisés avec Bootstrap */
-.form-range {
-  height: 6px;
-  cursor: pointer;
+.equalizer-controls input[type="range"]::-webkit-slider-thumb {
+  width: 20px;
+  height: 20px;
+  background: #0d6efd;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.form-range::-webkit-slider-thumb {
-  width: 18px;
-  height: 18px;
-  background-color: #0d6efd;
-  border: 2px solid #fff;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-}
+/* Couleurs différentes pour chaque bande EQ */
+#eqLow::-webkit-slider-thumb { background: #dc3545; }
+#eqMid::-webkit-slider-thumb { background: #ffc107; }
+#eqHigh::-webkit-slider-thumb { background: #198754; }
 
-/* Petite distinction de couleur pour l'égaliseur (très subtile) */
-#eqLow::-webkit-slider-thumb { background-color: #dc3545; }
-#eqMid::-webkit-slider-thumb { background-color: #fd7e14; }
-#eqHigh::-webkit-slider-thumb { background-color: #198754; }
-
-/* Balance discrète */
+/* Style pour la balance verticale */
 #balanceControl {
-  height: 6px;
+  margin: 20px auto;
+  height: 8px;
 }
 
 #balanceControl::-webkit-slider-thumb {
-  background-color: #6f42c1;
+  width: 24px;
+  height: 24px;
+  background: #6f42c1;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* Conteneur de la balance */
-.col-md-4 {
-  padding: 10px 15px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  border: 1px solid #dee2e6;
-}
-
-/* Labels */
-.control-group label {
-  font-size: 0.9rem;
-  color: #212529;
-  font-weight: 500;
-}
-
-/* Espacement cohérent */
-.control-group .row {
-  gap: 20px;
-}
-
-/* Sur mobile, réduction du padding */
+/* Responsive */
 @media (max-width: 768px) {
-  .equalizer-controls .flex-fill {
-    padding: 8px 10px;
+  .equalizer-controls {
+    flex-direction: column;
+    gap: 15px !important;
   }
   
-  .col-md-4, .col-md-8 {
-    padding: 10px;
+  #balanceControl {
+    transform: rotate(0deg) !important;
+    width: 100% !important;
+    margin: 10px 0;
   }
 }
 /* ========================= */

@@ -1864,13 +1864,13 @@ window.wordDefinitions =
   "diminution": {
     "definition": "Technique où les durées des notes d’un motif ou d’une mélodie sont raccourcies proportionnellement, accélérant le rythme tout en préservant la structure mélodique."
   },
-  "clarinette_basse": {
+  "clarinette basse": {
   "definition": "Grande clarinette jouant plus grave que la clarinette classique, avec un long tube recourbé et un pavillon en métal, utilisée pour apporter de la profondeur au son."
 },
 "hautbois": {
   "definition": "Instrument à vent à anche double au son clair et légèrement nasal, souvent chargé de jouer des mélodies expressives dans l’orchestre."
 },
-"cor_anglais": {
+"cor anglais": {
   "definition": "Instrument de la famille du hautbois, plus grand et plus grave, au timbre doux et mélancolique, idéal pour les passages calmes ou expressifs."
 },
 "basson": {

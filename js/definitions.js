@@ -1938,5 +1938,8 @@ window.wordDefinitions =
 },
 "ska": {
     "definition": "Musique jamaïcaine née avant le reggae, avec des rythmes syncopés et un mélange de cuivres et de guitare rythmique."
+},
+"énergisant": {
+    "definition": "Adjectif décrivant une musique qui donne de la vitalité et de l'énergie, incite à bouger ou à se sentir dynamique."
 }
 };

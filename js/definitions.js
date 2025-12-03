@@ -1734,11 +1734,8 @@ window.wordDefinitions =
     "formant": {
         "definition": "Renforcement de certaines fréquences dans le spectre sonore, influençant le timbre."
     },
-    "enveloppe du son": {
-        "definition": "Description de l'évolution d'un son dans le temps, divisée en attaque, decay, sustain et release."
-    },
     "enveloppe sonore": {
-        "definition": "Façon dont un son évolue dans le temps, influençant sa perception."
+        "definition": "Description de l'évolution d'un son dans le temps, divisée en attaque, decay, sustain et release."
     },
     "bruit": {
         "definition": "Son complexe et non périodique, souvent perçu comme désagréable."

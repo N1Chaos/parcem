@@ -38,8 +38,6 @@ window.wordDefinitions =
   "chaloupé": { definition: "Avec un balancement marqué, typique de certaines danses." },
 
   // Timbre
-  "chaud": { definition: "Riche, rond, agréable à l’oreille." },
-  "métallique": { definition: "Brillant, résonant comme le métal." },
   "boisé": { definition: "Rond, naturel, doux comme les sons des instruments en bois." },
   "sourd": { definition: "Mat, étouffé, peu brillant." },
   "éclatant": { definition: "Vif, brillant, frappant." },

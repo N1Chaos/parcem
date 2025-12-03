@@ -623,16 +623,26 @@ header p {
   padding: 10px 0;
 }
 
-.equalizer-controls input[type="range"] {
+/* Style commun pour tous les sliders */
+.equalizer-controls input[type="range"],
+#balanceControl {
   height: 8px;
+  cursor: pointer;
 }
 
-.equalizer-controls input[type="range"]::-webkit-slider-thumb {
+.equalizer-controls input[type="range"]::-webkit-slider-thumb,
+#balanceControl::-webkit-slider-thumb {
   width: 20px;
   height: 20px;
-  background: #0d6efd;
   border: 2px solid white;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.2s;
+}
+
+.equalizer-controls input[type="range"]::-webkit-slider-thumb:hover,
+#balanceControl::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
 }
 
 /* Couleurs différentes pour chaque bande EQ */
@@ -640,18 +650,34 @@ header p {
 #eqMid::-webkit-slider-thumb { background: #ffc107; }
 #eqHigh::-webkit-slider-thumb { background: #198754; }
 
-/* Style pour la balance verticale */
+/* Style spécifique pour la balance - HORIZONTALE */
 #balanceControl {
-  margin: 20px auto;
-  height: 8px;
+  margin: 10px 0;
+  background: linear-gradient(to right, #0d6efd, #ffffff 50%, #0d6efd);
+  border-radius: 4px;
 }
 
 #balanceControl::-webkit-slider-thumb {
-  width: 24px;
-  height: 24px;
   background: #6f42c1;
+}
+
+/* Pour Firefox */
+.equalizer-controls input[type="range"]::-moz-range-thumb,
+#balanceControl::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
   border: 2px solid white;
+  border-radius: 50%;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#eqLow::-moz-range-thumb { background: #dc3545; }
+#eqMid::-moz-range-thumb { background: #ffc107; }
+#eqHigh::-moz-range-thumb { background: #198754; }
+#balanceControl::-moz-range-thumb { background: #6f42c1; }
+
+#balanceControl::-moz-range-track {
+  background: linear-gradient(to right, #0d6efd, #ffffff 50%, #0d6efd);
 }
 
 /* Responsive */
@@ -661,10 +687,8 @@ header p {
     gap: 15px !important;
   }
   
-  #balanceControl {
-    transform: rotate(0deg) !important;
-    width: 100% !important;
-    margin: 10px 0;
+  .equalizer-controls .flex-fill {
+    padding: 8px 0;
   }
 }
 /* ========================= */

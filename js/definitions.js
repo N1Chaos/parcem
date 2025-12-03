@@ -1905,5 +1905,38 @@ window.wordDefinitions =
 },
 "métallique": {
     "definition": "L'aspect métallique d'un son correspond à un son brillant et plutôt résonant, qui rappelle les sonorités du métal."
+},
+"pop": {
+    "definition": "Musique populaire, mélodique et facile à écouter, souvent diffusée à la radio et destinée à un large public."
+},
+"r&b": {
+    "definition": "Rythm and Blues moderne, style vocal et instrumental, mélangeant soul, funk et hip-hop avec des rythmes syncopés."
+},
+"soul": {
+    "definition": "Musique expressive née aux États-Unis, centrée sur le chant émotionnel et le groove, issue du gospel et du R&B."
+},
+"funk": {
+    "definition": "Musique rythmique et dansante avec des lignes de basse marquées, des cuivres et des grooves syncopés."
+},
+"disco": {
+    "definition": "Musique dansante des années 1970, caractérisée par un rythme binaire, des arrangements orchestraux et des lignes de basse entraînantes."
+},
+"electro": {
+    "definition": "Musique électronique centrée sur les sons synthétiques, les boîtes à rythmes et les effets numériques."
+},
+"techno": {
+    "definition": "Musique électronique répétitive et rythmique, souvent jouée en clubs et festivals, avec un tempo rapide et des sons synthétiques."
+},
+"punk": {
+    "definition": "Musique rock énergique et brute, caractérisée par des guitares électriques agressives et des textes contestataires."
+},
+"metal": {
+    "definition": "Musique rock puissante avec guitares saturées, batterie intense et souvent des voix fortes ou gutturales."
+},
+"reggaeton": {
+    "definition": "Style musical d'origine latino-américaine mélangeant reggae, hip-hop et musique latine, rythmé et dansant."
+},
+"ska": {
+    "definition": "Musique jamaïcaine née avant le reggae, avec des rythmes syncopés et un mélange de cuivres et de guitare rythmique."
 }
 };

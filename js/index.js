@@ -1823,6 +1823,38 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+document.addEventListener('DOMContentLoaded', () => {
+  // Ici tu récupères les boutons et conteneurs
+  const toggleControls = document.getElementById('toggleControls');
+  const visualizations = document.querySelector('.visualizations');
+  const audioControls = document.querySelector('.audio-controls');
+
+  // Fonction toggle (code fourni)
+  function toggleAudioControls() {
+    [visualizations, audioControls].forEach(el => {
+      const isVisible = el.style.display === 'flex' || getComputedStyle(el).display !== 'none';
+
+      if (isVisible) {
+        el.style.opacity = '0';
+        el.style.maxHeight = '0';
+        el.style.pointerEvents = 'none';
+        setTimeout(() => { el.style.display = 'none'; }, 500);
+      } else {
+        el.style.display = 'flex';
+        setTimeout(() => {
+          el.style.maxHeight = '1000px';
+          el.style.opacity = '1';
+          el.style.pointerEvents = 'auto';
+        }, 10);
+      }
+    });
+  }
+
+  // Événement clic
+  toggleControls.addEventListener('click', toggleAudioControls);
+});
+
+
 // ==================== BROUILLON COMMENTAIRE : TOUJOURS PRÉSENT MÊME APRÈS GÉNÉRATION ====================
 document.addEventListener("DOMContentLoaded", () => {
   const editor = document.getElementById('commentEditor');

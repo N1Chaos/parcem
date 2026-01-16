@@ -237,12 +237,6 @@
     }
     const analyserLeft = audioContext.createAnalyser();
     const analyserRight = audioContext.createAnalyser();
-
-    // === ANALYSEUR GLOBAL VISUEL (AVANT LA BALANCE) ===
-const analyserVisualGlobal = audioContext.createAnalyser();
-analyserVisualGlobal.fftSize = 2048;
-const dataArrayVisualGlobal = new Uint8Array(analyserVisualGlobal.frequencyBinCount);
-
    
     analyserLeft.fftSize = 2048;
     analyserRight.fftSize = 2048;
@@ -260,8 +254,7 @@ const dataArrayVisualGlobal = new Uint8Array(analyserVisualGlobal.frequencyBinCo
     highFilter.frequency.value = 4000;
     // Chaîne audio principale avec analyseurs après les effets
     const splitter = audioContext.createChannelSplitter(2);
-    source.connect(analyserVisualGlobal);
-analyserVisualGlobal.connect(pannerNode);
+    source.connect(pannerNode);
     pannerNode.connect(lowFilter);
     lowFilter.connect(midFilter);
     midFilter.connect(highFilter);
@@ -563,8 +556,8 @@ analyserVisualGlobal.connect(pannerNode);
     let dataArray = new Uint8Array(bufferLength);
    
     if (analyserLeftGlobal && dataArrayLeftGlobal) {
-      analyserVisualGlobal.getByteFrequencyData(dataArrayVisualGlobal);
-      dataArray = dataArrayVisualGlobal;
+      analyserLeftGlobal.getByteFrequencyData(dataArrayLeftGlobal);
+      dataArray = dataArrayLeftGlobal;
      
       // Vérifier si les données ne sont pas silencieuses (pas seulement des zéros)
       const sum = dataArray.reduce((a, b) => a + b, 0);
@@ -1644,14 +1637,14 @@ function exportToWord() {
   }
   function drawSpectrogram() {
     if (!spectroCtx || !analyserLeftGlobal || !dataArrayLeftGlobal) return;
-    analyserVisualGlobal.getByteFrequencyData(dataArrayVisualGlobal);
+    analyserLeftGlobal.getByteFrequencyData(dataArrayLeftGlobal);
     // === SCROLL TRÈS LENT + FONDU ULTRA-DOUX ===
     spectroCtx.drawImage(spectroCtx.canvas, -1, 0);
     // Nouvelle colonne à droite
     const height = spectroCanvas.height;
     const width = spectroCanvas.width;
-    for (let i = 0; i < dataArrayVisualGlobal.length; i += 2) {
-      const value = dataArrayVisualGlobal[i] / 255;
+    for (let i = 0; i < dataArrayLeftGlobal.length; i += 2) {
+      const value = dataArrayLeftGlobal[i] / 255;
       if (value < 0.02) continue;
       const y = height - (i / dataArrayLeftGlobal.length) * height;
       // === COULEURS INTENSES ET DURABLES ===

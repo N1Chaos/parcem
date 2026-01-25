@@ -29,6 +29,24 @@
 </head>
 
 <body class="container-fluid">
+  <!-- Bouton Retour au portail principal -->
+<!-- Mini-header Parcem -->
+<div class="d-flex align-items-center justify-content-between mb-3 mt-2 p-2 border rounded bg-light">
+  <div class="d-flex align-items-center">
+    <img src="../assets/images/logo-academie-paris.png" alt="Académie de Paris" height="50" class="me-2">
+    <div>
+      <strong>Parcem</strong><br>
+      <small>Projet pédagogique — Académie de Paris</small>
+    </div>
+  </div>
+  <div>
+    <a href="../index.html" class="btn btn-outline-primary">
+      <i class="bi bi-arrow-left-circle"></i> Retour au portail
+    </a>
+  </div>
+</div>
+
+
   <header class="text-black text-center py-3 mb-4">
     <h1>Commentaire d'écoute</h1>
     <p>Écoutez, commentez et partagez vos impressions musicales</p>
@@ -70,39 +88,62 @@
 <!-- Section contrôles -->
 <div id="audioControls" class="audio-controls mt-3" style="display: block;">
 
- <!-- Égaliseur + Balance sur même ligne -->
-<div class="control-group">
-  <div class="row align-items-center g-3">
-    <!-- Égaliseur -->
-    <div class="col-md-9">
-      <div class="border rounded p-3 bg-light">
-        <label class="mb-3 fw-semibold text-dark">Égaliseur</label>
-        <div class="equalizer-controls d-flex gap-4">
-          <div class="flex-fill text-center">
-            <label class="small d-block mb-2 fw-medium text-muted">Basses</label>
-            <input type="range" id="eqLow" min="-12" max="12" step="0.1" value="0" class="form-range" />
-            <div class="mt-1 small text-muted">-12dB ↔ +12dB</div>
-          </div>
-          <div class="flex-fill text-center">
-            <label class="small d-block mb-2 fw-medium text-muted">Médiums</label>
-            <input type="range" id="eqMid" min="-12" max="12" step="0.1" value="0" class="form-range" />
-            <div class="mt-1 small text-muted">-12dB ↔ +12dB</div>
-          </div>
-          <div class="flex-fill text-center">
-            <label class="small d-block mb-2 fw-medium text-muted">Aigus</label>
-            <input type="range" id="eqHigh" min="-12" max="12" step="0.1" value="0" class="form-range" />
-            <div class="mt-1 small text-muted">-12dB ↔ +12dB</div>
-          </div>
-        </div>
+<!-- Égaliseur -->
+<div class="col-12 mb-3">
+  <div class="border rounded p-3 bg-light">
+    <label class="mb-3 fw-semibold text-dark">Égaliseur</label>
+    <div class="equalizer-controls d-flex gap-4">
+      <div class="flex-fill text-center">
+        <label class="small d-block mb-2 fw-medium text-muted">Basses</label>
+        <input type="range" id="eqLow" min="-12" max="12" step="0.1" value="0" class="form-range" />
+        <div class="mt-1 small text-muted">-12dB ↔ +12dB</div>
+      </div>
+      <div class="flex-fill text-center">
+        <label class="small d-block mb-2 fw-medium text-muted">Médiums</label>
+        <input type="range" id="eqMid" min="-12" max="12" step="0.1" value="0" class="form-range" />
+        <div class="mt-1 small text-muted">-12dB ↔ +12dB</div>
+      </div>
+      <div class="flex-fill text-center">
+        <label class="small d-block mb-2 fw-medium text-muted">Aigus</label>
+        <input type="range" id="eqHigh" min="-12" max="12" step="0.1" value="0" class="form-range" />
+        <div class="mt-1 small text-muted">-12dB ↔ +12dB</div>
       </div>
     </div>
-    
-    <!-- Balance - HORIZONTALE -->
-    <div class="col-md-3">
-  <div class="border rounded p-3 bg-light h-100">
+  </div>
+</div>
+
+<!-- Spectre + Spectrogramme -->
+<div class="position-relative mb-3">
+  <canvas id="spectrumCanvas" class="visualization-canvas spectrum mb-2" 
+          style="height: 180px; background: white !important;"></canvas>
+</div>
+
+<div class="position-relative mb-3">
+  <canvas id="spectrogramCanvas" class="visualization-canvas" style="height: 180px; background: black; display: block;"></canvas>
+  <div style="position: absolute; inset: 0; pointer-events: none;">
+    <div style="position: absolute; left: 8px; top: 0; bottom: 0; width: 50px; font-size: 11px; color: rgba(255,255,255,0.85); text-shadow: 0 0 4px black; display: flex; flex-direction: column; justify-content: space-between; padding: 4px 0;">
+      <span>20 kHz</span>
+      <span>10 k</span>
+      <span>5 k</span>
+      <span>2 k</span>
+      <span>500</span>
+      <span>20 Hz</span>
+    </div>
+    <div style="position: absolute; bottom: -24px; left: 0; right: 0; text-align: center; font-size: 11px; color: rgba(255,255,255,0.7);">
+      <span style="position: absolute; left: 0%;">0s</span>
+      <span style="position: absolute; left: 25%;">15s</span>
+      <span style="position: absolute; left: 50%;">30s</span>
+      <span style="position: absolute; left: 75%;">45s</span>
+      <span style="position: absolute; right: 0%;">1:00</span>
+    </div>
+  </div>
+</div>
+
+<!-- Balance stéréo (plein largeur, au-dessus des VU-mètres) -->
+<div class="col-12 mb-3">
+  <div class="border rounded p-3 bg-light">
     <label class="mb-3 fw-semibold text-dark d-block">Balance stéréo</label>
-    
-    <!-- Icônes en haut -->
+
     <div class="d-flex justify-content-between align-items-center small text-muted mb-3">
       <span class="d-flex flex-column align-items-center">
         <i class="bi bi-speaker fs-5 text-primary"></i>
@@ -117,88 +158,51 @@
         <span class="mt-1">Droite</span>
       </span>
     </div>
-    
-    <!-- Slider en dessous -->
-    <input type="range" id="balanceControl" min="-1" max="1" step="0.01" value="0" 
-           class="form-range w-100" />
+
+    <input type="range" id="balanceControl" min="-1" max="1" step="0.01" value="0" class="form-range w-100" />
   </div>
 </div>
-    </div>
-  </div>
 
-  <!-- Spectre + Spectrogramme (identique) -->
-  <div class="position-relative">
-    <canvas id="spectrumCanvas" class="visualization-canvas spectrum mb-2" 
-            style="height: 180px; background: white !important;"></canvas>
-  </div>
-  
-  <!-- Spectrogramme avec labels (identique) -->
-  <div class="position-relative">
-    <canvas id="spectrogramCanvas" class="visualization-canvas" style="height: 180px; background: black; display: block;"></canvas>
-    <div style="position: absolute; inset: 0; pointer-events: none;">
-      <div style="position: absolute; left: 8px; top: 0; bottom: 0; width: 50px; font-size: 11px; color: rgba(255,255,255,0.85); text-shadow: 0 0 4px black; display: flex; flex-direction: column; justify-content: space-between; padding: 4px 0;">
-        <span>20 kHz</span>
-        <span>10 k</span>
-        <span>5 k</span>
-        <span>2 k</span>
-        <span>500</span>
-        <span>20 Hz</span>
-      </div>
-      <div style="position: absolute; bottom: -24px; left: 0; right: 0; text-align: center; font-size: 11px; color: rgba(255,255,255,0.7);">
-        <span style="position: absolute; left: 0%;">0s</span>
-        <span style="position: absolute; left: 25%;">15s</span>
-        <span style="position: absolute; left: 50%;">30s</span>
-        <span style="position: absolute; left: 75%;">45s</span>
-        <span style="position: absolute; right: 0%;">1:00</span>
-      </div>
-    </div>
-  </div>
-
-
-      <!-- VU-mètres et formes d'onde (identique - déplacé après les contrôles) -->
-      <div class="visualizations mt-3">
-        <div class="row g-2">
-          <div class="col-md-6">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">VU-mètres</h5>
-                <div class="d-flex flex-row gap-2">
-                  <div class="vu-meter-container">
-                    <label>Gauche</label>
-                    <canvas id="vuMeterLeftCanvas" class="visualization-canvas"></canvas>
-                  </div>
-                  <div class="vu-meter-container">
-                    <label>Droite</label>
-                    <canvas id="vuMeterRightCanvas" class="visualization-canvas"></canvas>
-                  </div>
-                </div>
-              </div>
+<!-- VU-mètres et formes d'onde (inchangé) -->
+<div class="visualizations mt-3">
+  <div class="row g-2">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">VU-mètres</h5>
+          <div class="d-flex flex-row gap-2">
+            <div class="vu-meter-container">
+              <label>Gauche</label>
+              <canvas id="vuMeterLeftCanvas" class="visualization-canvas"></canvas>
             </div>
-          </div>
-          <div class="col-md-6">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">Formes d'onde</h5>
-                <div class="d-flex flex-row gap-2">
-                  <div class="waveform-container">
-                    <label>Gauche</label>
-                    <canvas id="waveformLeftCanvas" class="visualization-canvas"></canvas>
-                  </div>
-                  <div class="waveform-container">
-                    <label>Droite</label>
-                    <canvas id="waveformRightCanvas" class="visualization-canvas"></canvas>
-                  </div>
-                </div>
-              </div>
+            <div class="vu-meter-container">
+              <label>Droite</label>
+              <canvas id="vuMeterRightCanvas" class="visualization-canvas"></canvas>
             </div>
           </div>
         </div>
       </div>
-
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Formes d'onde</h5>
+          <div class="d-flex flex-row gap-2">
+            <div class="waveform-container">
+              <label>Gauche</label>
+              <canvas id="waveformLeftCanvas" class="visualization-canvas"></canvas>
+            </div>
+            <div class="waveform-container">
+              <label>Droite</label>
+              <canvas id="waveformRightCanvas" class="visualization-canvas"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
-</div>
+
 
   <!-- Boutons de navigation -->
   <div class="col-md-8 mb-4 w-100">

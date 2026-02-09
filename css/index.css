@@ -671,37 +671,6 @@ header p {
     }
 }
 
-/* ========================= */
-/* LECTEUR PLYR - VIDÉOS ENTIERES */
-/* ========================= */
-
-/* Conteneur vidéo : s’adapte au ratio réel */
-.plyr__video-wrapper--fixed-ratio {
-  aspect-ratio: auto !important; /* plus de ratio fixe */
-  height: auto !important;
-  overflow: visible !important;
-}
-
-/* Vidéo : toujours visible en entier */
-.plyr video {
-  width: 100% !important;
-  height: auto !important;        /* conserve le ratio réel */
-  object-fit: contain !important; /* aucun rognage, bandes noires si nécessaire */
-}
-
-/* Plein écran : adapter la vidéo à l’écran sans la rogner */
-.plyr.plyr--fullscreen video {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: contain !important;
-}
-
-/* Optionnel : pour que le lecteur lui-même s’adapte */
-.plyr.plyr--fullscreen .plyr__video-wrapper {
-  width: 100% !important;
-  height: 100% !important;
-}
-
 
 
 

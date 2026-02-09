@@ -401,11 +401,6 @@ header p {
 .time-labels{bottom:-20px;left:0;width:100%;text-align:center;}
 #spectrumCanvas~div,#spectrogramCanvas~div{pointer-events:none;}
 
-/* ========================= */
-/* AUDIO PLAYER - PLYR        */
-/* ========================= */
-.plyr--audio{height:56px!important;}
-.plyr--audio .plyr__video-wrapper,.plyr--audio video{height:56px!important;background:transparent!important;border-radius:var(--border-radius);}
 
 /* CONTROLES TOUJOURS VISIBLES + jamais de fade-out */
 .plyr--audio .plyr__controls{
@@ -433,20 +428,21 @@ header p {
 .plyr__controls,.plyr{transition:none;}   /* plus aucune transition */
 
 /* MOBILE OPTIMIZATIONS */
-@media(max-width:768px){
-  .plyr--audio{height:52px!important;}
-  .plyr--audio .plyr__video-wrapper,.plyr--audio video{height:52px!important;}
-  .plyr--audio .plyr__controls{
-    height:52px!important;
-    padding:0 8px!important;
-    opacity:1!important;
-    transform:translateY(0)!important;
+@media (max-width: 768px) {
+  #plyr-container {
+    transform: none !important;
+    margin-bottom: 0 !important;
+  }
+
+  .plyr--audio,
+  .plyr--audio .plyr__video-wrapper,
+  .plyr--audio video,
+  .plyr--audio .plyr__controls {
+    height: auto !important;
+    min-height: 56px !important;
   }
 }
-@media(max-width:380px){
-  .plyr--audio .plyr__video-wrapper,.plyr--audio video{height:48px!important;}
-  .plyr--audio .plyr__controls{padding:4px 6px!important;}
-}
+
 
 /* Cadres colorés harmonisés selon ton thème */
 .card.bg-secondary-light {
@@ -653,27 +649,8 @@ header p {
   }
 }
 
-/* ========================= */
-/* CORRECTION PLYR MOBILE RADICALE */
-/* ========================= */
 
-@media (max-width: 768px) {
-  #plyr-container {
-    transform: scale(0.9);
-    transform-origin: top center;
-    margin-bottom: -10px;
-  }
-  
-  .plyr--audio .plyr__controls {
-    padding: 4px 8px !important;
-    gap: 2px !important;
-  }
-  
-  /* Cache certains éléments moins importants sur mobile */
-  .plyr__time + .plyr__time {
-    display: none !important;
-  }
-}
+
 
 /* ========================= */
 /* FIN DU CSS                */

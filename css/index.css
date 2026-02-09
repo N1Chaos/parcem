@@ -702,15 +702,6 @@ header p {
   height: 100% !important;
 }
 
-@media (max-width: 768px) {
-  .plyr video {
-    max-height: 100vh;       /* limite la hauteur à la fenêtre */
-    width: auto !important;  /* largeur automatique selon ratio */
-    object-fit: contain;     /* toujours visible entièrement */
-    display: block;
-    margin: 0 auto;          /* centré horizontalement */
-  }
-}
 
 
 

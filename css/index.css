@@ -649,7 +649,27 @@ header p {
   }
 }
 
+/* Ajuste le lecteur Plyr sur mobile */
+@media (max-width: 768px) {
+    /* Conteneur principal Plyr */
+    #plyr-container {
+        transform: none !important;
+        margin-bottom: 0 !important;
+    }
 
+    /* Conteneur de la vidéo/audio */
+    #plyr-container .plyr__video-wrapper--fixed-ratio {
+        aspect-ratio: 16 / 9 !important; /* ratio plus standard */
+        height: auto !important;         /* ajuste la hauteur automatiquement */
+        overflow: visible !important;    /* pour ne rien couper */
+    }
+
+    /* Optionnel : ajuster la vidéo à 100% du conteneur */
+    #plyr-container video {
+        width: 100% !important;
+        height: auto !important;
+    }
+}
 
 
 /* ========================= */

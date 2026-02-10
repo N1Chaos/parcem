@@ -1028,6 +1028,8 @@ ${content}
   link.click();
 }
 
+window.exportToWord = exportToWord;
+
   // ==================== INITIALISATION ====================
   document.addEventListener("DOMContentLoaded", () => {
     Object.keys(PAGES).forEach(displayWordsForPage);

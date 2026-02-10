@@ -1816,18 +1816,37 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// ==================== BROUILLON COMMENTAIRE : TOUJOURS PRÉSENT MÊME APRÈS GÉNÉRATION ====================
+// ==================== BROUILLON COMMENTAIRE : ÉDITEUR AVEC BOUTONS ====================
 document.addEventListener("DOMContentLoaded", () => {
   const editor = document.getElementById('commentEditor');
-  if (!editor) return;
+  const toolbar = document.getElementById('commentToolbar');
+  if (!editor || !toolbar) return;
 
-  // 1. Restaurer le brouillon au chargement de la page principale
+  // === Fonction centralisée pour appliquer le formatage ===
+  function formatText(command) {
+    editor.focus();
+    // execCommand fonctionne encore pour les formats simples
+    document.execCommand(command, false, null);
+  }
+
+  // === Associer chaque bouton à sa commande ===
+  toolbar.querySelectorAll('button').forEach(btn => {
+    const command = btn.getAttribute('data-command');
+    if (!command) return;
+
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      formatText(command);
+    });
+  });
+
+  // === Restaurer le brouillon sauvegardé au chargement ===
   const saved = localStorage.getItem('commentDraft');
   if (saved && saved.trim() !== '' && saved !== '<br>') {
     editor.innerHTML = saved;
   }
 
-  // 2. Sauvegarde automatique à chaque frappe (débounce 500 ms)
+  // === Sauvegarde automatique avec debounce (500ms) ===
   let timeout;
   editor.addEventListener('input', () => {
     clearTimeout(timeout);
@@ -1841,12 +1860,25 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 500);
   });
 
-  // 3. IMPORTANT : on NE VIDE RIEN quand on génère ou exporte
-  const keepComment = () => {
-    // Ne fait absolument rien → le texte reste
-    console.log('Fichier généré/exporté → commentaire conservé dans l’éditeur et dans localStorage');
-  };
+  // === Préserver le texte lors de la génération/export ===
+  function keepComment() {
+    console.log('Commentaire conservé dans l’éditeur et dans localStorage');
+  }
 
   document.getElementById('generateTextButton')?.addEventListener('click', keepComment);
   document.querySelector('button[onclick="exportToWord()"]')?.addEventListener('click', keepComment);
+
+  // === Raccourcis clavier : Ctrl+B / Ctrl+I ===
+  editor.addEventListener('keydown', (e) => {
+    if (e.ctrlKey || e.metaKey) {
+      if (e.key.toLowerCase() === 'b') {
+        e.preventDefault();
+        formatText('bold');
+      }
+      if (e.key.toLowerCase() === 'i') {
+        e.preventDefault();
+        formatText('italic');
+      }
+    }
+  });
 });

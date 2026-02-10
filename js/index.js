@@ -1825,8 +1825,22 @@ document.addEventListener("DOMContentLoaded", () => {
   // === Fonction centralisée pour appliquer le formatage ===
   function formatText(command) {
     editor.focus();
-    // execCommand fonctionne encore pour les formats simples
     document.execCommand(command, false, null);
+    updateToolbarState();
+  }
+
+  // === Mettre à jour l'état visuel des boutons selon la sélection ===
+  function updateToolbarState() {
+    toolbar.querySelectorAll('button').forEach(btn => {
+      const command = btn.getAttribute('data-command');
+      if (!command) return;
+
+      if (document.queryCommandState(command)) {
+        btn.classList.add('active'); // bouton activé → couleur/bouton enfoncé
+      } else {
+        btn.classList.remove('active');
+      }
+    });
   }
 
   // === Associer chaque bouton à sa commande ===
@@ -1858,13 +1872,13 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.removeItem('commentDraft');
       }
     }, 500);
+    updateToolbarState();
   });
 
   // === Préserver le texte lors de la génération/export ===
   function keepComment() {
     console.log('Commentaire conservé dans l’éditeur et dans localStorage');
   }
-
   document.getElementById('generateTextButton')?.addEventListener('click', keepComment);
   document.querySelector('button[onclick="exportToWord()"]')?.addEventListener('click', keepComment);
 
@@ -1881,4 +1895,9 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   });
+
+  // === Mettre à jour l'état des boutons lors du déplacement de la sélection ===
+  editor.addEventListener('keyup', updateToolbarState);
+  editor.addEventListener('mouseup', updateToolbarState);
 });
+

@@ -751,6 +751,15 @@ header p {
   }
 }
 
+#commentToolbar button.active {
+  background-color: #0d6efd; /* bleu bootstrap */
+  color: white;
+}
+#commentToolbar button {
+  transition: background-color 0.2s;
+}
+
+
 
 
 /* ========================= */

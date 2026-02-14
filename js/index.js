@@ -1930,3 +1930,74 @@ document.addEventListener("DOMContentLoaded", () => {
   editor.addEventListener('mouseup', updateToolbarState);
 });
 
+/* ========================= */
+/* AUTOÉVALUATION – GRILLE   */
+/* ========================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+  const table = document.querySelector(".autoeval-table"); // le tableau
+  const autoNoteSpan = document.getElementById("autoNote"); // badge note
+  const resetBtn = document.getElementById("resetAutoEval"); // bouton réinitialiser
+  const toggleBtn = document.getElementById("toggleAutoEval"); // bouton afficher/masquer
+  const container = document.getElementById("autoEvalContainer"); // conteneur caché
+
+  if (!table || !autoNoteSpan || !resetBtn || !toggleBtn || !container) return;
+
+  // =========================
+  // Sélection des cellules
+  // =========================
+  table.querySelectorAll("tbody tr").forEach(row => {
+    const cells = row.querySelectorAll(".eval-cell");
+
+    cells.forEach((cell, index) => {
+      cell.addEventListener("click", () => {
+        cells.forEach(c => c.classList.remove("active"));
+        cell.classList.add("active");
+        cell.dataset.value = index + 1;
+        calculateAutoEvaluation();
+      });
+    });
+  });
+
+  // =========================
+  // Calcul automatique de la note
+  // =========================
+  function calculateAutoEvaluation() {
+    let total = 0;
+    let count = 0;
+
+    table.querySelectorAll(".eval-cell.active").forEach(cell => {
+      total += Number(cell.dataset.value);
+      count++;
+    });
+
+    const noteSur20 = count
+      ? Math.round((total / (count * 4)) * 20)
+      : 0;
+
+    autoNoteSpan.textContent = `${noteSur20} / 20`;
+  }
+
+  // =========================
+  // Bouton Réinitialiser
+  // =========================
+  resetBtn.addEventListener("click", () => {
+    table.querySelectorAll(".eval-cell").forEach(cell => {
+      cell.classList.remove("active");
+      delete cell.dataset.value;
+    });
+    autoNoteSpan.textContent = "0 / 20";
+  });
+
+  // =========================
+  // Bouton Afficher / Masquer
+  // =========================
+  toggleBtn.addEventListener("click", () => {
+    if (container.style.display === "none" || container.style.display === "") {
+      container.style.display = "block";
+      container.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else {
+      container.style.display = "none";
+    }
+  });
+});

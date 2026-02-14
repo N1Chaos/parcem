@@ -908,6 +908,30 @@ h1:hover {
   border-color: var(--button-color);
 }
 
+/* Onglets boîte à outils rédaction */
+.writing-tabs {
+  display: flex;
+  flex-wrap: wrap;             /* Permet aux onglets de passer à la ligne sur mobile */
+  justify-content: space-between; /* Les onglets se répartissent sur toute la largeur */
+  gap: 4px;                    /* Petit espace entre les onglets */
+}
+
+/* Chaque bouton prend le même espace sur grand écran */
+.writing-tabs .nav-item {
+  flex: 1 1 auto;
+  text-align: center;
+}
+
+/* Sur mobile, les onglets peuvent wrap pour éviter de déborder */
+@media (max-width: 767px) {
+  .writing-tabs {
+    justify-content: center;    /* Centrer les onglets */
+  }
+  .writing-tabs .nav-item {
+    flex: 1 1 45%;              /* Deux onglets par ligne si nécessaire */
+    margin-bottom: 4px;
+  }
+}
 
 
 /* ========================= */

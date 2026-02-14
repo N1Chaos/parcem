@@ -1995,7 +1995,7 @@ document.addEventListener("DOMContentLoaded", () => {
   toggleBtn.addEventListener("click", () => {
     if (container.style.display === "none" || container.style.display === "") {
       container.style.display = "block";
-      container.scrollIntoView({ behavior: "smooth", block: "start" });
+      //container.scrollIntoView({ behavior: "smooth", block: "start" });
     } else {
       container.style.display = "none";
     }

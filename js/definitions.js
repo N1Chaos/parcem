@@ -782,7 +782,7 @@ window.wordDefinitions =
           "definition": "Groupe de langues non indo-européennes d'Europe du Nord et de l'Oural, comprenant le finnois, l'estonien et le hongrois."
         },
         "langues celtiques": {
-          "definition": "Anciennes langues indo-européennes parlées historiquement en Europe de l'Ouest, dont le breton, le gaélique irlandais et le gallois."
+          "definition": "Langues indo-européennes historiquement parlées en Europe de l’Ouest, comme le breton, le gaélique, l’irlandais et le gallois."
         },
         "basque": {
           "definition": "Langue isolée, sans lien connu avec d'autres familles, parlée au Pays basque entre la France et l'Espagne."

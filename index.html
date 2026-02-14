@@ -380,10 +380,163 @@
   </button>
 </div>
 
+
+
 <div id="commentEditor" contenteditable="true" 
      class="form-control" 
      style="min-height: 200px; padding: 15px; font-family: 'Georgia', serif; font-size: 1.1rem; line-height: 1.6; overflow-y: auto; border-radius: 8px;"
      placeholder="Écrivez votre commentaire (Ctrl+B = gras, Ctrl+I = italique)"></div>
+
+
+<!-- Titre -->
+<h5 class="mt-3 mb-1 text-primary">
+  <i class="bi bi-tools"></i> Boîte à outils pour rédiger
+</h5>
+
+<!-- Astuce -->
+<p class="small text-muted mb-2">
+  💡 Astuce : cliquez sur chaque bouton pour voir des phrases et connecteurs utiles. Utilisez-les pour construire votre commentaire étape par étape.
+</p>
+
+<!-- Onglets -->
+<div class="mb-3">
+  <ul class="nav nav-tabs" id="writingHelpTabs" role="tablist">
+    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#start">Commencer</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#add">Ajouter</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#similar">Relier</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#example">Exemple</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#oppose">Opposer</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#cause">Cause</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#consequence">Conséquence</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#compare">Comparer</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#goal">But</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#steps">Étapes</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#rephrase">Reformuler</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#conclude">Conclure</button></li>
+  </ul>
+
+  <div class="tab-content p-3 border border-top-0 rounded-bottom bg-light">
+    <div class="tab-pane fade show active" id="start">
+      <ul>
+        <li>Tout d’abord…</li>
+        <li>Pour commencer…</li>
+        <li>En premier lieu…</li>
+        <li>D’abord…</li>
+        <li>Avant tout…</li>
+      </ul>
+    </div>
+
+    <div class="tab-pane fade" id="add">
+      <ul>
+        <li>De plus…</li>
+        <li>En plus…</li>
+        <li>Par ailleurs…</li>
+        <li>Aussi…</li>
+        <li>Ensuite…</li>
+      </ul>
+    </div>
+
+    <div class="tab-pane fade" id="similar">
+      <ul>
+        <li>De la même façon…</li>
+        <li>De même que…</li>
+        <li>Comme…</li>
+        <li>Tout comme…</li>
+        <li>Dans le même sens…</li>
+      </ul>
+    </div>
+
+    <div class="tab-pane fade" id="example">
+      <ul>
+        <li>Par exemple…</li>
+        <li>Ainsi…</li>
+        <li>C’est le cas de…</li>
+        <li>Comme le montre…</li>
+        <li>On peut citer…</li>
+      </ul>
+    </div>
+
+    <div class="tab-pane fade" id="oppose">
+      <ul>
+        <li>Mais…</li>
+        <li>Cependant…</li>
+        <li>Pourtant…</li>
+        <li>En revanche…</li>
+        <li>Au contraire…</li>
+      </ul>
+    </div>
+
+    <div class="tab-pane fade" id="cause">
+      <ul>
+        <li>Parce que…</li>
+        <li>Car…</li>
+        <li>En effet…</li>
+        <li>Puisque…</li>
+        <li>Grâce à…</li>
+      </ul>
+    </div>
+
+    <div class="tab-pane fade" id="consequence">
+      <ul>
+        <li>Donc…</li>
+        <li>Ainsi…</li>
+        <li>C’est pourquoi…</li>
+        <li>Par conséquent…</li>
+        <li>Alors…</li>
+      </ul>
+    </div>
+
+    <div class="tab-pane fade" id="compare">
+      <ul>
+        <li>Comme…</li>
+        <li>De la même manière que…</li>
+        <li>Plus que…</li>
+        <li>Moins que…</li>
+        <li>Autant que…</li>
+      </ul>
+    </div>
+
+    <div class="tab-pane fade" id="goal">
+      <ul>
+        <li>Pour…</li>
+        <li>Afin de…</li>
+        <li>Dans le but de…</li>
+        <li>De façon à…</li>
+        <li>Pour que…</li>
+      </ul>
+    </div>
+
+    <div class="tab-pane fade" id="steps">
+      <ul>
+        <li>Premièrement…</li>
+        <li>Deuxièmement…</li>
+        <li>Troisièmement…</li>
+        <li>Ensuite…</li>
+        <li>Puis…</li>
+      </ul>
+    </div>
+
+    <div class="tab-pane fade" id="rephrase">
+      <ul>
+        <li>Autrement dit…</li>
+        <li>En d’autres termes…</li>
+        <li>C’est-à-dire…</li>
+        <li>Pour le dire autrement…</li>
+        <li>En résumé…</li>
+      </ul>
+    </div>
+
+    <div class="tab-pane fade" id="conclude">
+      <ul>
+        <li>Pour conclure…</li>
+        <li>En conclusion…</li>
+        <li>En résumé…</li>
+        <li>Pour finir…</li>
+        <li>Finalement…</li>
+      </ul>
+    </div>
+  </div>
+</div>
 
 
       <!-- === Boutons d'export === -->

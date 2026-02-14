@@ -805,6 +805,75 @@ h1:hover {
 }
 
 
+/* ========================= */
+/* BOÎTE À OUTILS ÉCRITURE   */
+/* ========================= */
+#writingHelpTabs {
+  border: 2px solid var(--highlight-color);
+  border-radius: var(--border-radius);
+  background-color: #f1f3f5; /* léger gris doux */
+  padding: 12px;
+  margin-bottom: 20px;
+}
+
+/* Onglets */
+#writingHelpTabs .nav-link {
+  font-weight: 600;
+  color: var(--button-color);
+  border-radius: var(--border-radius)  /* arrondi en haut */
+                 var(--border-radius) 0 0 0;
+  margin-right: 4px;
+  transition: background 0.2s, color 0.2s;
+}
+
+#writingHelpTabs .nav-link.active {
+  background-color: var(--button-color);
+  color: white;
+}
+
+#writingHelpTabs .nav-link:hover:not(.active) {
+  background-color: var(--highlight-color);
+  color: white;
+}
+
+/* Contenu des onglets */
+#writingHelpTabs .tab-content {
+  padding: 15px;
+  background-color: #fff;
+  border-top: 2px solid var(--highlight-color);
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
+}
+
+/* Listes des phrases */
+#writingHelpTabs ul {
+  padding-left: 20px;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+/* Effet sur les items au survol */
+#writingHelpTabs li:hover {
+  background-color: #e0f2ff; /* léger bleu */
+  cursor: default;
+  border-radius: 4px;
+  padding-left: 4px;
+}
+
+/* Titres internes des sections */
+#writingHelpTabs h4 {
+  font-family: var(--heading-font);
+  font-weight: 600;
+  color: var(--button-color);
+  margin-top: 10px;
+  margin-bottom: 6px;
+}
+
+/* Éventuelle icône ou couleur différente par onglet (optionnel) */
+#writingHelpTabs .start-tab { color: #28a745; }    /* vert */
+#writingHelpTabs .add-tab { color: #0dcaf0; }      /* bleu clair */
+#writingHelpTabs .example-tab { color: #ffc107; }  /* jaune */
+#writingHelpTabs .oppose-tab { color: #fd7e14; }   /* orange */
+#writingHelpTabs .conclude-tab { color: #6f42c1; } /* violet */
 
 
 

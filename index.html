@@ -306,19 +306,113 @@
     </div>
   </div>
 
-  <!-- Boutons Carte/Frise -->
-  <div class="row mb-4">
-    <div class="col-12 text-center p-2 d-flex justify-content-center gap-3">
-      <!-- Bouton Carte du monde avec modale -->
-      <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#carteMondeModal">
-        <i class="bi bi-globe"></i> Carte du monde
-      </button>
-      <!-- Bouton Frise chronologique avec modale -->
-      <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#friseChronoModal">
-        <i class="bi bi-calendar-range"></i> Frise chronologique
-      </button>
+<!-- ===================== -->
+<!--  SITUER LA MUSIQUE    -->
+<!-- ===================== -->
+<div class="col-12 mb-4">
+  <div class="card border-primary shadow-sm">
+    <div class="card-body text-center">
+
+      <h5 class="card-title mb-2">
+        <i class="bi bi-geo-alt-fill text-primary"></i>
+        Situer la musique dans l’espace et dans le temps
+      </h5>
+
+      <p class="small text-muted mb-3">
+        Utilise la carte du monde et la frise chronologique pour situer l’œuvre écoutée.
+      </p>
+
+      <!-- Boutons Carte / Frise (même ligne) -->
+      <div class="d-flex justify-content-center gap-3 mb-3">
+        <button type="button"
+                class="btn btn-outline-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#carteMondeModal"
+                style="white-space: nowrap;">
+          <i class="bi bi-globe"></i> Carte du monde
+        </button>
+
+        <button type="button"
+                class="btn btn-outline-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#friseChronoModal"
+                style="white-space: nowrap;">
+          <i class="bi bi-calendar-range"></i> Frise chronologique
+        </button>
+      </div>
+
+      <!-- Bouton aide géographique et musicale amélioré -->
+<button id="geoMusicHelpBtn"
+        data-bs-toggle="collapse"
+        data-bs-target="#repèresMusicaux"
+        aria-expanded="false">
+  🧭 Aide géographique et musicale
+</button>
+
+
+      <!-- Aide géographique et musicale -->
+      <div id="repèresMusicaux" class="collapse mt-3 text-start">
+        <div class="alert alert-light mb-0">
+
+          <p class="fw-semibold mb-2">
+            Repères pour t’aider à situer la musique :
+          </p>
+
+          <ul class="small mb-2">
+            <li>
+              <strong>Afrique de l’Ouest</strong> : polyrythmie, percussions (djembé, dundun), chants collectifs, musique liée aux cérémonies et danses traditionnelles.
+            </li>
+
+            <li>
+              <strong>Afrique centrale</strong> : polyphonie vocale, percussions et instruments à cordes (balafon, kora), musiques de fête et rites sociaux.
+            </li>
+
+            <li>
+              <strong>Maghreb et Moyen-Orient</strong> : musique modale (maqam), chant ornementé, musique arabo-andalouse, instruments : oud, qanun, darbouka, ney ; improvisation rythmique et mélodique.
+            </li>
+
+            <li>
+              <strong>Europe occidentale</strong> : musique écrite, harmonie tonale, orchestre, formes savantes (symphonie, sonate), musique vocale sacrée et profane.
+            </li>
+
+            <li>
+              <strong>Europe de l’Est / Balkans</strong> : rythmes irréguliers (5/8, 7/8…), polyphonie vocale, musiques populaires et danses.
+            </li>
+
+            <li>
+              <strong>Asie du Sud (Inde)</strong> : musique modale (raga), cycles rythmiques (tala), improvisation ; instruments : sitar, tabla, bansuri.
+            </li>
+
+            <li>
+              <strong>Asie de l’Est (Chine, Japon)</strong> : timbres spécifiques, échelles pentatoniques, musique liée aux rituels et saisons ; instruments : guqin, shakuhachi, koto.
+            </li>
+
+            <li>
+              <strong>Amérique du Nord</strong> : jazz, blues, rock, folk, musique populaire.
+            </li>
+
+            <li>
+              <strong>Amérique centrale / Caraïbes</strong> : salsa, merengue, cumbia, rythmes afro-caribéens ; instruments : congas, bongos, trompette, maracas.
+            </li>
+
+            <li>
+              <strong>Amérique du Sud</strong> : samba, bossa nova, tango, musiques traditionnelles andines ; instruments : guitare, charango, flûte de pan, bandonéon.
+            </li>
+          </ul>
+
+          <p class="small fst-italic text-muted mb-0">
+            ⚠️ Ces repères sont indicatifs : une musique peut circuler entre plusieurs régions et évoluer dans le temps.
+          </p>
+
+        </div>
+      </div>
+
     </div>
   </div>
+</div>
+
+
+
 
   <!-- Modale pour la carte du monde -->
   <div class="modal fade" id="carteMondeModal" tabindex="-1" aria-labelledby="carteMondeModalLabel" aria-hidden="true">
@@ -395,7 +489,7 @@
 
 <!-- Astuce -->
 <p class="small text-muted mb-2">
-  💡 Astuce : cliquez sur chaque bouton pour voir des phrases et connecteurs utiles. Utilisez-les pour construire votre commentaire étape par étape.
+  💡 Astuce : cliquez sur chaque bouton pour voir des connecteurs utiles. Utilisez-les pour construire votre commentaire étape par étape.
 </p>
 
 <!-- Onglets -->

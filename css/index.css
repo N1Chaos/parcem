@@ -875,6 +875,39 @@ h1:hover {
 #writingHelpTabs .oppose-tab { color: #fd7e14; }   /* orange */
 #writingHelpTabs .conclude-tab { color: #6f42c1; } /* violet */
 
+/* Bouton Aide géographique et musicale */
+#geoMusicHelpBtn {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--button-color);
+  background-color: #f1f3f5;
+  border: 2px solid var(--button-color);
+  border-radius: var(--border-radius);
+  padding: 8px 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 240px; /* assez large pour texte + icône */
+}
+
+/* Hover */
+#geoMusicHelpBtn:hover {
+  background-color: var(--highlight-color);
+  color: white;
+  border-color: var(--highlight-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(33,150,243,0.3);
+}
+
+/* Actif (ou lorsqu’il ouvre la collapse) */
+#geoMusicHelpBtn[aria-expanded="true"] {
+  background-color: var(--button-color);
+  color: white;
+  border-color: var(--button-color);
+}
+
 
 
 /* ========================= */

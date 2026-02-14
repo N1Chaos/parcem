@@ -1963,20 +1963,23 @@ document.addEventListener("DOMContentLoaded", () => {
   // Calcul automatique de la note
   // =========================
   function calculateAutoEvaluation() {
-    let total = 0;
-    let count = 0;
+  let total = 0;
+  const rows = table.querySelectorAll("tbody tr");
+  const maxPerRow = 4;
 
-    table.querySelectorAll(".eval-cell.active").forEach(cell => {
-      total += Number(cell.dataset.value);
-      count++;
-    });
+  rows.forEach(row => {
+    const activeCell = row.querySelector(".eval-cell.active");
+    if (activeCell) {
+      total += Number(activeCell.dataset.value);
+    }
+  });
 
-    const noteSur20 = count
-      ? Math.round((total / (count * 4)) * 20)
-      : 0;
+  const maxTotal = rows.length * maxPerRow;
+  const noteSur20 = maxTotal ? Math.round((total / maxTotal) * 20) : 0;
 
-    autoNoteSpan.textContent = `${noteSur20} / 20`;
-  }
+  autoNoteSpan.textContent = `${noteSur20} / 20`;
+}
+
 
   // =========================
   // Bouton Réinitialiser

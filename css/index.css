@@ -1004,6 +1004,28 @@ h1:hover {
   }
 }
 
+/* Titre cliquable – boîte à outils */
+.writing-toolbox-toggle {
+  padding: 10px 12px;
+  border-radius: 10px;
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease;
+}
+
+.writing-toolbox-toggle:hover {
+  background-color: #e7f1ff; /* bleu clair plus visible */
+  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+  transform: translateY(-1px);
+  color: #0d6efd;
+}
+
+.writing-toolbox-toggle:focus-visible {
+  outline: 3px solid #0d6efd;
+  outline-offset: 3px;
+}
+
 
 
 /* ========================= */

@@ -477,9 +477,21 @@
 
 
 <!-- Titre -->
-<h5 class="mt-3 mb-1 text-primary">
-  <i class="bi bi-tools"></i> Boîte à outils pour rédiger
+<h5 class="mt-3 mb-1 text-primary d-flex align-items-center gap-2 writing-toolbox-toggle"
+    role="button"
+    data-bs-toggle="collapse"
+    data-bs-target="#writingToolbox"
+    aria-expanded="false"
+    aria-controls="writingToolbox"
+    tabindex="0"
+    style="cursor: pointer;">
+  <i class="bi bi-tools"></i>
+  Boîte à outils pour rédiger
+  <i class="bi bi-chevron-down ms-auto"></i>
 </h5>
+
+<div id="writingToolbox" class="collapse">
+
 
 <!-- Astuce -->
 <p class="small text-muted mb-2">
@@ -625,6 +637,7 @@
       </ul>
     </div>
   </div>
+</div>
 </div>
 
 

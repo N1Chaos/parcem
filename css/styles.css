@@ -154,11 +154,15 @@ header p {
 
 /* Boutons */
 .btn {
-    font-size: var(--font-size);
-    padding: 0.5rem 1rem;
-    transition: background-color 0.3s ease, transform 0.2s ease-in-out, box-shadow 0.2s ease;
-    margin-bottom: 1rem;
-    border-radius: 5px;
+    border-radius: 50px; /* rend le bouton arrondi comme une capsule */
+    padding: 0.6rem 1.5rem; /* ajustement pour un meilleur look */
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(33, 150, 243, 0.4);
 }
 
 .btn-success {

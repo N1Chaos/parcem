@@ -1928,6 +1928,15 @@ document.addEventListener("DOMContentLoaded", () => {
   // === Mettre à jour l'état des boutons lors du déplacement de la sélection ===
   editor.addEventListener('keyup', updateToolbarState);
   editor.addEventListener('mouseup', updateToolbarState);
+
+  // === BOUTON POLICE DYS ===
+const dysButton = document.getElementById("toggleDysFont");
+if (dysButton) {
+  dysButton.addEventListener("click", () => {
+    editor.classList.toggle("dys-font");
+    dysButton.classList.toggle("active");
+  });
+}
 });
 
 /* ========================= */

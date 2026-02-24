@@ -28,97 +28,103 @@
     </div>
 
     <!-- Première rangée -->
-    <div class="row mb-4">
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Musique occidentale</h2>
-          <div>
-            <span class="selectable">musique du Moyen-Age</span>
-            <span class="selectable">musique de la Renaissance</span>
-            <span class="selectable">style baroque</span>
-            <span class="selectable">style classique</span>
-            <span class="selectable">style romantique</span>
-            <span class="selectable">musique moderne</span>
-            <span class="selectable">musique contemporaine</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Musiques traditionnelles</h2>
-          <div>
-            <span class="selectable">musique celtique</span>
-            <span class="selectable">flamenco</span>
-            <span class="selectable">fado</span>
-            <span class="selectable">gnawa</span>
-            <span class="selectable">blues traditionnel</span>
-            <span class="selectable">musique africaine</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Musiques populaires</h2>
-          <div>
-            <span class="selectable">pop</span>
-            <span class="selectable">rock</span>
-            <span class="selectable">rap</span>
-            <span class="selectable">r&b</span>
-            <span class="selectable">jazz</span>
-            <span class="selectable">soul</span>
-            <span class="selectable">funk</span>
-            <span class="selectable">disco</span>
-            <span class="selectable">electro</span>
-            <span class="selectable">techno</span>
-            <span class="selectable">punk</span>
-            <span class="selectable">metal</span>
-             <span class="selectable">reggae</span>
-            <span class="selectable">reggaeton</span>
-            <span class="selectable">ska</span>
-          </div>
-        </div>
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="occidentale" class="toggle-checkbox" checked>
+      <label for="occidentale" class="toggle-label">Musique occidentale</label>
+      <div class="toggle-content">
+        <span class="selectable">musique du Moyen-Age</span>
+        <span class="selectable">musique de la Renaissance</span>
+        <span class="selectable">style baroque</span>
+        <span class="selectable">style classique</span>
+        <span class="selectable">style romantique</span>
+        <span class="selectable">musique moderne</span>
+        <span class="selectable">musique contemporaine</span>
       </div>
     </div>
+  </div>
 
-    <!-- Deuxième rangée -->
-    <div class="row mb-4">
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Musiques du monde</h2>
-          <div>
-            <span class="selectable">samba</span>
-            <span class="selectable">raga</span>
-            <span class="selectable">musique arabo-andalouse</span>
-            <span class="selectable">chants pygmées</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Musiques spirituelles</h2>
-          <div>
-            <span class="selectable">chamanisme</span>
-            <span class="selectable">gospel</span>
-            <span class="selectable">qawwali</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Traditions</h2>
-          <div>
-            <span class="selectable">musique de tradition orale</span>
-            <span class="selectable">musique de tradition écrite</span>
-            <span class="selectable">musique populaire</span>
-            <span class="selectable">musique savante</span>
-          </div>
-        </div>
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="traditionnelles" class="toggle-checkbox" checked>
+      <label for="traditionnelles" class="toggle-label">Musiques traditionnelles</label>
+      <div class="toggle-content">
+        <span class="selectable">musique celtique</span>
+        <span class="selectable">flamenco</span>
+        <span class="selectable">fado</span>
+        <span class="selectable">gnawa</span>
+        <span class="selectable">blues traditionnel</span>
+        <span class="selectable">musique africaine</span>
       </div>
     </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="populaires" class="toggle-checkbox" checked>
+      <label for="populaires" class="toggle-label">Musiques populaires</label>
+      <div class="toggle-content">
+        <span class="selectable">pop</span>
+        <span class="selectable">rock</span>
+        <span class="selectable">rap</span>
+        <span class="selectable">r&b</span>
+        <span class="selectable">jazz</span>
+        <span class="selectable">soul</span>
+        <span class="selectable">funk</span>
+        <span class="selectable">disco</span>
+        <span class="selectable">electro</span>
+        <span class="selectable">techno</span>
+        <span class="selectable">punk</span>
+        <span class="selectable">metal</span>
+        <span class="selectable">reggae</span>
+        <span class="selectable">reggaeton</span>
+        <span class="selectable">ska</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Deuxième rangée -->
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="monde" class="toggle-checkbox">
+      <label for="monde" class="toggle-label">Musiques du monde</label>
+      <div class="toggle-content">
+        <span class="selectable">samba</span>
+        <span class="selectable">raga</span>
+        <span class="selectable">musique arabo-andalouse</span>
+        <span class="selectable">chants pygmées</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="spirituelles" class="toggle-checkbox">
+      <label for="spirituelles" class="toggle-label">Musiques spirituelles</label>
+      <div class="toggle-content">
+        <span class="selectable">chamanisme</span>
+        <span class="selectable">gospel</span>
+        <span class="selectable">qawwali</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="traditions" class="toggle-checkbox">
+      <label for="traditions" class="toggle-label">Traditions</label>
+      <div class="toggle-content">
+        <span class="selectable">musique de tradition orale</span>
+        <span class="selectable">musique de tradition écrite</span>
+        <span class="selectable">musique populaire</span>
+        <span class="selectable">musique savante</span>
+      </div>
+    </div>
+  </div>
+</div>
 
     <!-- Boutons -->
     <div class="row mb-5 g-3">

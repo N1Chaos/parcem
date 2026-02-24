@@ -21,91 +21,97 @@
     <h1 class="text-center">CLASSIFICATION DES LANGUES</h1>
 
 
-    <!-- Première rangée -->
-    <div class="row mb-4">
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Afrique</h2>
-          <div>
-            <span class="selectable">langues afro-asiatiques</span>
-            <span class="selectable">langues nigéro-congolaises</span>
-            <span class="selectable">langues khoïsan</span>
-            <span class="selectable">langues oubanguiennes</span>
-            <span class="selectable">langues mandé</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Asie</h2>
-          <div>
-            <span class="selectable">langues sino-tibétaines</span>
-            <span class="selectable">langue japonaise</span>
-            <span class="selectable">langue coréenne</span>
-            <span class="selectable">langues dravidiennes</span>
-            <span class="selectable">langues altaïques</span>
-            <span class="selectable">langues austroasiatiques</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Amériques</h2>
-          <div>
-            <span class="selectable">langues amérindiennes</span>
-            <span class="selectable">langues quechua</span>
-            <span class="selectable">langues mayas</span>
-            <span class="selectable">langues tupi-guarani</span>
-          </div>
-        </div>
+   <!-- Première rangée -->
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="afrique" class="toggle-checkbox" checked>
+      <label for="afrique" class="toggle-label">Afrique</label>
+      <div class="toggle-content">
+        <span class="selectable">langues afro-asiatiques</span>
+        <span class="selectable">langues nigéro-congolaises</span>
+        <span class="selectable">langues khoïsan</span>
+        <span class="selectable">langues oubanguiennes</span>
+        <span class="selectable">langues mandé</span>
       </div>
     </div>
+  </div>
 
-    <!-- Deuxième rangée -->
-    <div class="row mb-4">
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Europe</h2>
-          <div>
-            <span class="selectable">langues germaniques</span>
-            <span class="selectable">langues romanes</span>
-            <span class="selectable">langues slaves</span>
-            <span class="selectable">langues finno-ougriennes</span>
-            <span class="selectable">langues celtiques</span>
-            <span class="selectable">basque</span>
-            <span class="selectable">latin</span>
-            <span class="selectable">grec</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Océanie</h2>
-          <div>
-            <span class="selectable">langues austronésiennes</span>
-            <span class="selectable">langues aborigènes</span>
-            <span class="selectable">langues polynésiennes</span>
-            <span class="selectable">langues mélanésiennes</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Autres</h2>
-          <div>
-            <span class="selectable">langues créoles</span>
-            <span class="selectable">langues pidgin</span>
-            <span class="selectable">langues signées</span>
-            <span class="selectable">langues construites</span>
-            <span class="selectable">esperanto</span>
-          </div>
-        </div>
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="asie" class="toggle-checkbox" checked>
+      <label for="asie" class="toggle-label">Asie</label>
+      <div class="toggle-content">
+        <span class="selectable">langues sino-tibétaines</span>
+        <span class="selectable">langue japonaise</span>
+        <span class="selectable">langue coréenne</span>
+        <span class="selectable">langues dravidiennes</span>
+        <span class="selectable">langues altaïques</span>
+        <span class="selectable">langues austroasiatiques</span>
       </div>
     </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="ameriques" class="toggle-checkbox" checked>
+      <label for="ameriques" class="toggle-label">Amériques</label>
+      <div class="toggle-content">
+        <span class="selectable">langues amérindiennes</span>
+        <span class="selectable">langues quechua</span>
+        <span class="selectable">langues mayas</span>
+        <span class="selectable">langues tupi-guarani</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Deuxième rangée -->
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="europe" class="toggle-checkbox">
+      <label for="europe" class="toggle-label">Europe</label>
+      <div class="toggle-content">
+        <span class="selectable">langues germaniques</span>
+        <span class="selectable">langues romanes</span>
+        <span class="selectable">langues slaves</span>
+        <span class="selectable">langues finno-ougriennes</span>
+        <span class="selectable">langues celtiques</span>
+        <span class="selectable">basque</span>
+        <span class="selectable">latin</span>
+        <span class="selectable">grec</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="oceanie" class="toggle-checkbox">
+      <label for="oceanie" class="toggle-label">Océanie</label>
+      <div class="toggle-content">
+        <span class="selectable">langues austronésiennes</span>
+        <span class="selectable">langues aborigènes</span>
+        <span class="selectable">langues polynésiennes</span>
+        <span class="selectable">langues mélanésiennes</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="autres" class="toggle-checkbox">
+      <label for="autres" class="toggle-label">Autres</label>
+      <div class="toggle-content">
+        <span class="selectable">langues créoles</span>
+        <span class="selectable">langues pidgin</span>
+        <span class="selectable">langues signées</span>
+        <span class="selectable">langues construites</span>
+        <span class="selectable">esperanto</span>
+      </div>
+    </div>
+  </div>
+</div>
 
     <!-- Boutons -->
        <div class="row mb-5 g-3">

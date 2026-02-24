@@ -25,112 +25,120 @@
       <img src="../images/nuage_voix.jpg" alt="nuage de mots" class="img-fluid rounded shadow">
     </div>
 
-    <!-- Catégories -->
-    <div class="row mb-4">
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Catégories</h2>
-          <div>
-            <span class="selectable">soprano colorature</span>
-            <span class="selectable">soprano</span>
-            <span class="selectable">mezzo-soprano</span>
-            <span class="selectable">alto</span>
-            <span class="selectable">contralto</span>
-            <span class="selectable">haute-contre</span>
-            <span class="selectable">contreténor</span>
-            <span class="selectable">ténor</span>
-            <span class="selectable">baryton</span>
-            <span class="selectable">basse</span>
-            <span class="selectable">basse profonde</span>
-          </div>
-        </div>
-      </div>
-      
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Étendue</h2>
-          <div>
-            <span class="selectable">ambitus</span>
-            <span class="selectable">tessiture</span>
-            <span class="selectable">registre</span>
-            <span class="selectable">registre naturel</span>
-            <span class="selectable">registre aigu</span>
-            <span class="selectable">voix mixte</span>
-          </div>
-        </div>
-      </div>
-      
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Anatomie</h2>
-          <div>
-            <span class="selectable">abdomen</span>
-            <span class="selectable">bronches</span>
-            <span class="selectable">cavités de résonance</span>
-            <span class="selectable">cordes vocales</span>
-            <span class="selectable">côtes</span>
-            <span class="selectable">diaphragme</span>
-            <span class="selectable">fosses nasales</span>
-            <span class="selectable">glotte</span>
-            <span class="selectable">larynx</span>
-            <span class="selectable">oreille</span>
-            <span class="selectable">pharynx</span>
-            <span class="selectable">poumons</span>
-            <span class="selectable">résonateurs</span>
-            <span class="selectable">physiologie</span>
-            <span class="selectable">sternum</span>
-            <span class="selectable">thorax</span>
-            <span class="selectable">trachée</span>
-            <span class="selectable">voies aériennes</span>
-            <span class="selectable">voile du palais</span>
-          </div>
-        </div>
+    <!-- Première rangée -->
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="categoriesVoix" class="toggle-checkbox" checked>
+      <label for="categoriesVoix" class="toggle-label">Catégories</label>
+      <div class="toggle-content">
+        <span class="selectable">soprano colorature</span>
+        <span class="selectable">soprano</span>
+        <span class="selectable">mezzo-soprano</span>
+        <span class="selectable">alto</span>
+        <span class="selectable">contralto</span>
+        <span class="selectable">haute-contre</span>
+        <span class="selectable">contreténor</span>
+        <span class="selectable">ténor</span>
+        <span class="selectable">baryton</span>
+        <span class="selectable">basse</span>
+        <span class="selectable">basse profonde</span>
       </div>
     </div>
+  </div>
 
-    <!-- Deuxième ligne -->
-    <div class="row mb-4">
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Émission vocale</h2>
-          <div>
-            <span class="selectable">attaque du son</span>
-            <span class="selectable">décomposition du son</span>
-            <span class="selectable">intonation</span>
-            <span class="selectable">onomatopées</span>
-            <span class="selectable">phénomène vibratoire</span>
-            <span class="selectable">résonance</span>
-            <span class="selectable">soutien</span>
-            <span class="selectable">terminaison du son</span>
-            <span class="selectable">timbre</span>
-          </div>
-        </div>
-      </div>
-      
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Pratiques vocales</h2>
-          <div>
-            <span class="selectable">a cappella</span>
-            <span class="selectable">échauffement</span>
-            <span class="selectable">mélisme</span>
-            <span class="selectable">vocalise</span>
-            <span class="selectable">physiologie</span>
-          </div>
-        </div>
-      </div>
-      
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Respiration</h2>
-          <div>
-            <span class="selectable">inspiration</span>
-            <span class="selectable">expiration</span>
-            <span class="selectable">gestion du souffle</span>
-          </div>
-        </div>
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="etendueVoix" class="toggle-checkbox" checked>
+      <label for="etendueVoix" class="toggle-label">Étendue</label>
+      <div class="toggle-content">
+        <span class="selectable">ambitus</span>
+        <span class="selectable">tessiture</span>
+        <span class="selectable">registre</span>
+        <span class="selectable">registre naturel</span>
+        <span class="selectable">registre aigu</span>
+        <span class="selectable">voix mixte</span>
       </div>
     </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="pratiquesVocales" class="toggle-checkbox" checked>
+      <label for="pratiquesVocales" class="toggle-label">Pratiques vocales</label>
+      <div class="toggle-content">
+        <span class="selectable">a cappella</span>
+        <span class="selectable">échauffement</span>
+        <span class="selectable">mélisme</span>
+        <span class="selectable">vocalise</span>
+        <span class="selectable">physiologie</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Deuxième rangée -->
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="emissionVocale" class="toggle-checkbox">
+      <label for="emissionVocale" class="toggle-label">Émission vocale</label>
+      <div class="toggle-content">
+        <span class="selectable">attaque du son</span>
+        <span class="selectable">décomposition du son</span>
+        <span class="selectable">intonation</span>
+        <span class="selectable">onomatopées</span>
+        <span class="selectable">phénomène vibratoire</span>
+        <span class="selectable">résonance</span>
+        <span class="selectable">soutien</span>
+        <span class="selectable">terminaison du son</span>
+        <span class="selectable">timbre</span>
+      </div>
+    </div>
+  </div>
+
+  
+
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="respiration" class="toggle-checkbox">
+      <label for="respiration" class="toggle-label">Respiration</label>
+      <div class="toggle-content">
+        <span class="selectable">inspiration</span>
+        <span class="selectable">expiration</span>
+        <span class="selectable">gestion du souffle</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="anatomieVoix" class="toggle-checkbox">
+      <label for="anatomieVoix" class="toggle-label">Anatomie</label>
+      <div class="toggle-content">
+        <span class="selectable">abdomen</span>
+        <span class="selectable">bronches</span>
+        <span class="selectable">cavités de résonance</span>
+        <span class="selectable">cordes vocales</span>
+        <span class="selectable">côtes</span>
+        <span class="selectable">diaphragme</span>
+        <span class="selectable">fosses nasales</span>
+        <span class="selectable">glotte</span>
+        <span class="selectable">larynx</span>
+        <span class="selectable">oreille</span>
+        <span class="selectable">pharynx</span>
+        <span class="selectable">poumons</span>
+        <span class="selectable">résonateurs</span>
+        <span class="selectable">physiologie</span>
+        <span class="selectable">sternum</span>
+        <span class="selectable">thorax</span>
+        <span class="selectable">trachée</span>
+        <span class="selectable">voies aériennes</span>
+        <span class="selectable">voile du palais</span>
+      </div>
+    </div>
+  </div>
+</div>
 
     <!-- Boutons -->
       <div class="row mb-5 g-3">

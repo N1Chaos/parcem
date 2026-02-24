@@ -21,94 +21,100 @@
     <h1 class="text-center">HARMONIE</h1>
 
     <!-- Première rangée -->
-    <div class="row mb-4">
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Accords et intervalles</h2>
-          <div>
-            <span class="selectable">accord</span>
-            <span class="selectable">accord parfait</span>
-            <span class="selectable">arpège</span>
-            <span class="selectable">consonance</span>
-            <span class="selectable">dissonance</span>
-            <span class="selectable">intervalle</span>
-            <span class="selectable">renversement</span>
-            <span class="selectable">tierce</span>
-            <span class="selectable">quinte</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Fonctions harmoniques</h2>
-          <div>
-            <span class="selectable">cadence</span>
-            <span class="selectable">dominante</span>
-            <span class="selectable">sous-dominante</span>
-            <span class="selectable">tonique</span>
-            <span class="selectable">modulation</span>
-            <span class="selectable">pivot</span>
-            <span class="selectable">résolution</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Types d'accords</h2>
-          <div>
-            <span class="selectable">accord de septième</span>
-            <span class="selectable">accord diminué</span>
-            <span class="selectable">accord augmenté</span>
-            <span class="selectable">accord suspendu</span>
-            <span class="selectable">accord de neuvième</span>
-            <span class="selectable">accord de sixte</span>
-          </div>
-        </div>
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="accordsIntervalles" class="toggle-checkbox" checked>
+      <label for="accordsIntervalles" class="toggle-label">Accords et intervalles</label>
+      <div class="toggle-content">
+        <span class="selectable">accord</span>
+        <span class="selectable">accord parfait</span>
+        <span class="selectable">arpège</span>
+        <span class="selectable">consonance</span>
+        <span class="selectable">dissonance</span>
+        <span class="selectable">intervalle</span>
+        <span class="selectable">renversement</span>
+        <span class="selectable">tierce</span>
+        <span class="selectable">quinte</span>
       </div>
     </div>
+  </div>
 
-    <!-- Deuxième rangée -->
-    <div class="row mb-4">
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Progressions</h2>
-          <div>
-            <span class="selectable">cycle des quintes</span>
-            <span class="selectable">progression</span>
-            <span class="selectable">mouvement harmonique</span>
-            <span class="selectable">enchaînement</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Techniques</h2>
-          <div>
-            <span class="selectable">contrepoint</span>
-            <span class="selectable">harmonisation</span>
-            <span class="selectable">voicing</span>
-            <span class="selectable">doublure</span>
-            <span class="selectable">pédale</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Concepts avancés</h2>
-          <div>
-            <span class="selectable">harmonie modale</span>
-            <span class="selectable">polytonalité</span>
-            <span class="selectable">cluster</span>
-            <span class="selectable">quartal</span>
-            <span class="selectable">quintal</span>
-          </div>
-        </div>
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="fonctionsHarmoniques" class="toggle-checkbox" checked>
+      <label for="fonctionsHarmoniques" class="toggle-label">Fonctions harmoniques</label>
+      <div class="toggle-content">
+        <span class="selectable">cadence</span>
+        <span class="selectable">dominante</span>
+        <span class="selectable">sous-dominante</span>
+        <span class="selectable">tonique</span>
+        <span class="selectable">modulation</span>
+        <span class="selectable">pivot</span>
+        <span class="selectable">résolution</span>
       </div>
     </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="typesAccords" class="toggle-checkbox" checked>
+      <label for="typesAccords" class="toggle-label">Types d'accords</label>
+      <div class="toggle-content">
+        <span class="selectable">accord de septième</span>
+        <span class="selectable">accord diminué</span>
+        <span class="selectable">accord augmenté</span>
+        <span class="selectable">accord suspendu</span>
+        <span class="selectable">accord de neuvième</span>
+        <span class="selectable">accord de sixte</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Deuxième rangée -->
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="progressions" class="toggle-checkbox">
+      <label for="progressions" class="toggle-label">Progressions</label>
+      <div class="toggle-content">
+        <span class="selectable">cycle des quintes</span>
+        <span class="selectable">progression</span>
+        <span class="selectable">mouvement harmonique</span>
+        <span class="selectable">enchaînement</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="techniques" class="toggle-checkbox">
+      <label for="techniques" class="toggle-label">Techniques</label>
+      <div class="toggle-content">
+        <span class="selectable">contrepoint</span>
+        <span class="selectable">harmonisation</span>
+        <span class="selectable">voicing</span>
+        <span class="selectable">doublure</span>
+        <span class="selectable">pédale</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="conceptsAvances" class="toggle-checkbox">
+      <label for="conceptsAvances" class="toggle-label">Concepts avancés</label>
+      <div class="toggle-content">
+        <span class="selectable">harmonie modale</span>
+        <span class="selectable">polytonalité</span>
+        <span class="selectable">cluster</span>
+        <span class="selectable">quartal</span>
+        <span class="selectable">quintal</span>
+      </div>
+    </div>
+  </div>
+</div>
 
     <!-- Boutons -->
        <div class="row mb-5 g-3">

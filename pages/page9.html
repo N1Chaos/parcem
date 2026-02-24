@@ -20,80 +20,85 @@
   <div class="container py-4" style="padding-bottom: 70px;">
     <h1 class="text-center">TEMPO</h1>
 
-    <!-- Première rangée -->
-    <div class="row mb-4">
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Indications de tempo</h2>
-          <div>
-            <span class="selectable">largo</span>
-            <span class="selectable">adagio</span>
-            <span class="selectable">andante</span>
-            <span class="selectable">moderato</span>
-            <span class="selectable">allegro</span>
-            <span class="selectable">presto</span>
-            <span class="selectable">prestissimo</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Modifications de tempo</h2>
-          <div>
-            <span class="selectable">accelerando</span>
-            <span class="selectable">ritardando</span>
-            <span class="selectable">rallentando</span>
-            <span class="selectable">rubato</span>
-            <span class="selectable">a tempo</span>
-            <span class="selectable">tempo primo</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Mesures et battements</h2>
-          <div>
-            <span class="selectable">battement</span>
-            <span class="selectable">métronome</span>
-            <span class="selectable">pulsation</span>
-            <span class="selectable">BPM</span>
-            <span class="selectable">mesure</span>
-          </div>
-        </div>
+   <!-- Première rangée -->
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="indicationsTempo" class="toggle-checkbox" checked>
+      <label for="indicationsTempo" class="toggle-label">Indications de tempo</label>
+      <div class="toggle-content">
+        <span class="selectable">largo</span>
+        <span class="selectable">adagio</span>
+        <span class="selectable">andante</span>
+        <span class="selectable">moderato</span>
+        <span class="selectable">allegro</span>
+        <span class="selectable">presto</span>
+        <span class="selectable">prestissimo</span>
       </div>
     </div>
+  </div>
 
-    <!-- Deuxième rangée -->
-    <div class="row mb-4">
-      <div class="col-md-6">
-        <div class="category">
-          <h2>Termes associés</h2>
-          <div>
-            <span class="selectable">agogique</span>
-            <span class="selectable">alla breve</span>
-            <span class="selectable">lent</span>
-            <span class="selectable">vif</span>
-            <span class="selectable">vivace</span>
-            <span class="selectable">tempo grave</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-6">
-        <div class="category">
-          <h2>Styles rythmiques</h2>
-          <div>
-            <span class="selectable">syncope</span>
-            <span class="selectable">contretemps</span>
-            <span class="selectable">swing</span>
-            <span class="selectable">shuffle</span>
-            <span class="selectable">pointé</span>
-          </div>
-        </div>
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="modificationsTempo" class="toggle-checkbox" checked>
+      <label for="modificationsTempo" class="toggle-label">Modifications de tempo</label>
+      <div class="toggle-content">
+        <span class="selectable">accelerando</span>
+        <span class="selectable">ritardando</span>
+        <span class="selectable">rallentando</span>
+        <span class="selectable">rubato</span>
+        <span class="selectable">a tempo</span>
+        <span class="selectable">tempo primo</span>
       </div>
     </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="mesuresBattements" class="toggle-checkbox" checked>
+      <label for="mesuresBattements" class="toggle-label">Mesures et battements</label>
+      <div class="toggle-content">
+        <span class="selectable">battement</span>
+        <span class="selectable">métronome</span>
+        <span class="selectable">pulsation</span>
+        <span class="selectable">BPM</span>
+        <span class="selectable">mesure</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Deuxième rangée -->
+<div class="row mb-4">
+  <div class="col-md-6">
+    <div class="category">
+      <input type="checkbox" id="termesAssocies" class="toggle-checkbox">
+      <label for="termesAssocies" class="toggle-label">Termes associés</label>
+      <div class="toggle-content">
+        <span class="selectable">agogique</span>
+        <span class="selectable">alla breve</span>
+        <span class="selectable">lent</span>
+        <span class="selectable">vif</span>
+        <span class="selectable">vivace</span>
+        <span class="selectable">tempo grave</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="category">
+      <input type="checkbox" id="stylesRythmiquesTempo" class="toggle-checkbox">
+      <label for="stylesRythmiquesTempo" class="toggle-label">Styles rythmiques</label>
+      <div class="toggle-content">
+        <span class="selectable">syncope</span>
+        <span class="selectable">contretemps</span>
+        <span class="selectable">swing</span>
+        <span class="selectable">shuffle</span>
+        <span class="selectable">pointé</span>
+      </div>
+    </div>
+  </div>
+</div>
 
     <!-- Boutons -->
        <div class="row mb-5 g-3">

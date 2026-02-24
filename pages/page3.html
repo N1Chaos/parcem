@@ -25,139 +25,147 @@
       <img src="../images/instruments.jpg" alt="instruments musicaux" class="img-fluid rounded shadow">
     </div> -->
 
-    <!-- Première rangée -->
-    <div class="row mb-4">
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Cordes frottées</h2>
-          <div>
-            <span class="selectable">violon</span>
-            <span class="selectable">violon alto</span>
-            <span class="selectable">violoncelle</span>
-            <span class="selectable">contrebasse</span>
-            <span class="selectable">archet</span>
-          </div>
-        </div>
-      </div>
-      
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Cordes pincées</h2>
-          <div>
-            <span class="selectable">guitare</span>
-            <span class="selectable">harpe</span>
-            <span class="selectable">clavecin</span>
-            <span class="selectable">guitare électrique</span>
-            <span class="selectable">basse électrique</span>
-          </div>
-        </div>
-      </div>
-      
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Cordes frappées</h2>
-          <div>
-            <span class="selectable">piano</span>
-          </div>
-        </div>
+   <!-- Première rangée -->
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="cordesFrottees" class="toggle-checkbox" checked>
+      <label for="cordesFrottees" class="toggle-label">Cordes frottées</label>
+      <div class="toggle-content">
+        <span class="selectable">violon</span>
+        <span class="selectable">violon alto</span>
+        <span class="selectable">violoncelle</span>
+        <span class="selectable">contrebasse</span>
+        <span class="selectable">archet</span>
       </div>
     </div>
+  </div>
 
-    <!-- Deuxième rangée -->
-    <div class="row mb-4">
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Vents</h2>
-          <div>
-            <span class="selectable">bois</span>
-            <span class="selectable">cuivres</span>
-          </div>
-        </div>
-      </div>
-      
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Bois</h2>
-          <div>
-            <!-- Flûtes -->
-<span class="selectable">flûte traversière</span>
-<span class="selectable">piccolo</span>
-<span class="selectable">flûte à bec</span>
-
-<!-- Anches simples -->
-<span class="selectable">clarinette</span>
-<span class="selectable">cor de basset</span>
-<span class="selectable">clarinette basse</span>
-<span class="selectable">saxophone</span>
-
-<!-- Anches doubles -->
-<span class="selectable">hautbois</span>
-<span class="selectable">cor anglais</span>
-<span class="selectable">basson</span>
-
-          </div>
-        </div>
-      </div>
-      
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Cuivres</h2>
-          <div>
-            <span class="selectable">trompette</span>
-            <span class="selectable">cor</span>
-            <span class="selectable">trombone</span>
-            <span class="selectable">tuba</span>
-          </div>
-        </div>
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="cordesPincees" class="toggle-checkbox" checked>
+      <label for="cordesPincees" class="toggle-label">Cordes pincées</label>
+      <div class="toggle-content">
+        <span class="selectable">guitare</span>
+        <span class="selectable">harpe</span>
+        <span class="selectable">clavecin</span>
+        <span class="selectable">guitare électrique</span>
+        <span class="selectable">basse électrique</span>
       </div>
     </div>
+  </div>
 
-    <!-- Troisième rangée -->
-    <div class="row mb-4">
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Percussions</h2>
-          <div>
-            <span class="selectable">percussions à peau</span>
-            <span class="selectable">percussions en bois</span>
-            <span class="selectable">percussions métalliques</span>
-          </div>
-        </div>
-      </div>
-      
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Percussions (hauteur indéterminée)</h2>
-          <div>
-            <span class="selectable">afuche cabasa</span>
-            <span class="selectable">batterie</span>
-            <span class="selectable">caisse claire</span>
-            <span class="selectable">grosse caisse</span>
-            <span class="selectable">tom</span>
-            <span class="selectable">cymbales</span>
-            <span class="selectable">tambourin</span>
-            <span class="selectable">triangle</span>
-            <span class="selectable">congas</span>
-            <span class="selectable">bongos</span>
-            <span class="selectable">djembe</span>
-          </div>
-        </div>
-      </div>
-      
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Percussions (hauteur déterminée)</h2>
-          <div>
-            <span class="selectable">timbales</span>
-            <span class="selectable">xylophone</span>
-            <span class="selectable">marimba</span>
-            <span class="selectable">vibraphone</span>
-            <span class="selectable">glockenspiel</span>
-            <span class="selectable">célesta</span>
-          </div>
-        </div>
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="cordesFrappees" class="toggle-checkbox" checked>
+      <label for="cordesFrappees" class="toggle-label">Cordes frappées</label>
+      <div class="toggle-content">
+        <span class="selectable">piano</span>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Deuxième rangée -->
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="vents" class="toggle-checkbox">
+      <label for="vents" class="toggle-label">Vents</label>
+      <div class="toggle-content">
+        <span class="selectable">bois</span>
+        <span class="selectable">cuivres</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="bois" class="toggle-checkbox">
+      <label for="bois" class="toggle-label">Bois</label>
+      <div class="toggle-content">
+        <!-- Flûtes -->
+        <span class="selectable">flûte traversière</span>
+        <span class="selectable">piccolo</span>
+        <span class="selectable">flûte à bec</span>
+
+        <!-- Anches simples -->
+        <span class="selectable">clarinette</span>
+        <span class="selectable">cor de basset</span>
+        <span class="selectable">clarinette basse</span>
+        <span class="selectable">saxophone</span>
+
+        <!-- Anches doubles -->
+        <span class="selectable">hautbois</span>
+        <span class="selectable">cor anglais</span>
+        <span class="selectable">basson</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="cuivres" class="toggle-checkbox">
+      <label for="cuivres" class="toggle-label">Cuivres</label>
+      <div class="toggle-content">
+        <span class="selectable">trompette</span>
+        <span class="selectable">cor</span>
+        <span class="selectable">trombone</span>
+        <span class="selectable">tuba</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Troisième rangée -->
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="percussions" class="toggle-checkbox">
+      <label for="percussions" class="toggle-label">Percussions</label>
+      <div class="toggle-content">
+        <span class="selectable">percussions à peau</span>
+        <span class="selectable">percussions en bois</span>
+        <span class="selectable">percussions métalliques</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="percussionsIndeterminees" class="toggle-checkbox">
+      <label for="percussionsIndeterminees" class="toggle-label">Percussions (hauteur indéterminée)</label>
+      <div class="toggle-content">
+        <span class="selectable">afuche cabasa</span>
+        <span class="selectable">batterie</span>
+        <span class="selectable">caisse claire</span>
+        <span class="selectable">grosse caisse</span>
+        <span class="selectable">tom</span>
+        <span class="selectable">cymbales</span>
+        <span class="selectable">tambourin</span>
+        <span class="selectable">triangle</span>
+        <span class="selectable">congas</span>
+        <span class="selectable">bongos</span>
+        <span class="selectable">djembe</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="percussionsDeterminees" class="toggle-checkbox">
+      <label for="percussionsDeterminees" class="toggle-label">Percussions (hauteur déterminée)</label>
+      <div class="toggle-content">
+        <span class="selectable">timbales</span>
+        <span class="selectable">xylophone</span>
+        <span class="selectable">marimba</span>
+        <span class="selectable">vibraphone</span>
+        <span class="selectable">glockenspiel</span>
+        <span class="selectable">célesta</span>
+      </div>
+    </div>
+  </div>
+</div>
 
     <!-- Boutons -->
        <div class="row mb-5 g-3">

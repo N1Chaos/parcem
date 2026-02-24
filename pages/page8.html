@@ -20,90 +20,96 @@
   <div class="container py-4" style="padding-bottom: 70px;">
     <h1 class="text-center">PROCÉDÉ D'ÉCRITURE</h1>
 
-    <!-- Première rangée -->
-    <div class="row mb-4">
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Techniques de composition</h2>
-          <div>
-            <span class="selectable">contrepoint</span>
-            <span class="selectable">harmonisation</span>
-            <span class="selectable">orchestration</span>
-            <span class="selectable">variation</span>
-            <span class="selectable">développement thématique</span>
-            <span class="selectable">mélodisation</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Styles d'écriture</h2>
-          <div>
-            <span class="selectable">homophonique</span>
-            <span class="selectable">polyphonique</span>
-            <span class="selectable">hétérophonique</span>
-            <span class="selectable">monodique</span>
-            <span class="selectable">antiphonique</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Formes classiques</h2>
-          <div>
-            <span class="selectable">fugue</span>
-            <span class="selectable">canon</span>
-            <span class="selectable">sonate</span>
-            <span class="selectable">rondo</span>
-            <span class="selectable">thème et variations</span>
-          </div>
-        </div>
+   <!-- Première rangée -->
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="techniquesComposition" class="toggle-checkbox" checked>
+      <label for="techniquesComposition" class="toggle-label">Techniques de composition</label>
+      <div class="toggle-content">
+        <span class="selectable">contrepoint</span>
+        <span class="selectable">harmonisation</span>
+        <span class="selectable">orchestration</span>
+        <span class="selectable">variation</span>
+        <span class="selectable">développement thématique</span>
+        <span class="selectable">mélodisation</span>
       </div>
     </div>
+  </div>
 
-    <!-- Deuxième rangée -->
-    <div class="row mb-4">
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Techniques contemporaines</h2>
-          <div>
-            <span class="selectable">sérialisme</span>
-            <span class="selectable">aléatoire</span>
-            <span class="selectable">spectralisme</span>
-            <span class="selectable">minimalisme</span>
-            <span class="selectable">polyrythmie</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Éléments structurels</h2>
-          <div>
-            <span class="selectable">motif</span>
-            <span class="selectable">thème</span>
-            <span class="selectable">phrase</span>
-            <span class="selectable">période</span>
-            <span class="selectable">ostinato</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Procédés spécifiques</h2>
-          <div>
-            <span class="selectable">imitation</span>
-            <span class="selectable">inversion</span>
-            <span class="selectable">rétrogradation</span>
-            <span class="selectable">augmentation</span>
-            <span class="selectable">diminution</span>
-          </div>
-        </div>
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="stylesEcriture" class="toggle-checkbox" checked>
+      <label for="stylesEcriture" class="toggle-label">Styles d'écriture</label>
+      <div class="toggle-content">
+        <span class="selectable">homophonique</span>
+        <span class="selectable">polyphonique</span>
+        <span class="selectable">hétérophonique</span>
+        <span class="selectable">monodique</span>
+        <span class="selectable">antiphonique</span>
       </div>
     </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="formesClassiques" class="toggle-checkbox" checked>
+      <label for="formesClassiques" class="toggle-label">Formes classiques</label>
+      <div class="toggle-content">
+        <span class="selectable">fugue</span>
+        <span class="selectable">canon</span>
+        <span class="selectable">sonate</span>
+        <span class="selectable">rondo</span>
+        <span class="selectable">thème et variations</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Deuxième rangée -->
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="techniquesContemporaines" class="toggle-checkbox">
+      <label for="techniquesContemporaines" class="toggle-label">Techniques contemporaines</label>
+      <div class="toggle-content">
+        <span class="selectable">sérialisme</span>
+        <span class="selectable">aléatoire</span>
+        <span class="selectable">spectralisme</span>
+        <span class="selectable">minimalisme</span>
+        <span class="selectable">polyrythmie</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="elementsStructurels" class="toggle-checkbox">
+      <label for="elementsStructurels" class="toggle-label">Éléments structurels</label>
+      <div class="toggle-content">
+        <span class="selectable">motif</span>
+        <span class="selectable">thème</span>
+        <span class="selectable">phrase</span>
+        <span class="selectable">période</span>
+        <span class="selectable">ostinato</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="procedesSpecifiques" class="toggle-checkbox">
+      <label for="procedesSpecifiques" class="toggle-label">Procédés spécifiques</label>
+      <div class="toggle-content">
+        <span class="selectable">imitation</span>
+        <span class="selectable">inversion</span>
+        <span class="selectable">rétrogradation</span>
+        <span class="selectable">augmentation</span>
+        <span class="selectable">diminution</span>
+      </div>
+    </div>
+  </div>
+</div>
 
     <!-- Boutons -->
        <div class="row mb-5 g-3">

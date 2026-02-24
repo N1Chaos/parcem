@@ -21,89 +21,95 @@
     <h1 class="text-center">DYNAMIQUE</h1>
 
     <!-- Première rangée -->
-    <div class="row mb-4">
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Nuances de base</h2>
-          <div>
-            <span class="selectable">pianissimo (pp)</span>
-            <span class="selectable">piano (p)</span>
-            <span class="selectable">mezzo piano (mp)</span>
-            <span class="selectable">mezzo forte (mf)</span>
-            <span class="selectable">forte (f)</span>
-            <span class="selectable">fortissimo (ff)</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Nuances extrêmes</h2>
-          <div>
-            <span class="selectable">pianississimo (ppp)</span>
-            <span class="selectable">fortississimo (fff)</span>
-            <span class="selectable">sforzando (sfz)</span>
-            <span class="selectable">rinforzando (rfz)</span>
-            <span class="selectable">forte-piano (fp)</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Évolution progressive</h2>
-          <div>
-            <span class="selectable">crescendo</span>
-            <span class="selectable">decrescendo</span>
-            <span class="selectable">diminuendo</span>
-            <span class="selectable">morendo</span>
-            <span class="selectable">perdendosi</span>
-          </div>
-        </div>
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="nuances_base" class="toggle-checkbox" checked>
+      <label for="nuances_base" class="toggle-label">Nuances de base</label>
+      <div class="toggle-content">
+        <span class="selectable">pianissimo (pp)</span>
+        <span class="selectable">piano (p)</span>
+        <span class="selectable">mezzo piano (mp)</span>
+        <span class="selectable">mezzo forte (mf)</span>
+        <span class="selectable">forte (f)</span>
+        <span class="selectable">fortissimo (ff)</span>
       </div>
     </div>
+  </div>
 
-    <!-- Deuxième rangée -->
-    <div class="row mb-4">
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Accentuations</h2>
-          <div>
-            <span class="selectable">accent</span>
-            <span class="selectable">marcato</span>
-            <span class="selectable">martelé</span>
-            <span class="selectable">staccato</span>
-            <span class="selectable">tenuto</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Effets dynamiques</h2>
-          <div>
-            <span class="selectable">messa di voce</span>
-            <span class="selectable">echo</span>
-            <span class="selectable">subito</span>
-            <span class="selectable">espressivo</span>
-            <span class="selectable">con forza</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Termes associés</h2>
-          <div>
-            <span class="selectable">doux</span>
-            <span class="selectable">puissant</span>
-            <span class="selectable">léger</span>
-            <span class="selectable">lourd</span>
-            <span class="selectable">délicat</span>
-          </div>
-        </div>
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="nuances_extremes" class="toggle-checkbox" checked>
+      <label for="nuances_extremes" class="toggle-label">Nuances extrêmes</label>
+      <div class="toggle-content">
+        <span class="selectable">pianississimo (ppp)</span>
+        <span class="selectable">fortississimo (fff)</span>
+        <span class="selectable">sforzando (sfz)</span>
+        <span class="selectable">rinforzando (rfz)</span>
+        <span class="selectable">forte-piano (fp)</span>
       </div>
     </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="evolution_progressive" class="toggle-checkbox" checked>
+      <label for="evolution_progressive" class="toggle-label">Évolution progressive</label>
+      <div class="toggle-content">
+        <span class="selectable">crescendo</span>
+        <span class="selectable">decrescendo</span>
+        <span class="selectable">diminuendo</span>
+        <span class="selectable">morendo</span>
+        <span class="selectable">perdendosi</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Deuxième rangée -->
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="accentuations" class="toggle-checkbox" checked>
+      <label for="accentuations" class="toggle-label">Accentuations</label>
+      <div class="toggle-content">
+        <span class="selectable">accent</span>
+        <span class="selectable">marcato</span>
+        <span class="selectable">martelé</span>
+        <span class="selectable">staccato</span>
+        <span class="selectable">tenuto</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="effets_dynamiques" class="toggle-checkbox" checked>
+      <label for="effets_dynamiques" class="toggle-label">Effets dynamiques</label>
+      <div class="toggle-content">
+        <span class="selectable">messa di voce</span>
+        <span class="selectable">echo</span>
+        <span class="selectable">subito</span>
+        <span class="selectable">espressivo</span>
+        <span class="selectable">con forza</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="termes_associes" class="toggle-checkbox" checked>
+      <label for="termes_associes" class="toggle-label">Termes associés</label>
+      <div class="toggle-content">
+        <span class="selectable">doux</span>
+        <span class="selectable">puissant</span>
+        <span class="selectable">léger</span>
+        <span class="selectable">lourd</span>
+        <span class="selectable">délicat</span>
+      </div>
+    </div>
+  </div>
+</div>
 
     <!-- Boutons -->
        <div class="row mb-5 g-3">

@@ -21,100 +21,106 @@
     <h1 class="text-center">ADJECTIFS MUSICAUX</h1>
 
     <!-- Première rangée -->
-    <div class="row mb-4">
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Émotions</h2>
-          <div>
-            <span class="selectable">émouvant</span>
-            <span class="selectable">angoissant</span>
-            <span class="selectable">joyeux</span>
-            <span class="selectable">énergisant</span>
-            <span class="selectable">nostalgique</span>
-            <span class="selectable">mélancolique</span>
-            <span class="selectable">apaisant</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Caractère</h2>
-          <div>
-            <span class="selectable">délicat</span>
-            <span class="selectable">puissant</span>
-            <span class="selectable">enjoué</span>
-            <span class="selectable">solennel</span>
-            <span class="selectable">majestueux</span>
-            <span class="selectable">intime</span>
-            <span class="selectable">dramatique</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Texture</h2>
-          <div>
-            <span class="selectable">aérien</span>
-            <span class="selectable">dense</span>
-            <span class="selectable">cristallin</span>
-            <span class="selectable">velouté</span>
-            <span class="selectable">rugueux</span>
-            <span class="selectable">fluide</span>
-            <span class="selectable">granuleux</span>
-          </div>
-        </div>
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="emotions" class="toggle-checkbox" checked>
+      <label for="emotions" class="toggle-label">Émotions</label>
+      <div class="toggle-content">
+        <span class="selectable">émouvant</span>
+        <span class="selectable">angoissant</span>
+        <span class="selectable">joyeux</span>
+        <span class="selectable">énergisant</span>
+        <span class="selectable">nostalgique</span>
+        <span class="selectable">mélancolique</span>
+        <span class="selectable">apaisant</span>
       </div>
     </div>
+  </div>
 
-    <!-- Deuxième rangée -->
-    <div class="row mb-4">
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Mouvement</h2>
-          <div>
-            <span class="selectable">entraînant</span>
-            <span class="selectable">languissant</span>
-            <span class="selectable">saccadé</span>
-            <span class="selectable">ondulant</span>
-            <span class="selectable">frénétique</span>
-            <span class="selectable">mesuré</span>
-            <span class="selectable">chaloupé</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Timbre</h2>
-          <div>
-            <span class="selectable">chaud</span>
-            <span class="selectable">métallique</span>
-            <span class="selectable">boisé</span>
-            <span class="selectable">sourd</span>
-            <span class="selectable">éclatant</span>
-            <span class="selectable">nasillard</span>
-            <span class="selectable">soyeux</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Impression globale</h2>
-          <div>
-            <span class="selectable">envoûtant</span>
-            <span class="selectable">hypnotique</span>
-            <span class="selectable">transcendant</span>
-            <span class="selectable">captivant</span>
-            <span class="selectable">enveloppant</span>
-            <span class="selectable">immersionnel</span>
-            <span class="selectable">évocateur</span>
-          </div>
-        </div>
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="caractere" class="toggle-checkbox" checked>
+      <label for="caractere" class="toggle-label">Caractère</label>
+      <div class="toggle-content">
+        <span class="selectable">délicat</span>
+        <span class="selectable">puissant</span>
+        <span class="selectable">enjoué</span>
+        <span class="selectable">solennel</span>
+        <span class="selectable">majestueux</span>
+        <span class="selectable">intime</span>
+        <span class="selectable">dramatique</span>
       </div>
     </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="texture" class="toggle-checkbox" checked>
+      <label for="texture" class="toggle-label">Texture</label>
+      <div class="toggle-content">
+        <span class="selectable">aérien</span>
+        <span class="selectable">dense</span>
+        <span class="selectable">cristallin</span>
+        <span class="selectable">velouté</span>
+        <span class="selectable">rugueux</span>
+        <span class="selectable">fluide</span>
+        <span class="selectable">granuleux</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Deuxième rangée -->
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="mouvement" class="toggle-checkbox">
+      <label for="mouvement" class="toggle-label">Mouvement</label>
+      <div class="toggle-content">
+        <span class="selectable">entraînant</span>
+        <span class="selectable">languissant</span>
+        <span class="selectable">saccadé</span>
+        <span class="selectable">ondulant</span>
+        <span class="selectable">frénétique</span>
+        <span class="selectable">mesuré</span>
+        <span class="selectable">chaloupé</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="timbre" class="toggle-checkbox">
+      <label for="timbre" class="toggle-label">Timbre</label>
+      <div class="toggle-content">
+        <span class="selectable">chaud</span>
+        <span class="selectable">métallique</span>
+        <span class="selectable">boisé</span>
+        <span class="selectable">sourd</span>
+        <span class="selectable">éclatant</span>
+        <span class="selectable">nasillard</span>
+        <span class="selectable">soyeux</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="impression" class="toggle-checkbox">
+      <label for="impression" class="toggle-label">Impression globale</label>
+      <div class="toggle-content">
+        <span class="selectable">envoûtant</span>
+        <span class="selectable">hypnotique</span>
+        <span class="selectable">transcendant</span>
+        <span class="selectable">captivant</span>
+        <span class="selectable">enveloppant</span>
+        <span class="selectable">immersionnel</span>
+        <span class="selectable">évocateur</span>
+      </div>
+    </div>
+  </div>
+</div>
 
     <!-- Boutons -->
        <div class="row mb-5 g-3">

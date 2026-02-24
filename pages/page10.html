@@ -6,7 +6,7 @@
   <title>Rythme</title>
 
   <!-- Google Fonts -->
-   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Open+Sans&display=swap" rel="stylesheet">
 
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -17,124 +17,132 @@
 </head>
 <body>
 
-  <div class="container py-4" style="padding-bottom: 70px;">
-    <h1 class="text-center">RYTHME</h1>
+<div class="container py-4" style="padding-bottom: 70px;">
+  <h1 class="text-center mb-4">RYTHME</h1>
 
-    <!-- Première rangée -->
-    <div class="row mb-4">
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Éléments rythmiques</h2>
-          <div>
-            <span class="selectable">pulsation</span>
-            <span class="selectable">tempo</span>
-            <span class="selectable">mètre</span>
-            <span class="selectable">mesure</span>
-            <span class="selectable">battement</span>
-            <span class="selectable">contretemps</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Figures rythmiques</h2>
-          <div>
-            <span class="selectable">noire</span>
-            <span class="selectable">croche</span>
-            <span class="selectable">double-croche</span>
-            <span class="selectable">ronde</span>
-            <span class="selectable">blanche</span>
-            <span class="selectable">soupir</span>
-            <span class="selectable">demi-soupir</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Techniques rythmiques</h2>
-          <div>
-            <span class="selectable">syncope</span>
-            <span class="selectable">pointé</span>
-            <span class="selectable">triolet</span>
-            <span class="selectable">swing</span>
-            <span class="selectable">shuffle</span>
-            <span class="selectable">polyrythmie</span>
-          </div>
+  <!-- Première rangée -->
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <div class="category">
+        <input type="checkbox" id="elRythmiques" class="toggle-checkbox" checked>
+        <label for="elRythmiques" class="toggle-label">Éléments rythmiques</label>
+        <div class="toggle-content">
+          <span class="selectable">pulsation</span>
+          <span class="selectable">tempo</span>
+          <span class="selectable">mètre</span>
+          <span class="selectable">mesure</span>
+          <span class="selectable">battement</span>
+          <span class="selectable">contretemps</span>
         </div>
       </div>
     </div>
 
-    <!-- Deuxième rangée -->
-    <div class="row mb-4">
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Styles rythmiques</h2>
-          <div>
-            <span class="selectable">temps binaire</span>
-            <span class="selectable">temps ternaire</span>
-            <span class="selectable">quaternaire</span>
-            <span class="selectable">bossa-nova</span>
-            <span class="selectable">samba</span>
-            <span class="selectable">funk</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Termes spécifiques</h2>
-          <div>
-            <span class="selectable">anacrouse</span>
-            <span class="selectable">hémiole</span>
-            <span class="selectable">ostinato</span>
-            <span class="selectable">rubato</span>
-            <span class="selectable">agogique</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Notation</h2>
-          <div>
-            <span class="selectable">chiffrage</span>
-            <span class="selectable">barre de mesure</span>
-            <span class="selectable">liaison</span>
-            <span class="selectable">point d'orgue</span>
-            <span class="selectable">mesure à blanc</span>
-          </div>
+    <div class="col-md-4">
+      <div class="category">
+        <input type="checkbox" id="figRythmiques" class="toggle-checkbox" checked>
+        <label for="figRythmiques" class="toggle-label">Figures rythmiques</label>
+        <div class="toggle-content">
+          <span class="selectable">noire</span>
+          <span class="selectable">croche</span>
+          <span class="selectable">double-croche</span>
+          <span class="selectable">ronde</span>
+          <span class="selectable">blanche</span>
+          <span class="selectable">soupir</span>
+          <span class="selectable">demi-soupir</span>
         </div>
       </div>
     </div>
 
-    <!-- Boutons -->
-       <div class="row mb-5 g-3">
-  <div class="col-md-6">
-    <button class="btn btn-primary w-100" onclick="goToHomePage()">
-      <i class="bi bi-house-door-fill me-2"></i>Retour à l'accueil
-    </button>
+    <div class="col-md-4">
+      <div class="category">
+        <input type="checkbox" id="techRythmiques" class="toggle-checkbox" checked>
+        <label for="techRythmiques" class="toggle-label">Techniques rythmiques</label>
+        <div class="toggle-content">
+          <span class="selectable">syncope</span>
+          <span class="selectable">pointé</span>
+          <span class="selectable">triolet</span>
+          <span class="selectable">swing</span>
+          <span class="selectable">shuffle</span>
+          <span class="selectable">polyrythmie</span>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="col-md-6">
-    <button class="btn btn-danger w-100" onclick="clearSelection()">
-      <i class="bi bi-x-circle-fill me-2"></i>Annuler la sélection
-    </button>
-  </div>
-</div>
-<!-- Mini-lecteur audio -->
-    <div id="miniPlayer" class="mini-player d-none">
-      <div class="d-flex align-items-center gap-2">
-        <button id="miniPlayPause" class="btn btn-primary btn-sm" aria-label="Lire ou mettre en pause l’audio">
-          <i class="bi bi-play-fill"></i>
-        </button>
-        <input type="range" id="miniSeekBar" min="0" value="0" class="form-range" aria-label="Naviguer dans l’audio">
-        <span id="miniCurrentTime">0:00</span> / <span id="miniDuration">0:00</span>
-      </div>
-      <div id="miniPlayerError" class="text-danger d-none" style="font-size: 0.8em; margin-top: 5px;">
-        Erreur : impossible de charger l’audio. Essayez de recharger sur la page principale.
+
+  <!-- Deuxième rangée -->
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <div class="category">
+        <input type="checkbox" id="stylesRythmiques" class="toggle-checkbox">
+        <label for="stylesRythmiques" class="toggle-label">Styles rythmiques</label>
+        <div class="toggle-content">
+          <span class="selectable">temps binaire</span>
+          <span class="selectable">temps ternaire</span>
+          <span class="selectable">quaternaire</span>
+          <span class="selectable">bossa-nova</span>
+          <span class="selectable">samba</span>
+          <span class="selectable">funk</span>
+        </div>
       </div>
     </div>
+
+    <div class="col-md-4">
+      <div class="category">
+        <input type="checkbox" id="termesSpecifiques" class="toggle-checkbox">
+        <label for="termesSpecifiques" class="toggle-label">Termes spécifiques</label>
+        <div class="toggle-content">
+          <span class="selectable">anacrouse</span>
+          <span class="selectable">hémiole</span>
+          <span class="selectable">ostinato</span>
+          <span class="selectable">rubato</span>
+          <span class="selectable">agogique</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="category">
+        <input type="checkbox" id="notation" class="toggle-checkbox">
+        <label for="notation" class="toggle-label">Notation</label>
+        <div class="toggle-content">
+          <span class="selectable">chiffrage</span>
+          <span class="selectable">barre de mesure</span>
+          <span class="selectable">liaison</span>
+          <span class="selectable">point d'orgue</span>
+          <span class="selectable">mesure à blanc</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Boutons -->
+  <div class="row mb-5 g-3">
+    <div class="col-md-6">
+      <button class="btn btn-primary w-100" onclick="goToHomePage()">
+        <i class="bi bi-house-door-fill me-2"></i>Retour à l'accueil
+      </button>
+    </div>
+    <div class="col-md-6">
+      <button class="btn btn-danger w-100" onclick="clearSelection()">
+        <i class="bi bi-x-circle-fill me-2"></i>Annuler la sélection
+      </button>
+    </div>
+  </div>
+
+  <!-- Mini-lecteur audio -->
+  <div id="miniPlayer" class="mini-player d-none">
+    <div class="d-flex align-items-center gap-2">
+      <button id="miniPlayPause" class="btn btn-primary btn-sm" aria-label="Lire ou mettre en pause l’audio">
+        <i class="bi bi-play-fill"></i>
+      </button>
+      <input type="range" id="miniSeekBar" min="0" value="0" class="form-range" aria-label="Naviguer dans l’audio">
+      <span id="miniCurrentTime">0:00</span> / <span id="miniDuration">0:00</span>
+    </div>
+    <div id="miniPlayerError" class="text-danger d-none" style="font-size: 0.8em; margin-top: 5px;">
+      Erreur : impossible de charger l’audio. Essayez de recharger sur la page principale.
+    </div>
+  </div>
+
   <!-- Panneau latéral de définition -->
   <div id="definition-container">
     <span id="close-definition" onclick="closeDefinition()" aria-label="Fermer la définition" title="Fermer la définition">×</span>
@@ -151,18 +159,20 @@
         Votre navigateur ne supporte pas l'élément audio.
       </audio>
     </div>
-    <!-- Conteneur vidéo -->
+
     <div id="definition-video-container">
-        <video id="definition-video" controls style="display: none; width: 100%;">
-            <source id="definition-video-source" src="" type="video/mp4">
-            Votre navigateur ne supporte pas les vidéos.
-        </video>
-      </div>
+      <video id="definition-video" controls style="display: none; width: 100%;">
+        <source id="definition-video-source" src="" type="video/mp4">
+        Votre navigateur ne supporte pas les vidéos.
+      </video>
+    </div>
   </div>
 
-  <!-- Bootstrap JS + script personnalisé -->
-   <script src="../js/definitions.js"></script>
-  <script src="../js/script.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</div>
+
+<!-- Bootstrap JS + script personnalisé -->
+<script src="../js/definitions.js"></script>
+<script src="../js/script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -499,3 +499,95 @@ header p {
         padding: 12px 20px !important;
     }
 }
+
+/* Masquer la checkbox */
+.toggle-checkbox {
+  display: none;
+}
+
+/* ===== TITRE (identique à Instruments) ===== */
+
+.toggle-label {
+  font-family: var(--heading-font);
+  color: #ff7f50;
+  font-size: 1.8rem;
+  text-align: center;
+  position: relative;
+  padding-bottom: 0.3rem;
+  margin-bottom: 1rem;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+
+  background: none;
+  border: none;
+}
+
+/* Ligne décorative */
+.toggle-label::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 3px;
+  background: #ff7f50;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.toggle-label:hover::before {
+  width: 80px;
+}
+
+/* Flèche */
+.toggle-label::after {
+  content: " ▼";
+  font-size: 1rem;
+  margin-left: 8px;
+  transition: transform 0.3s ease;
+  color: #ff7f50;
+}
+
+.toggle-checkbox:checked + .toggle-label::after {
+  transform: rotate(-180deg);
+}
+
+/* ===== CONTENU DÉROULANT ===== */
+
+.toggle-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.4s ease;
+  padding: 0 1em;
+  border-left: 2px solid #ddd;
+  margin-bottom: 1em;
+  background: #fafafa;
+}
+
+.toggle-checkbox:checked + .toggle-label + .toggle-content {
+  max-height: 1000px;
+  padding: 0.5em 1em;
+}
+
+/* ===== STRUCTURE BOOTSTRAP ===== */
+
+/* Empêche Bootstrap d'étirer les colonnes */
+.row {
+  align-items: flex-start !important;
+}
+
+.col-md-4 {
+  display: flex;
+  align-items: flex-start;
+}
+
+.category {
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+}

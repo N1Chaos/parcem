@@ -21,44 +21,47 @@
     <h1 class="text-center">LANGUES</h1>
 
 
-    <!-- Première rangée -->
-    <div class="row mb-4">
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Europe</h2>
-          <div>
-            <span class="selectable">français</span>
-            <span class="selectable">anglais</span>
-            <span class="selectable">espagnol</span>
-            <span class="selectable">portugais</span>
-            <span class="selectable">italien</span>
-            <span class="selectable">allemand</span>
-            <span class="selectable">russe</span>
-            <span class="selectable">basque</span>        
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Langues anciennes</h2>
-          <div>
-            <span class="selectable">latin</span>
-            <span class="selectable">grec</span>
-            <span class="selectable">langues celtiques</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Autres</h2>
-          <div>
-            <span class="selectable">langues extra-européennes</span>
-          </div>
-        </div>
+   <!-- Première rangée -->
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="europe" class="toggle-checkbox" checked>
+      <label for="europe" class="toggle-label">Europe</label>
+      <div class="toggle-content">
+        <span class="selectable">français</span>
+        <span class="selectable">anglais</span>
+        <span class="selectable">espagnol</span>
+        <span class="selectable">portugais</span>
+        <span class="selectable">italien</span>
+        <span class="selectable">allemand</span>
+        <span class="selectable">russe</span>
+        <span class="selectable">basque</span>
       </div>
     </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="anciennes" class="toggle-checkbox" checked>
+      <label for="anciennes" class="toggle-label">Langues anciennes</label>
+      <div class="toggle-content">
+        <span class="selectable">latin</span>
+        <span class="selectable">grec</span>
+        <span class="selectable">langues celtiques</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="autres" class="toggle-checkbox" checked>
+      <label for="autres" class="toggle-label">Autres</label>
+      <div class="toggle-content">
+        <span class="selectable">langues extra-européennes</span>
+      </div>
+    </div>
+  </div>
+</div>
 
     
 
@@ -75,7 +78,6 @@
       <i class="bi bi-x-circle-fill me-2"></i>Annuler la sélection
     </button>
   </div>
-      </div>
       <button class="btn btn-outline-info w-100 mt-2" onclick="goToClassification()">
   <i class="bi bi-arrow-right-circle me-2"></i>Pour aller plus loin dans la classification des langues
 </button>

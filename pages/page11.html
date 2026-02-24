@@ -20,95 +20,101 @@
   <div class="container py-4" style="padding-bottom: 70px;">
     <h1 class="text-center">GENRE</h1>
 
-    <!-- Première rangée -->
-    <div class="row mb-4">
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Genres vocaux</h2>
-          <div>
-            <span class="selectable">chanson</span>
-            <span class="selectable">lied</span>
-            <span class="selectable">mélodie</span>
-            <span class="selectable">aria</span>
-            <span class="selectable">cantate</span>
-            <span class="selectable">oratorio</span>
-            <span class="selectable">messe</span>
-            <span class="selectable">motet</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Genres instrumentaux</h2>
-          <div>
-            <span class="selectable">concerto</span>
-            <span class="selectable">sonate</span>
-            <span class="selectable">symphonie</span>
-            <span class="selectable">prélude</span>
-            <span class="selectable">fugue</span>
-            <span class="selectable">étude</span>
-            <span class="selectable">nocturne</span>
-            <span class="selectable">ballade</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Genres scéniques</h2>
-          <div>
-            <span class="selectable">opéra</span>
-            <span class="selectable">opérette</span>
-            <span class="selectable">ballet</span>
-            <span class="selectable">comédie musicale</span>
-            <span class="selectable">drame musical</span>
-          </div>
-        </div>
+   <!-- Première rangée -->
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="genres_vocaux" class="toggle-checkbox" checked>
+      <label for="genres_vocaux" class="toggle-label">Genres vocaux</label>
+      <div class="toggle-content">
+        <span class="selectable">chanson</span>
+        <span class="selectable">lied</span>
+        <span class="selectable">mélodie</span>
+        <span class="selectable">aria</span>
+        <span class="selectable">cantate</span>
+        <span class="selectable">oratorio</span>
+        <span class="selectable">messe</span>
+        <span class="selectable">motet</span>
       </div>
     </div>
+  </div>
 
-    <!-- Deuxième rangée -->
-    <div class="row mb-4">
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Musique de chambre</h2>
-          <div>
-            <span class="selectable">quatuor à cordes</span>
-            <span class="selectable">trio</span>
-            <span class="selectable">quintette</span>
-            <span class="selectable">sonate en duo</span>
-            <span class="selectable">divertimento</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Formes libres</h2>
-          <div>
-            <span class="selectable">fantaisie</span>
-            <span class="selectable">impromptu</span>
-            <span class="selectable">rhapsodie</span>
-            <span class="selectable">toccata</span>
-            <span class="selectable">variations</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="category">
-          <h2>Genres traditionnels</h2>
-          <div>
-            <span class="selectable">suite</span>
-            <span class="selectable">partita</span>
-            <span class="selectable">chaconne</span>
-            <span class="selectable">passacaille</span>
-            <span class="selectable">ricercare</span>
-          </div>
-        </div>
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="genres_instrumentaux" class="toggle-checkbox" checked>
+      <label for="genres_instrumentaux" class="toggle-label">Genres instrumentaux</label>
+      <div class="toggle-content">
+        <span class="selectable">concerto</span>
+        <span class="selectable">sonate</span>
+        <span class="selectable">symphonie</span>
+        <span class="selectable">prélude</span>
+        <span class="selectable">fugue</span>
+        <span class="selectable">étude</span>
+        <span class="selectable">nocturne</span>
+        <span class="selectable">ballade</span>
       </div>
     </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="genres_sceniques" class="toggle-checkbox" checked>
+      <label for="genres_sceniques" class="toggle-label">Genres scéniques</label>
+      <div class="toggle-content">
+        <span class="selectable">opéra</span>
+        <span class="selectable">opérette</span>
+        <span class="selectable">ballet</span>
+        <span class="selectable">comédie musicale</span>
+        <span class="selectable">drame musical</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Deuxième rangée -->
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="musique_chambre" class="toggle-checkbox">
+      <label for="musique_chambre" class="toggle-label">Musique de chambre</label>
+      <div class="toggle-content">
+        <span class="selectable">quatuor à cordes</span>
+        <span class="selectable">trio</span>
+        <span class="selectable">quintette</span>
+        <span class="selectable">sonate en duo</span>
+        <span class="selectable">divertimento</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="formes_libres" class="toggle-checkbox">
+      <label for="formes_libres" class="toggle-label">Formes libres</label>
+      <div class="toggle-content">
+        <span class="selectable">fantaisie</span>
+        <span class="selectable">impromptu</span>
+        <span class="selectable">rhapsodie</span>
+        <span class="selectable">toccata</span>
+        <span class="selectable">variations</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="category">
+      <input type="checkbox" id="genres_traditionnels" class="toggle-checkbox">
+      <label for="genres_traditionnels" class="toggle-label">Genres traditionnels</label>
+      <div class="toggle-content">
+        <span class="selectable">suite</span>
+        <span class="selectable">partita</span>
+        <span class="selectable">chaconne</span>
+        <span class="selectable">passacaille</span>
+        <span class="selectable">ricercare</span>
+      </div>
+    </div>
+  </div>
+</div>
 
     <!-- Boutons -->
        <div class="row mb-5 g-3">

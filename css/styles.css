@@ -558,19 +558,25 @@ header p {
 
 /* ===== CONTENU DÉROULANT ===== */
 
+/* État fermé */
 .toggle-content {
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.4s ease, padding 0.4s ease;
-  padding: 0 1em;
-  border-left: 2px solid #ddd;
-  margin-bottom: 1em;
-  background: #fafafa;
+  transition: max-height 0.4s ease, padding 0.3s ease;
+  
+  padding: 0 16px;           /* horizontal seulement */
+  border: none;              /* pas de bordure */
+  background: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: none;
 }
 
+/* État ouvert */
 .toggle-checkbox:checked + .toggle-label + .toggle-content {
   max-height: 1000px;
-  padding: 0.5em 1em;
+  padding: 16px;
+  border: 1px solid #ececec;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
 }
 
 /* ===== STRUCTURE BOOTSTRAP ===== */
@@ -591,3 +597,54 @@ header p {
   display: flex;
   flex-direction: column;
 }
+
+/* ===== TRIANGLE VISUEL BAS GAUCHE ===== */
+
+#definition-container {
+    position: fixed;
+}
+
+/* Triangle décoratif */
+#definition-container::after {
+    content: "";
+    position: absolute;
+    bottom: 6px;
+    left: 6px;
+    width: 14px;
+    height: 14px;
+    border-left: 3px solid var(--highlight-color);
+    border-bottom: 3px solid var(--highlight-color);
+    opacity: 0.6;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* Effet hover */
+#definition-container:hover::after {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+    #definition-container::after {
+        display: none;
+    }
+
+    #definition-container {
+        cursor: default !important;
+    }
+}
+
+@media (max-width: 768px) {
+
+    #definition-container {
+        position: relative !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        right: auto !important;
+        left: auto !important;
+        margin-top: 20px;
+    }
+
+}
+

@@ -40,31 +40,52 @@ const definitionVideoContainer = document.getElementById('definition-video-conta
 // Redimensionnement
 let isResizing = false;
 let startX, startY, startWidth, startHeight;
+const handleSize = 20;
 
 definitionContainer.addEventListener('mousedown', (e) => {
     const rect = definitionContainer.getBoundingClientRect();
-    const handleSize = 20;
+
     if (e.clientX <= rect.left + handleSize && e.clientY >= rect.bottom - handleSize) {
         isResizing = true;
         startX = e.clientX;
         startY = e.clientY;
-        startWidth = parseFloat(getComputedStyle(definitionContainer).width);
-        startHeight = parseFloat(getComputedStyle(definitionContainer).height);
+        startWidth = rect.width;
+        startHeight = rect.height;
+
+        document.body.style.userSelect = "none";
         e.preventDefault();
     }
 });
 
 document.addEventListener('mousemove', (e) => {
-    if (isResizing) {
-        const newWidth = startWidth - (e.clientX - startX);
-        const newHeight = startHeight + (e.clientY - startY);
-        definitionContainer.style.width = `${Math.max(250, Math.min(newWidth, 600))}px`;
-        definitionContainer.style.height = `${Math.max(200, Math.min(newHeight, 800))}px`;
-    }
+    if (!isResizing) return;
+
+    const newWidth = startWidth - (e.clientX - startX);
+    const newHeight = startHeight + (e.clientY - startY);
+
+    definitionContainer.style.width =
+        `${Math.max(250, Math.min(newWidth, 600))}px`;
+
+    definitionContainer.style.height =
+        `${Math.max(200, Math.min(newHeight, 800))}px`;
 });
 
 document.addEventListener('mouseup', () => {
     isResizing = false;
+    document.body.style.userSelect = "auto";
+});
+
+definitionContainer.addEventListener('mousemove', (e) => {
+    const rect = definitionContainer.getBoundingClientRect();
+
+    if (
+        e.clientX <= rect.left + handleSize &&
+        e.clientY >= rect.bottom - handleSize
+    ) {
+        definitionContainer.style.cursor = 'nesw-resize';
+    } else {
+        definitionContainer.style.cursor = 'default';
+    }
 });
 
 // Restaurer les mots sélectionnés au chargement de la page
